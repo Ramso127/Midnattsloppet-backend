@@ -8,6 +8,7 @@ public class GroupOneApplication {
 
 	public static void main(String[] args) {
 		System.out.println("test");
+		System.out.println("wille");
 		SpringApplication.run(GroupOneApplication.class, args);
 	}
 
