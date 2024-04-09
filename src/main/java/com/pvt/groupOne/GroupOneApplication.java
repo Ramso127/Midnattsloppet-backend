@@ -10,6 +10,7 @@ public class GroupOneApplication {
 		System.out.println("test");
 		System.out.println("wille");
 		SpringApplication.run(GroupOneApplication.class, args);
+
 	}
 
 }
