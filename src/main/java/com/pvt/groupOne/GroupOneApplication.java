@@ -12,26 +12,12 @@ public class GroupOneApplication {
 		System.out.println("tjalalla");
 		SpringApplication.run(GroupOneApplication.class, args);
 
-
-		System.out.println("Noa");
-
-		
-
-
-
-
-
-		System.out.println("Didde2");
-		System.out.println("Didde");
-
-
-		System.out.println("Test3Didde");
-
-		System.out.println("booomba");
-		System.out.println("brödrost");
+		//AOFÅJUBFÅU
 	}
 
 }
 // Didde testkommentar
 
 // test test test test
+
+// hej
