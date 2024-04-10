@@ -12,6 +12,22 @@ public class GroupOneApplication {
 		System.out.println("tjalalla");
 		SpringApplication.run(GroupOneApplication.class, args);
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 	}
 
 }
