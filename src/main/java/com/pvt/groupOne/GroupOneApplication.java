@@ -13,7 +13,7 @@ public class GroupOneApplication {
 		SpringApplication.run(GroupOneApplication.class, args);
 
 
-
+		System.out.println("Noa");
 
 		
 
@@ -28,7 +28,7 @@ public class GroupOneApplication {
 
 
 		System.out.println("booomba");
-
+		System.out.println("brödrost");
 	}
 
 }
