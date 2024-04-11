@@ -1,5 +1,6 @@
 package com.pvt.groupOne.controller;
 
+import com.pvt.groupOne.repository.Account;
 import com.pvt.groupOne.repository.GroupRunners;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -10,7 +11,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.pvt.groupOne.repository.RunnerGroupRepository;
-import com.pvt.groupOne.repository.Account;
 import com.pvt.groupOne.repository.AccountRepository;
 
 @Controller
@@ -19,7 +19,7 @@ import com.pvt.groupOne.repository.AccountRepository;
 public class MainController {
 
     @Autowired
-    private AccountRepository userRepository;
+    private AccountRepository accountRepository;
 
     @Autowired
     private RunnerGroupRepository groupRepository;
@@ -37,11 +37,11 @@ public class MainController {
     @GetMapping(value = "/adduser/{username}/{password}/{email}")
     public @ResponseBody String addUser(@PathVariable String username, @PathVariable String password,
             @PathVariable String email) {
-        Account newUser = new Account();
-        newUser.setUserName(username);
-        newUser.setPassword(password);
-        newUser.setEmail(email);
-        userRepository.save(newUser);
+        Account newAccount = new Account();
+        newAccount.setUserName(username);
+        newAccount.setPassword(password);
+        newAccount.setEmail(email);
+        accountRepository.save(newAccount);
 
         return "Account " + username + " with password " + password + " has been added to the database.";
     }
