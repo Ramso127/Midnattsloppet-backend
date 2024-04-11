@@ -14,9 +14,9 @@ import com.pvt.groupOne.repository.User;
 import com.pvt.groupOne.repository.UserRepository;
 
 @Controller
-@RequestMapping(path = "/test")
+@RequestMapping(path = "/controller")
 @CrossOrigin
-public class DiddeTest {
+public class MainController {
 
     @Autowired
     private UserRepository userRepository;
