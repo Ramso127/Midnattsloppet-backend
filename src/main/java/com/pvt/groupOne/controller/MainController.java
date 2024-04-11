@@ -1,13 +1,17 @@
 package com.pvt.groupOne.controller;
 
+import com.pvt.groupOne.model.User;
+import com.pvt.groupOne.model.RunnerGroup;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.pvt.groupOne.repository.RunnerGroup;
 import com.pvt.groupOne.repository.RunnerGroupRepository;
-import com.pvt.groupOne.repository.User;
-import com.pvt.groupOne.repository.UserRepository;
+import com.pvt.groupOne.repository.AccountRepository;
 
 @Controller
 @RequestMapping(path = "/controller")
@@ -15,7 +19,7 @@ import com.pvt.groupOne.repository.UserRepository;
 public class MainController {
 
     @Autowired
-    private UserRepository userRepository;
+    private AccountRepository accountRepository;
 
     @Autowired
     private RunnerGroupRepository groupRepository;
@@ -25,7 +29,7 @@ public class MainController {
         return "Hello this is Didrik's test";
     }
 
-    @GetMapping(value = "/greet/{firstName}/{lastName}" )
+    @GetMapping(value = "/greet/{firstName}/{lastName}")
     public @ResponseBody String greetUser(@PathVariable String firstName, @PathVariable String lastName) {
         return "Hello, " + firstName + " " + lastName + "!";
     }
@@ -37,7 +41,7 @@ public class MainController {
         newUser.setUserName(username);
         newUser.setPassword(password);
         newUser.setEmail(email);
-        userRepository.save(newUser);
+        accountRepository.save(newUser);
 
         return "User " + username + " with password " + password + " has been added to the database.";
     }
