@@ -13,7 +13,6 @@ public class Group {
     private Integer id;
 
     private String groupName;
-
     private String groupType;
 
     public String getGroupName() {
