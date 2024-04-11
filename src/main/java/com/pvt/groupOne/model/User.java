@@ -1,4 +1,4 @@
-package com.pvt.groupOne.repository;
+package com.pvt.groupOne.model;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;

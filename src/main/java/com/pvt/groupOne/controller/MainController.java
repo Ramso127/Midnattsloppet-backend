@@ -8,9 +8,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.pvt.groupOne.repository.RunnerGroup;
+import com.pvt.groupOne.model.RunnerGroup;
 import com.pvt.groupOne.repository.RunnerGroupRepository;
-import com.pvt.groupOne.repository.User;
+import com.pvt.groupOne.model.User;
 import com.pvt.groupOne.repository.UserRepository;
 
 @Controller
