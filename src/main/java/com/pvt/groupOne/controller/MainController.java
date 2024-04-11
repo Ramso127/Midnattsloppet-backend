@@ -2,11 +2,7 @@ package com.pvt.groupOne.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import com.pvt.groupOne.repository.RunnerGroup;
 import com.pvt.groupOne.repository.RunnerGroupRepository;
@@ -29,7 +25,7 @@ public class MainController {
         return "Hello this is Didrik's test";
     }
 
-    @GetMapping(value = "/greet/{firstName}/{lastName}")
+    @GetMapping(value = "/greet/{firstName}/{lastName}" )
     public @ResponseBody String greetUser(@PathVariable String firstName, @PathVariable String lastName) {
         return "Hello, " + firstName + " " + lastName + "!";
     }
