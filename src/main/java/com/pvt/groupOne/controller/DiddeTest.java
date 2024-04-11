@@ -30,10 +30,11 @@ public class DiddeTest {
     }
 
     @GetMapping(value = "/adduser/{username}/{password}")
-    public @ResponseBody String addUser(@PathVariable String username, @PathVariable String password) {
+    public @ResponseBody String addUser(@PathVariable String username, @PathVariable String password, @PathVariable String email) {
         User newUser = new User();
         newUser.setUserName(username);
         newUser.setPassword(password);
+        newUser.setEmail(email);
         userRepository.save(newUser);
 
         return "User " + username + " with password " + password + " has been added to the database.";
