@@ -29,7 +29,7 @@ public class DiddeTest {
         return "Hello, " + firstName + " " + lastName + "!";
     }
 
-    @GetMapping(value = "/adduser/{username}/{password}")
+    @GetMapping(value = "/adduser/{username}/{password}/{email}")
     public @ResponseBody String addUser(@PathVariable String username, @PathVariable String password, @PathVariable String email) {
         User newUser = new User();
         newUser.setUserName(username);
