@@ -8,8 +8,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.pvt.groupOne.repository.Group;
-import com.pvt.groupOne.repository.GroupRepository;
+import com.pvt.groupOne.repository.RunnerGroup;
+import com.pvt.groupOne.repository.RunnerGroupRepository;
 import com.pvt.groupOne.repository.User;
 import com.pvt.groupOne.repository.UserRepository;
 
@@ -22,7 +22,7 @@ public class DiddeTest {
     private UserRepository userRepository;
 
     @Autowired
-    private GroupRepository groupRepository;
+    private RunnerGroupRepository groupRepository;
 
     @GetMapping(value = "/hello")
     public @ResponseBody String testMethod() {
@@ -48,13 +48,13 @@ public class DiddeTest {
 
     @GetMapping(value = "/addgroup/{groupName}/{groupType}")
     public @ResponseBody String addGroup(@PathVariable String groupName, @PathVariable String groupType) {
-        Group newGroup = new Group();
+        RunnerGroup newGroup = new RunnerGroup();
         newGroup.setGroupName(groupName);
         newGroup.setGroupType(groupType);
 
         try {
             groupRepository.save(newGroup);
-            
+
         } catch (Exception e) {
             return "Error: " + e;
         }
