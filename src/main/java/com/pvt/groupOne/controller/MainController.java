@@ -59,7 +59,7 @@ public class MainController {
         newGroup.setGroupType(groupType);
         groupRepository.save(newGroup);
 
-        return groupName + " of type " + groupType + " has been added to the database.";
+        return groupName + " of type " + groupType + " has been added to the database. ";
     }
 
 
