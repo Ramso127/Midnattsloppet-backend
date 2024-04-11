@@ -25,7 +25,7 @@ public class MainController {
         return "Hello this is Didrik's test";
     }
 
-    @GetMapping(value = "/greet/{firstName}/{lastName}")
+    @GetMapping(value = "/greet/{firstName}/{lastName}" )
     public @ResponseBody String greetUser(@PathVariable String firstName, @PathVariable String lastName) {
         return "Hello, " + firstName + " " + lastName + "!";
     }
