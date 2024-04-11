@@ -2,11 +2,7 @@ package com.pvt.groupOne.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import com.pvt.groupOne.model.RunnerGroup;
 import com.pvt.groupOne.repository.RunnerGroupRepository;
@@ -55,5 +51,16 @@ public class MainController {
 
         return groupName + " of type " + groupType + " has been added to the database.";
     }
+
+    @PostMapping(value = "/addTest/{groupName}/{groupType}")
+    public @ResponseBody String addTest(@PathVariable String groupName, @PathVariable String groupType) {
+        RunnerGroup newGroup = new RunnerGroup();
+        newGroup.setGroupName(groupName);
+        newGroup.setGroupType(groupType);
+        groupRepository.save(newGroup);
+
+        return groupName + " of type " + groupType + " has been added to the database.";
+    }
+
 
 }
