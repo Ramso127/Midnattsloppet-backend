@@ -1,7 +1,7 @@
 package com.pvt.groupOne.controller;
 
-import com.pvt.groupOne.repository.Account;
-import com.pvt.groupOne.repository.GroupRunners;
+import com.pvt.groupOne.model.User;
+import com.pvt.groupOne.model.RunnerGroup;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -37,18 +37,18 @@ public class MainController {
     @GetMapping(value = "/adduser/{username}/{password}/{email}")
     public @ResponseBody String addUser(@PathVariable String username, @PathVariable String password,
             @PathVariable String email) {
-        Account newAccount = new Account();
-        newAccount.setUserName(username);
-        newAccount.setPassword(password);
-        newAccount.setEmail(email);
-        accountRepository.save(newAccount);
+        User newUser = new User();
+        newUser.setUserName(username);
+        newUser.setPassword(password);
+        newUser.setEmail(email);
+        accountRepository.save(newUser);
 
-        return "Account " + username + " with password " + password + " has been added to the database.";
+        return "User " + username + " with password " + password + " has been added to the database.";
     }
 
     @GetMapping(value = "/addgroup/{groupName}/{groupType}")
     public @ResponseBody String addGroup(@PathVariable String groupName, @PathVariable String groupType) {
-        GroupRunners newGroup = new GroupRunners();
+        RunnerGroup newGroup = new RunnerGroup();
         newGroup.setGroupName(groupName);
         newGroup.setGroupType(groupType);
         groupRepository.save(newGroup);

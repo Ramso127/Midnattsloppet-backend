@@ -1,4 +1,4 @@
-package com.pvt.groupOne.repository;
+package com.pvt.groupOne.model;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -7,7 +7,7 @@ import jakarta.persistence.Id;
 
 
 @Entity
-public class GroupRunners {
+public class RunnerGroup {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
