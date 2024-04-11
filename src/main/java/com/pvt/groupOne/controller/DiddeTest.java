@@ -33,7 +33,8 @@ public class DiddeTest {
     }
 
     @GetMapping(value = "/adduser/{username}/{password}/{email}")
-    public @ResponseBody String addUser(@PathVariable String username, @PathVariable String password, @PathVariable String email) {
+    public @ResponseBody String addUser(@PathVariable String username, @PathVariable String password,
+            @PathVariable String email) {
         User newUser = new User();
         newUser.setUserName(username);
         newUser.setPassword(password);
@@ -43,7 +44,7 @@ public class DiddeTest {
         return "User " + username + " with password " + password + " has been added to the database.";
     }
 
-    @GetMapping(value = "/adduser/{groupName}/{groupType}")
+    @GetMapping(value = "/addGroup/{groupName}/{groupType}")
     public @ResponseBody String addGroup(@PathVariable String groupName, @PathVariable String groupType) {
         Group group = new Group();
         group.setGroupName(groupName);
