@@ -51,13 +51,7 @@ public class MainController {
         RunnerGroup newGroup = new RunnerGroup();
         newGroup.setGroupName(groupName);
         newGroup.setGroupType(groupType);
-
-        try {
-            groupRepository.save(newGroup);
-
-        } catch (Exception e) {
-            return "Error: " + e;
-        }
+        groupRepository.save(newGroup);
 
         return groupName + " of type " + groupType + " has been added to the database.";
     }
