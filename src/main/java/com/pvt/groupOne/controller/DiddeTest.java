@@ -51,7 +51,13 @@ public class DiddeTest {
         Group newGroup = new Group();
         newGroup.setGroupName(groupName);
         newGroup.setGroupType(groupType);
-        groupRepository.save(newGroup);
+
+        try {
+            groupRepository.save(newGroup);
+            
+        } catch (Exception e) {
+            return "Error: " + e;
+        }
 
         return groupName + " of type " + groupType + " has been added to the database.";
     }
