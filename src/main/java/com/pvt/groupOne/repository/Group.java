@@ -10,7 +10,7 @@ public class Group {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private Integer id;
+    private Integer groupId;
 
     private String groupName;
     private String groupType;

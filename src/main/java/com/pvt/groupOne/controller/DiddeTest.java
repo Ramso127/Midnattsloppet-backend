@@ -20,6 +20,7 @@ public class DiddeTest {
 
     @Autowired
     private UserRepository userRepository;
+
     @Autowired
     private GroupRepository groupRepository;
 
