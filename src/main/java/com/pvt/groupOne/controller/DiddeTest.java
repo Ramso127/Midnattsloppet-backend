@@ -1,7 +1,6 @@
 package com.pvt.groupOne.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -27,7 +26,6 @@ public class DiddeTest {
 
     @GetMapping(value = "/greet/{firstName}/{lastName}")
     public @ResponseBody String greetUser(@PathVariable String firstName, @PathVariable String lastName) {
-        System.out.println("wille var här");
         return "Hello, " + firstName + " " + lastName + "!";
     }
 
