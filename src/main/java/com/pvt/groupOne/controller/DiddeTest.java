@@ -46,13 +46,14 @@ public class DiddeTest {
 
     @GetMapping(value = "/addgroup/{groupName}/{groupType}")
     public @ResponseBody String addGroup(@PathVariable String groupName, @PathVariable String groupType) {
-        return groupName + " of " + groupType + " has been added to the database.";
-        // Group group = new Group();
-        // group.setGroupName(groupName);
-        // group.setGroupType(groupType);
+        Group group = new Group();
+        group.setGroupName(groupName);
+        group.setGroupType(groupType);
+        return group.getGroupName();
         // groupRepository.save(group);
 
-        // return groupName + " of " + groupType + " has been added to the database.";
+        // return groupName + " of type " + groupType + " has been added to the
+        // database.";
     }
 
 }
