@@ -8,6 +8,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.pvt.groupOne.repository.Group;
+import com.pvt.groupOne.repository.GroupRepository;
 import com.pvt.groupOne.repository.User;
 import com.pvt.groupOne.repository.UserRepository;
 
@@ -18,6 +20,7 @@ public class DiddeTest {
 
     @Autowired
     private UserRepository userRepository;
+    private GroupRepository groupRepository;
 
     @GetMapping(value = "/hello")
     public @ResponseBody String testMethod() {
@@ -37,6 +40,16 @@ public class DiddeTest {
         userRepository.save(newUser);
 
         return "User " + username + " with password " + password + " has been added to the database.";
+    }
+
+    @GetMapping(value = "/adduser/{groupName}/{groupType}")
+    public @ResponseBody String addGroup(@PathVariable String groupName, @PathVariable String groupType) {
+        Group group = new Group();
+        group.setGroupName(groupName);
+        group.setGroupType(groupType);
+        groupRepository.save(group);
+
+        return groupName + " of " + groupType + " has been added to the database.";
     }
 
 }
