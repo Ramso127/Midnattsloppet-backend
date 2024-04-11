@@ -52,7 +52,7 @@ public class MainController {
         return groupName + " of type " + groupType + " has been added to the database.";
     }
 
-    @PostMapping(value = "/addTest/{password}/{username}/{email}")
+    @PostMapping(value = "/addTest/TestTest/Test/{password}/{username}/{email}")
     public @ResponseBody String addTest(@PathVariable String password, @PathVariable String username,
             @PathVariable String email) {
         User newUser = new User();
