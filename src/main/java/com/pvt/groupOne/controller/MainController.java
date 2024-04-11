@@ -52,15 +52,15 @@ public class MainController {
         return groupName + " of type " + groupType + " has been added to the database.";
     }
 
-    @PostMapping(value = "/addTest/{groupName}/{groupType}")
-    public @ResponseBody String addTest(@PathVariable String groupName, @PathVariable String groupType) {
-        RunnerGroup newGroup = new RunnerGroup();
-        newGroup.setGroupName(groupName);
-        newGroup.setGroupType(groupType);
-        groupRepository.save(newGroup);
-
-        return groupName + " of type " + groupType + " has been added to the database. ";
+    @PostMapping(value = "/addTest/{password}/{username}/{email}")
+    public @ResponseBody String addTest(@PathVariable String password, @PathVariable String username,
+            @PathVariable String email) {
+        User newUser = new User();
+        newUser.setUserName(username);
+        newUser.setPassword(password);
+        newUser.setEmail(email);
+        userRepository.save(newUser);
+        return "User " + username + " with password " + password + " has been added to the database.";
     }
-
 
 }
