@@ -1,5 +1,6 @@
 package com.pvt.groupOne.controller;
 
+import com.pvt.groupOne.repository.RunnerGroup;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -8,7 +9,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.pvt.groupOne.repository.RunnerGroups;
+import com.pvt.groupOne.repository.RunnerGroup;
 import com.pvt.groupOne.repository.RunnerGroupRepository;
 import com.pvt.groupOne.repository.User;
 import com.pvt.groupOne.repository.UserRepository;
@@ -48,7 +49,7 @@ public class MainController {
 
     @GetMapping(value = "/addgroup/{groupName}/{groupType}")
     public @ResponseBody String addGroup(@PathVariable String groupName, @PathVariable String groupType) {
-        RunnerGroups newGroup = new RunnerGroups();
+        RunnerGroup newGroup = new RunnerGroup();
         newGroup.setGroupName(groupName);
         newGroup.setGroupType(groupType);
         groupRepository.save(newGroup);
