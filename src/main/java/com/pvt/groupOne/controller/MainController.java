@@ -10,8 +10,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.pvt.groupOne.repository.RunnerGroupRepository;
-import com.pvt.groupOne.repository.User;
-import com.pvt.groupOne.repository.UserRepository;
+import com.pvt.groupOne.repository.Account;
+import com.pvt.groupOne.repository.AccountRepository;
 
 @Controller
 @RequestMapping(path = "/controller")
@@ -19,7 +19,7 @@ import com.pvt.groupOne.repository.UserRepository;
 public class MainController {
 
     @Autowired
-    private UserRepository userRepository;
+    private AccountRepository userRepository;
 
     @Autowired
     private RunnerGroupRepository groupRepository;
@@ -37,13 +37,13 @@ public class MainController {
     @GetMapping(value = "/adduser/{username}/{password}/{email}")
     public @ResponseBody String addUser(@PathVariable String username, @PathVariable String password,
             @PathVariable String email) {
-        User newUser = new User();
+        Account newUser = new Account();
         newUser.setUserName(username);
         newUser.setPassword(password);
         newUser.setEmail(email);
         userRepository.save(newUser);
 
-        return "User " + username + " with password " + password + " has been added to the database.";
+        return "Account " + username + " with password " + password + " has been added to the database.";
     }
 
     @GetMapping(value = "/addgroup/{groupName}/{groupType}")
