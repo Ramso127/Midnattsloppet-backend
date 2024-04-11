@@ -4,9 +4,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-import com.pvt.groupOne.model.RunnerGroup;
+import com.pvt.groupOne.repository.RunnerGroup;
 import com.pvt.groupOne.repository.RunnerGroupRepository;
-import com.pvt.groupOne.model.User;
+import com.pvt.groupOne.repository.User;
 import com.pvt.groupOne.repository.UserRepository;
 
 @Controller
