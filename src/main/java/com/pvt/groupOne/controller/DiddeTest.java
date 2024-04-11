@@ -44,7 +44,7 @@ public class DiddeTest {
         return "User " + username + " with password " + password + " has been added to the database.";
     }
 
-    @GetMapping(value = "/addGroup/{groupName}/{groupType}")
+    @GetMapping(value = "/addgroup/{groupName}/{groupType}")
     public @ResponseBody String addGroup(@PathVariable String groupName, @PathVariable String groupType) {
         Group group = new Group();
         group.setGroupName(groupName);
