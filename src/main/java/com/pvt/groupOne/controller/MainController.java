@@ -12,7 +12,7 @@ import com.pvt.groupOne.repository.UserRepository;
 @Controller
 @RequestMapping(path = "/controller")
 @CrossOrigin
-public class MainController  {
+public class MainController {
 
     @Autowired
     private UserRepository userRepository;
@@ -25,7 +25,7 @@ public class MainController  {
         return "Hello this is Didrik's test";
     }
 
-    @GetMapping(value = "/greet/{firstName}/{lastName}" )
+    @GetMapping(value = "/greet/{firstName}/{lastName}")
     public @ResponseBody String greetUser(@PathVariable String firstName, @PathVariable String lastName) {
         return "Hello, " + firstName + " " + lastName + "!";
     }
@@ -51,5 +51,5 @@ public class MainController  {
 
         return groupName + " of type " + groupType + " has been added to the database.";
     }
-
+    // hej
 }
