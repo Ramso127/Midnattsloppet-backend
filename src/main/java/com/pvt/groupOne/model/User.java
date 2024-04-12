@@ -14,7 +14,7 @@ public class User {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
 
-    @Column(name = "username", unique = true)
+    @Column(name = "user_name", unique = true)
     private String username;
 
     @OneToOne(mappedBy = "user")
