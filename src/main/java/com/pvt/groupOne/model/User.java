@@ -56,8 +56,7 @@ public class User {
     }
 
     public UserInfo getUserInfo() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getUserInfo'");
+        return userInfo;
     }
 
 }
