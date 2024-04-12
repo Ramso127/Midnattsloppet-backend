@@ -7,6 +7,7 @@ import com.pvt.groupOne.model.RunnerGroup;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -33,6 +34,9 @@ public class MainController {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
     @GetMapping(value = "/hello")
     public @ResponseBody String testMethod() {
         return "Hello this is Didrik's test";
@@ -43,20 +47,24 @@ public class MainController {
         return "Hello, " + firstName + " " + lastName + "!";
     }
 
+    // Gör om till PostMapping
     @GetMapping(value = "/adduser/{username}/{password}/{email}")
     public @ResponseBody String addUser(@PathVariable String username, @PathVariable String password,
             @PathVariable String email) {
         if (accountRepository.existsByUsername(username))
             return "Username already exists";
+
+        String encodedPassword = passwordEncoder.encode(password);
         User newUser = new User();
         newUser.setUserName(username);
-        newUser.setPassword(password);
+        newUser.setPassword(encodedPassword);
         newUser.setEmail(email);
         accountRepository.save(newUser);
 
         return "User " + username + " with password " + password + " has been added to the database.";
     }
 
+    // Gör om till PostMapping
     @GetMapping(value = "/login/{username}/{password}")
     public ResponseEntity<String> login(@PathVariable String username, @PathVariable String password) {
         // Perform user authentication
