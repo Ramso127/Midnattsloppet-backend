@@ -46,17 +46,13 @@ public class MainController {
     @GetMapping(value = "/adduser/{username}/{password}/{email}")
     public @ResponseBody String addUser(@PathVariable String username, @PathVariable String password,
             @PathVariable String email) {
-        try {
-            if (accountRepository.existsByUsername(username))
-                return "Username already exists";
-            User newUser = new User();
-            newUser.setUserName(username);
-            newUser.setPassword(password);
-            newUser.setEmail(email);
-            accountRepository.save(newUser);
-        } catch (Exception e) {
-            return e.toString();
-        }
+        if (accountRepository.existsByUsername(username))
+            return "Username already exists";
+        User newUser = new User();
+        newUser.setUserName(username);
+        newUser.setPassword(password);
+        newUser.setEmail(email);
+        accountRepository.save(newUser);
 
         return "User " + username + " with password " + password + " has been added to the database.";
     }
@@ -64,10 +60,14 @@ public class MainController {
     @GetMapping(value = "/login/{username}/{password}")
     public ResponseEntity<String> login(@PathVariable String username, @PathVariable String password) {
         // Perform user authentication
-        if (userService.authenticateUser(username, password)) {
-            return ResponseEntity.ok("Login successful");
-        } else {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid username or password");
+        try {
+            if (userService.authenticateUser(username, password)) {
+                return ResponseEntity.ok("Login successful");
+            } else {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid username or password");
+            }
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.toString());
         }
     }
 
