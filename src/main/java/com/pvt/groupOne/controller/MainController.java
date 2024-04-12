@@ -2,6 +2,7 @@ package com.pvt.groupOne.controller;
 
 import com.pvt.groupOne.model.User;
 import com.pvt.groupOne.model.UserInfo;
+import com.pvt.groupOne.model.UserRequest;
 import com.pvt.groupOne.Service.UserService;
 import com.pvt.groupOne.model.RunnerGroup;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.pvt.groupOne.repository.RunnerGroupRepository;
@@ -43,10 +45,11 @@ public class MainController {
         return "Hello, " + firstName + " " + lastName + "!";
     }
 
-    // Gör om till PostMapping
-    @GetMapping(value = "/adduser/{username}/{password}")
-    public @ResponseBody String addUser(@PathVariable String username, @PathVariable String password) {
+    @PostMapping(value = "/adduser")
+    public @ResponseBody String addUser(@RequestBody UserRequest userRequest) {
         try {
+            String username = userRequest.getUsername();
+            String password = userRequest.getPassword();
             if (accountRepository.existsByUsername(username))
                 return "Username already exists";
             User newUser = new User();
