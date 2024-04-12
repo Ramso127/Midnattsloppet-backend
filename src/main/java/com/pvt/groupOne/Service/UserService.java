@@ -26,9 +26,10 @@ public class UserService {
         }
 
         // Retrieve userinfo associated with the user
+        UserInfo userInfo = user.getUserInfo();
 
         // Verify password
-        if (passwordEncoder.matches(password, user.getPassword())) {
+        if (password.equals(user.getPassword())) {
             // Passwords match, login successful
             return true;
         }
