@@ -46,13 +46,17 @@ public class MainController {
     @GetMapping(value = "/adduser/{username}/{password}/{email}")
     public @ResponseBody String addUser(@PathVariable String username, @PathVariable String password,
             @PathVariable String email) {
-        if (accountRepository.existsByUsername(username))
-            return "Username already exists";
-        User newUser = new User();
-        newUser.setUserName(username);
-        newUser.setPassword(password);
-        newUser.setEmail(email);
-        accountRepository.save(newUser);
+        try {
+            if (accountRepository.existsByUsername(username))
+                return "Username already exists";
+            User newUser = new User();
+            newUser.setUserName(username);
+            newUser.setPassword(password);
+            newUser.setEmail(email);
+            accountRepository.save(newUser);
+        } catch (Exception e) {
+            throw e;
+        }
 
         return "User " + username + " with password " + password + " has been added to the database.";
     }
