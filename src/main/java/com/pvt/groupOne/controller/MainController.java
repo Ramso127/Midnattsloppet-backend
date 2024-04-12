@@ -55,6 +55,7 @@ public class MainController {
             newUser.setEmail(email);
             accountRepository.save(newUser);
         } catch (Exception e) {
+            e.printStackTrace();
             throw e;
         }
 
