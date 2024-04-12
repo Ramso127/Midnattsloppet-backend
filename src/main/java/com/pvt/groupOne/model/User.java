@@ -20,16 +20,15 @@ public class User {
     @OneToOne(mappedBy = "user")
     private UserInfo userInfo;
 
-    private String userName;
     private String password;
     private String email;
 
-    public String getUserName() {
-        return userName;
+    public String getusername() {
+        return username;
     }
 
-    public void setUserName(String userName) {
-        this.userName = userName;
+    public void setusername(String username) {
+        this.username = username;
     }
 
     public String getPassword() {
