@@ -11,10 +11,7 @@ import jakarta.persistence.OneToOne;
 public class User {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Integer id;
-
-    @Column(name = "user_name", unique = true)
+    @Column(name = "user_name")
     private String username;
 
     @OneToOne(mappedBy = "user")
@@ -36,14 +33,6 @@ public class User {
 
     public void setPassword(String password) {
         this.password = password;
-    }
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
     }
 
     public UserInfo getUserInfo() {
