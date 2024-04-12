@@ -1,13 +1,19 @@
 package com.pvt.groupOne.controller;
 
 import com.pvt.groupOne.model.User;
+import com.pvt.groupOne.model.UserInfo;
+import com.Service.UserService;
 import com.pvt.groupOne.model.RunnerGroup;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.pvt.groupOne.repository.RunnerGroupRepository;
@@ -23,6 +29,9 @@ public class MainController {
 
     @Autowired
     private RunnerGroupRepository groupRepository;
+
+    @Autowired
+    private UserService userService;
 
     @GetMapping(value = "/hello")
     public @ResponseBody String testMethod() {
@@ -46,6 +55,16 @@ public class MainController {
         accountRepository.save(newUser);
 
         return "User " + username + " with password " + password + " has been added to the database.";
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<String> login(@RequestParam String username, @RequestParam String password) {
+        // Perform user authentication
+        if (userService.authenticateUser(username, password)) {
+            return ResponseEntity.ok("Login successful");
+        } else {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid username or password");
+        }
     }
 
     @GetMapping(value = "/addgroup/{groupName}/{groupType}")

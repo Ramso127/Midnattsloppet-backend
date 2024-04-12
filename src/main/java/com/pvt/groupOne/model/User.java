@@ -56,4 +56,9 @@ public class User {
         this.email = email;
     }
 
+    public UserInfo getUserInfo() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'getUserInfo'");
+    }
+
 }
