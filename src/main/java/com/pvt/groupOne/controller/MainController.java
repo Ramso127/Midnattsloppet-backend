@@ -46,14 +46,18 @@ public class MainController {
     // Gör om till PostMapping
     @GetMapping(value = "/adduser/{username}/{password}")
     public @ResponseBody String addUser(@PathVariable String username, @PathVariable String password) {
-        if (accountRepository.existsByUsername(username))
-            return "Username already exists";
-        User newUser = new User();
-        newUser.setUserName(username);
-        newUser.setPassword(password);
-        accountRepository.save(newUser);
+        try {
+            if (accountRepository.existsByUsername(username))
+                return "Username already exists";
+            User newUser = new User();
+            newUser.setUserName(username);
+            newUser.setPassword(password);
+            accountRepository.save(newUser);
 
-        return "User " + username + " with password " + password + " has been added to the database.";
+            return "User " + username + " with password " + password + " has been added to the database.";
+        } catch (Exception e) {
+            return e.toString();
+        }
     }
 
     // Gör om till PostMapping
