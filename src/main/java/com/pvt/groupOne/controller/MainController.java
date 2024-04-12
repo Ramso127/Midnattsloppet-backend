@@ -57,8 +57,8 @@ public class MainController {
         return "User " + username + " with password " + password + " has been added to the database.";
     }
 
-    @PostMapping("/login")
-    public ResponseEntity<String> login(@RequestParam String username, @RequestParam String password) {
+    @GetMapping("/login/username}/{password}")
+    public ResponseEntity<String> login(@PathVariable String username, @PathVariable String password) {
         // Perform user authentication
         if (userService.authenticateUser(username, password)) {
             return ResponseEntity.ok("Login successful");
