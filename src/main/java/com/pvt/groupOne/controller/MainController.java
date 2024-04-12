@@ -2,7 +2,7 @@ package com.pvt.groupOne.controller;
 
 import com.pvt.groupOne.model.User;
 import com.pvt.groupOne.model.UserInfo;
-import com.Service.UserService;
+import com.pvt.groupOne.Service.UserService;
 import com.pvt.groupOne.model.RunnerGroup;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
