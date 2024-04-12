@@ -4,7 +4,7 @@ import com.pvt.groupOne.model.User;
 import org.springframework.data.repository.CrudRepository;
 
 public interface AccountRepository extends CrudRepository<User, Integer> {
-    boolean existsByUserName(String username);
+    boolean existsByUsername(String username);
 
     User findByUsername(String username);
 }
