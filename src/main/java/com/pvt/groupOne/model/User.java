@@ -21,7 +21,6 @@ public class User {
     private UserInfo userInfo;
 
     private String password;
-    private String email;
 
     public String getUserName() {
         return username;
@@ -45,14 +44,6 @@ public class User {
 
     public void setId(Integer id) {
         this.id = id;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
     }
 
     public UserInfo getUserInfo() {
