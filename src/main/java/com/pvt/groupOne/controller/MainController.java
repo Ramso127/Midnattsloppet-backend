@@ -50,6 +50,8 @@ public class MainController {
 
     @GetMapping(value = "/addgroup/{groupName}/{groupType}")
     public @ResponseBody String addGroup(@PathVariable String groupName, @PathVariable String groupType) {
+        if (groupRepository.existsByGroupName(groupName))
+            return "Groupname already exists";
         RunnerGroup newGroup = new RunnerGroup();
         newGroup.setGroupName(groupName);
         newGroup.setGroupType(groupType);
