@@ -55,8 +55,7 @@ public class MainController {
             newUser.setEmail(email);
             accountRepository.save(newUser);
         } catch (Exception e) {
-            e.printStackTrace();
-            throw e;
+            return e.toString();
         }
 
         return "User " + username + " with password " + password + " has been added to the database.";
