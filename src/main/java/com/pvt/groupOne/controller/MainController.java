@@ -96,4 +96,23 @@ public class MainController {
         return groupName + " of type " + groupType + " has been added to the database.";
     }
 
+    //TODO kolla om användarnamn eller epost finns redan som en GET mapping
+
+    @GetMapping(value = "/checkusername/{username}")
+    public @ResponseBody Boolean checkUsernameExistsAlready(@PathVariable String username) {
+        if (accountRepository.existsByUsername(username))
+            return true;
+        else
+            return false;
+    }
+
+    @GetMapping(value = "/checkemail/{email}")
+    public @ResponseBody Boolean checkEmailExistsAlready(@PathVariable String email) {
+        if (accountRepository.existsByUsername(email))
+            return true;
+        else
+            return false;
+    }
+
+
 }
