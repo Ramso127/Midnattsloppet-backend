@@ -65,13 +65,13 @@ public class MainController {
     }
 
 
-    @DeleteMapping(value = "/removeuser")
+    @DeleteMapping(value = "/removeuser") // eller "/removeuser/{userId}" 
     public @ResponseBody String removeUser(@RequestBody User user) {
         if (!accountRepository.existsByUsername(user.getUserName())) {
             return "No such user exists";
         }
         accountRepository.delete(user);
-        return "The user has been successfully removed";
+        return "The user has been removed";
     }
 
     // Gör om till PostMapping
@@ -105,6 +105,15 @@ public class MainController {
         }
 
         return groupName + " of type " + groupType + " has been added to the database.";
+    }
+
+    @DeleteMapping(value = "/removeGroup")
+    public @ResponseBody String removeGroup(@RequestBody RunnerGroup group) {
+        if (!groupRepository.existsByGroupName(group.getGroupName())) {
+            return "No such group exists";
+        }
+        groupRepository.delete(group);
+        return "The group has been removed";
     }
 
     //TODO kolla om användarnamn eller epost finns redan som en GET mapping
