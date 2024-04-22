@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -61,6 +62,16 @@ public class MainController {
         } catch (Exception e) {
             return e.toString();
         }
+    }
+
+
+    @DeleteMapping(value = "/removeuser")
+    public @ResponseBody String removeUser(@RequestBody User user) {
+        if (!accountRepository.existsByUsername(user.getUserName())) {
+            return "No such user exists";
+        }
+        accountRepository.delete(user);
+        return "The user has been successfully removed";
     }
 
     // Gör om till PostMapping
