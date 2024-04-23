@@ -60,7 +60,6 @@ public class MainController {
         }
     }
 
-    // Gör om till PostMapping
     @GetMapping(value = "/login/{username}/{password}")
     public ResponseEntity<String> login(@PathVariable String username, @PathVariable String password) {
         // Perform user authentication
