@@ -4,6 +4,7 @@ import com.pvt.groupOne.model.User;
 import com.pvt.groupOne.model.UserInfo;
 import com.pvt.groupOne.model.UserRequest;
 import com.pvt.groupOne.Service.UserService;
+import com.pvt.groupOne.model.GroupRequest;
 import com.pvt.groupOne.model.RunnerGroup;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -41,11 +42,6 @@ public class MainController {
         return "Hello this is Didrik's test";
     }
 
-    @GetMapping(value = "/greet/{firstName}/{lastName}")
-    public @ResponseBody String greetUser(@PathVariable String firstName, @PathVariable String lastName) {
-        return "Hello, " + firstName + " " + lastName + "!";
-    }
-
     @PostMapping(value = "/adduser")
     public @ResponseBody String addUser(@RequestBody UserRequest userRequest) {
         try {
@@ -64,16 +60,6 @@ public class MainController {
         }
     }
 
-
-    @DeleteMapping(value = "/removeuser") // eller "/removeuser/{userId}" 
-    public @ResponseBody String removeUser(@RequestBody User user) {
-        if (!accountRepository.existsByUsername(user.getUserName())) {
-            return "No such user exists";
-        }
-        accountRepository.delete(user);
-        return "The user has been removed";
-    }
-
     // Gör om till PostMapping
     @GetMapping(value = "/login/{username}/{password}")
     public ResponseEntity<String> login(@PathVariable String username, @PathVariable String password) {
@@ -89,8 +75,10 @@ public class MainController {
         }
     }
 
-    @GetMapping(value = "/addgroup/{groupName}/{groupType}")
-    public @ResponseBody String addGroup(@PathVariable String groupName, @PathVariable String groupType) {
+    @PostMapping(value = "/addgroup")
+    public @ResponseBody String addGroup(@RequestBody GroupRequest groupRequest) {
+        String groupName = groupRequest.getGroupName();
+        String groupType = groupRequest.getGroupType();
         if (groupRepository.existsByGroupName(groupName))
             return "Groupname already exists";
         RunnerGroup newGroup = new RunnerGroup();
@@ -116,7 +104,7 @@ public class MainController {
         return "The group has been removed";
     }
 
-    //TODO kolla om användarnamn eller epost finns redan som en GET mapping
+    // TODO kolla om användarnamn eller epost finns redan som en GET mapping
 
     @GetMapping(value = "/checkusername/{username}")
     public @ResponseBody Boolean checkUsernameExistsAlready(@PathVariable String username) {
@@ -133,6 +121,5 @@ public class MainController {
         else
             return false;
     }
-
 
 }
