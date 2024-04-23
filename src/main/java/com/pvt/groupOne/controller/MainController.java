@@ -11,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -59,6 +60,7 @@ public class MainController {
         }
     }
 
+    // Gör om till PostMapping
     @GetMapping(value = "/login/{username}/{password}")
     public ResponseEntity<String> login(@PathVariable String username, @PathVariable String password) {
         // Perform user authentication
@@ -91,6 +93,15 @@ public class MainController {
         }
 
         return groupName + " of type " + groupType + " has been added to the database.";
+    }
+
+    @DeleteMapping(value = "/removeGroup")
+    public @ResponseBody String removeGroup(@RequestBody RunnerGroup group) {
+        if (!groupRepository.existsByGroupName(group.getGroupName())) {
+            return "No such group exists";
+        }
+        groupRepository.delete(group);
+        return "The group has been removed";
     }
 
     // TODO kolla om användarnamn eller epost finns redan som en GET mapping
