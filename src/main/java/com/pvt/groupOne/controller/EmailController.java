@@ -14,7 +14,7 @@ public class EmailController {
     @Autowired
     private EmailService emailService;
 
-    @PostMapping("/sendEmail/{email}")
+    @PostMapping("/sendEmail/{reciever}")
     public String sendEmail(@PathVariable String reciever, 
                             @RequestParam String subject, 
                             @RequestParam String text) {
