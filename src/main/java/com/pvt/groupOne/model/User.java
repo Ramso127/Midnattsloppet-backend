@@ -19,6 +19,8 @@ public class User {
 
     private String password;
 
+    private String email;
+
     public String getUserName() {
         return username;
     }
@@ -39,4 +41,12 @@ public class User {
         return userInfo;
     }
 
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+    
 }
