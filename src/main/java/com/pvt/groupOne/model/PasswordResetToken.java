@@ -1,18 +1,15 @@
 package com.pvt.groupOne.model;
 
 import com.pvt.groupOne.repository.PasswordTokenRepository;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToOne;
+import jakarta.persistence.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import java.util.Date;
 
-@Component
+@Entity
 public class PasswordResetToken {
 
-    private static final int EXPIRATION = 6 * 60 * 60 * 1000;
+    private static final int EXPIRATION = 24 * 60 * 60 * 1000;
 
     private String token;
 
