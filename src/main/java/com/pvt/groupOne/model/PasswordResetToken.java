@@ -22,9 +22,6 @@ public class PasswordResetToken {
 
     private Date expiryDate;
 
-    @Autowired
-    private PasswordTokenRepository passwordTokenRepository;
-
     public PasswordResetToken() {
 
     }
