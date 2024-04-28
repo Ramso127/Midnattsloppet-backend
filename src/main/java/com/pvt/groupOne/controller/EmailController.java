@@ -52,9 +52,10 @@ public class EmailController {
 
         } else {
             User user = accountRepository.findByEmail(email);
+
             PasswordResetToken token = userService.createPasswordResetToken(user);
 
-            String url = request.getContextPath() + "/resetPassword?token=" + token;
+            String url = request.getContextPath() + "/resetPassword?token=" + token.toString();
             EmailRequest emailRequest = new EmailRequest();
             emailRequest.setSubject("Reset Password");
             emailRequest.setText("Hello " + user.getUserName() + ", \r\n" +
