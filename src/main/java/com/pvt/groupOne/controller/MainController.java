@@ -31,7 +31,6 @@ public class MainController {
     @Autowired
     private RunnerGroupRepository groupRepository;
 
-    EmailController emailController;
 
     @Autowired
     private UserService userService;
@@ -133,18 +132,6 @@ public class MainController {
             return false;
     }
 
-    @PostMapping(value = "/resetPassword")
-    public @ResponseBody String resetPassword(HttpServletRequest request, @RequestParam("email") String email) {
-        if (!accountRepository.existsByEmail(email)) {
-            return "No such user exists";
-        } else {
-            User user = accountRepository.findByEmail(email);
-            PasswordResetToken token = userService.createPasswordResetToken(user);
-            emailController.sendResetTokenMail(request.getContextPath(), request.getLocale(), token, user);
-            return "Email has been sent";
-        }
 
-        // return "Password has been reset";
-    }
 
 }
