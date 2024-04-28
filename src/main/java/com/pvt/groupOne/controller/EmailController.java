@@ -45,8 +45,8 @@ public class EmailController {
         return sendEmail(user.getEmail(), emailRequest);
     }
 
-    @PostMapping(value = "/resetPassword")
-    public @ResponseBody String resetPassword(HttpServletRequest request, @RequestParam("email") String email) {
+    @GetMapping(value = "/resetPassword/{email}")
+    public @ResponseBody String resetPassword(HttpServletRequest request, @PathVariable String email) {
         if (!accountRepository.existsByEmail(email)) {
             return "No such user exists";
 
