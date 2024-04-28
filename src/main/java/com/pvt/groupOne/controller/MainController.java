@@ -2,6 +2,7 @@ package com.pvt.groupOne.controller;
 
 import com.pvt.groupOne.model.*;
 import com.pvt.groupOne.Service.UserService;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -29,6 +30,8 @@ public class MainController {
 
     @Autowired
     private RunnerGroupRepository groupRepository;
+
+    EmailController emailController;
 
     @Autowired
     private UserService userService;
@@ -130,14 +133,15 @@ public class MainController {
             return false;
     }
 
-    @GetMapping(value = "/resetPassword//{email}")
-    public @ResponseBody void resetPassword(@PathVariable String email) {
+    @PostMapping(value = "/resetPassword")
+    public @ResponseBody String resetPassword(HttpServletRequest request, @RequestParam("email") String email) {
         if (!accountRepository.existsByEmail(email)) {
-            // return "No such user exists";
+            return "No such user exists";
         } else {
             User user = accountRepository.findByEmail(email);
             PasswordResetToken token = userService.createPasswordResetToken(user);
-            // return token;
+            emailController.sendResetTokenMail(request.getContextPath(), request.getLocale(), token, user);
+            return "Email has been sent";
         }
 
         // return "Password has been reset";
