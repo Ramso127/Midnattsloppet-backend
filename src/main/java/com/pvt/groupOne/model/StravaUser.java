@@ -1,17 +1,30 @@
 package com.pvt.groupOne.model;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+
+@Entity
 public class StravaUser {
 
+    
+    @Id
+    @Column(name = "user_id")
     private int id;
+    
     private String firstName;
     private String scope;
-    private int accessToken;
-    private int refreshToken;
+    private String accessToken;
+    private String refreshToken;
     private long expiresAt;
 
-    public StravaUser(int id, String firstName, int accessToken, int refreshToken, long expiresAt) {
-        this.firstName = firstName;
+    public StravaUser(){
+        
+    }
+    
+    public StravaUser(int id, String firstName, String accessToken, String refreshToken, long expiresAt) {
         this.id = id;
+        this.firstName = firstName;
         this.accessToken = accessToken;
         this.refreshToken = refreshToken;
         this.expiresAt = expiresAt;
@@ -41,19 +54,19 @@ public class StravaUser {
         this.scope = scope;
     }
 
-    public int getAccessToken() {
+    public String getAccessToken() {
         return accessToken;
     }
 
-    public void setAccessToken(int accessToken) {
+    public void setAccessToken(String accessToken) {
         this.accessToken = accessToken;
     }
 
-    public int getRefreshToken() {
+    public String getRefreshToken() {
         return refreshToken;
     }
 
-    public void setRefreshToken(int refreshToken) {
+    public void setRefreshToken(String refreshToken) {
         this.refreshToken = refreshToken;
     }
 

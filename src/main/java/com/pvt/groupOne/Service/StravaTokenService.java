@@ -55,9 +55,6 @@ public class StravaTokenService {
                 String responseContent = EntityUtils.toString(entity);
                 System.out.println("Response Content: " + responseContent);
 
-                // TODO REMOVE TEST
-                System.out.println(uri.toString());
-
                 // Parse JSON response
                 ObjectMapper objectMapper = new ObjectMapper();
                 JsonNode jsonNode = objectMapper.readTree(responseContent);
@@ -76,7 +73,7 @@ public class StravaTokenService {
                 int id = athleteNode.has("id") ? athleteNode.get("id").asInt() : null;
                 String firstName = athleteNode.has("firstname") ? athleteNode.get("firstname").asText() : null;
 
-                return new StravaUser(id, firstName, Integer.parseInt(accessToken), Integer.parseInt(refreshToken),
+                return new StravaUser(id, firstName, accessToken, refreshToken,
                         expiresAt);
 
             }
@@ -90,9 +87,6 @@ public class StravaTokenService {
             // System.out.println(EntityUtils.toString(response.getEntity()));
         } catch (URISyntaxException | IOException e) {
             e.printStackTrace();
-            
-            //TODO REMOVE SYSOUT
-            System.out.println("LINE 94");
             return null;
         }
     }

@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.pvt.groupOne.repository.RunnerGroupRepository;
+import com.pvt.groupOne.repository.StravaUserRepository;
 import com.pvt.groupOne.repository.AccountRepository;
 
 @Controller
@@ -31,6 +32,9 @@ public class MainController {
 
     @Autowired
     private RunnerGroupRepository groupRepository;
+
+    @Autowired
+    private StravaUserRepository stravaUserRepository;
 
     @Autowired
     private UserService userService;
@@ -133,7 +137,7 @@ public class MainController {
     }
 
     @GetMapping("/exchange_token")
-    public @ResponseBody String saveAuthCode(@RequestParam(required = false) String error,
+    public @ResponseBody String saveStravaToken(@RequestParam(required = false) String error,
             @RequestParam("code") String authCode,
             @RequestParam("scope") String scope) {
 
@@ -148,18 +152,18 @@ public class MainController {
 
         try {
             StravaTokenService myExchanger = new StravaTokenService();
-            // TODO REMOVE TEST PRINT
-            System.out.println("LINE 152 TEST");
 
             StravaUser newUser = myExchanger.exchangeToken(authCode);
-            // TODO REMOVE TEST PRINT
-            System.out.println("LINE 156 TEST");
+            newUser.setScope(scope);
 
-            return newUser.toString();
+            String result = "ID: " + newUser.getId() + "\nName: " + newUser.getFirstName() + "\n Scope: "
+                    + newUser.getScope() + "\nAccess token: " + newUser.getAccessToken() + "\nRefresh token: "
+                    + newUser.getRefreshToken() + "\nExpires at: " + newUser.getExpiresAt();
+            
+            stravaUserRepository.save(newUser);
+            return result;
 
         } catch (Exception e) {
-            // TODO REMOVE SYSOUT
-            System.out.println("CATCH LINE 161");
             return "Error: " + e;
         }
 
