@@ -1,6 +1,7 @@
 package com.pvt.groupOne.controller;
 
 import com.pvt.groupOne.model.*;
+import com.pvt.groupOne.Service.StravaTokenService;
 import com.pvt.groupOne.Service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,7 +31,6 @@ public class MainController {
 
     @Autowired
     private RunnerGroupRepository groupRepository;
-
 
     @Autowired
     private UserService userService;
@@ -132,6 +132,26 @@ public class MainController {
             return false;
     }
 
+    @GetMapping("/")
+    public @ResponseBody String saveAuthCode(@RequestParam(required = false) String error,
+            @RequestParam("code") String authCode,
+            @RequestParam("scope") String scope) {
 
+        if (error != null && error.equals("access_denied")) {
+            System.out.println("Access denied");
+            return "ERROR, Access denied";
+        }
+
+        if (!scope.contains("activity:read")){
+            return "ERROR: User must accept activity:read";
+        }
+
+        StravaTokenService myExchanger = new StravaTokenService();
+
+        StravaUser newUser = myExchanger.exchangeToken(authCode);
+
+        String firstName = newUser.getFirstName();
+        return "SUCCESS! User " + firstName + " authorized.";
+    }
 
 }
