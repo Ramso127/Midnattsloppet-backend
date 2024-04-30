@@ -132,7 +132,7 @@ public class MainController {
             return false;
     }
 
-    @GetMapping("/")
+    @GetMapping("/exchange_token")
     public @ResponseBody String saveAuthCode(@RequestParam(required = false) String error,
             @RequestParam("code") String authCode,
             @RequestParam("scope") String scope) {
