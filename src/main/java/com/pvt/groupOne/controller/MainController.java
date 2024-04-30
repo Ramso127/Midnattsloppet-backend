@@ -137,21 +137,23 @@ public class MainController {
             @RequestParam("code") String authCode,
             @RequestParam("scope") String scope) {
 
-        if (error != null && error.equals("access_denied")) {
-            System.out.println("Access denied");
-            return "ERROR, Access denied";
-        }
+                return ("saveAuthCode method running");
 
-        if (!scope.contains("activity:read")){
-            return "ERROR: User must accept activity:read";
-        }
+        // if (error != null && error.equals("access_denied")) {
+        //     System.out.println("Access denied");
+        //     return "ERROR, Access denied";
+        // }
 
-        StravaTokenService myExchanger = new StravaTokenService();
+        // if (!scope.contains("activity:read")){
+        //     return "ERROR: User must accept activity:read";
+        // }
 
-        StravaUser newUser = myExchanger.exchangeToken(authCode);
+        // StravaTokenService myExchanger = new StravaTokenService();
 
-        String firstName = newUser.getFirstName();
-        return "SUCCESS! User " + firstName + " authorized.";
+        // StravaUser newUser = myExchanger.exchangeToken(authCode);
+
+        // String firstName = newUser.getFirstName();
+        // return "SUCCESS! User " + firstName + " authorized.";
     }
 
 }
