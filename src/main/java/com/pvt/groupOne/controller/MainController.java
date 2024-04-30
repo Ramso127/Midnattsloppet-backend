@@ -1,7 +1,7 @@
 package com.pvt.groupOne.controller;
 
 import com.pvt.groupOne.model.*;
-import com.pvt.groupOne.Service.StravaTokenService;
+import com.pvt.groupOne.Service.StravaService;
 import com.pvt.groupOne.Service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -136,6 +136,7 @@ public class MainController {
             return false;
     }
 
+    // TODO Make this return a boolean when everything works 100%
     @GetMapping("/exchange_token")
     public @ResponseBody String saveStravaToken(@RequestParam(required = false) String error,
             @RequestParam("code") String authCode,
@@ -151,7 +152,7 @@ public class MainController {
         }
 
         try {
-            StravaTokenService myExchanger = new StravaTokenService();
+            StravaService myExchanger = new StravaService();
 
             StravaUser newUser = myExchanger.exchangeToken(authCode);
             newUser.setScope(scope);

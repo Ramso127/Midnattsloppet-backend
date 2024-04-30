@@ -20,7 +20,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.pvt.groupOne.model.StravaUser;
 
-public class StravaTokenService {
+public class StravaService {
 
     public StravaUser exchangeToken(String authCode) {
 
@@ -89,6 +89,14 @@ public class StravaTokenService {
             e.printStackTrace();
             return null;
         }
+    }
+
+    public void refreshToken(){
+        // TODO make refreshToken method
+    }
+
+    public void getRunsAfter(int unixTimeStamp){
+        // TODO Make getRunsAfter
     }
 
 }
