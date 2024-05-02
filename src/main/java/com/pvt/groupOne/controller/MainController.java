@@ -3,7 +3,6 @@ package com.pvt.groupOne.controller;
 import com.pvt.groupOne.model.*;
 import com.pvt.groupOne.Service.StravaService;
 import com.pvt.groupOne.Service.UserService;
-import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -136,7 +135,7 @@ public class MainController {
             return false;
     }
 
-    // TODO Make this return a boolean when everything works 100%
+    // TODO DIDDE Make this return a boolean when everything works 100%
     // the initial /controller URL might be an issue when testing from Strava
     @GetMapping("/exchange_token")
     public @ResponseBody String saveStravaToken(@RequestParam(required = false) String error,
@@ -153,7 +152,7 @@ public class MainController {
         }
 
         try {
-            StravaService myExchanger = new StravaService();
+            StravaService myExchanger = new StravaService(stravaUserRepository);
 
             StravaUser newUser = myExchanger.exchangeToken(authCode);
             newUser.setScope(scope);
@@ -161,7 +160,7 @@ public class MainController {
             String result = "ID: " + newUser.getId() + "\nName: " + newUser.getFirstName() + "\n Scope: "
                     + newUser.getScope() + "\nAccess token: " + newUser.getAccessToken() + "\nRefresh token: "
                     + newUser.getRefreshToken() + "\nExpires at: " + newUser.getExpiresAt();
-            
+
             stravaUserRepository.save(newUser);
             return result;
 
@@ -169,8 +168,30 @@ public class MainController {
             return "Error: " + e;
         }
 
-        // String firstName = newUser.getFirstName();
-        // return "SUCCESS! User " + firstName + " authorized.";
+    }
+
+    @GetMapping(value = "/getrunsfrom/{stravaID}/{unixTime}")
+    public @ResponseBody String getRunsFrom(@PathVariable int stravaID, @PathVariable int unixTime) {
+        StravaUser myUser = stravaUserRepository.findById(stravaID);
+        StravaService myService = new StravaService(stravaUserRepository);
+        long currentSystemTime = System.currentTimeMillis() / 1000L;
+
+        // If the access token has expired,
+        // request a new one and add it to the database
+        if (myUser.getExpiresAt() < currentSystemTime) {
+            boolean result = myService.requestNewTokens(myUser.getRefreshToken(), stravaID);
+            if (result){
+                System.out.println("New token successfully fetched");
+            } else {
+                return "Error: token has not been updated";
+            }
+        }
+
+        // TODO: run getRunsAfter method
+        myService.getRunsAfter(stravaID, unixTime);
+        return "asd";
+
+
     }
 
 }
