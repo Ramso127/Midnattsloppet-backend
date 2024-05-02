@@ -62,4 +62,14 @@ public class PasswordResetToken {
     public void setUser(User user) {
         this.user = user;
     }
+
+    @Override
+    public String toString() {
+        return "PasswordResetToken{" +
+                "token='" + token + '\'' +
+                ", id=" + id +
+                ", user=" + user +
+                ", expiryDate=" + expiryDate +
+                '}';
+    }
 }
