@@ -1,6 +1,7 @@
 package com.pvt.groupOne.controller;
 
 import com.pvt.groupOne.model.*;
+import com.pvt.groupOne.Service.StravaService;
 import com.pvt.groupOne.Service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.pvt.groupOne.repository.RunnerGroupRepository;
+import com.pvt.groupOne.repository.StravaUserRepository;
 import com.pvt.groupOne.repository.AccountRepository;
 
 @Controller
@@ -29,6 +31,9 @@ public class MainController {
 
     @Autowired
     private RunnerGroupRepository groupRepository;
+
+    @Autowired
+    private StravaUserRepository stravaUserRepository;
 
     @Autowired
     private UserService userService;
@@ -130,17 +135,63 @@ public class MainController {
             return false;
     }
 
-    @GetMapping(value = "/resetPassword//{email}")
-    public @ResponseBody void resetPassword(@PathVariable String email) {
-        if (!accountRepository.existsByEmail(email)) {
-            // return "No such user exists";
-        } else {
-            User user = accountRepository.findByEmail(email);
-            PasswordResetToken token = userService.createPasswordResetToken(user);
-            // return token;
+    // TODO DIDDE Make this return a boolean when everything works 100%
+    // the initial /controller URL might be an issue when testing from Strava
+    @GetMapping("/exchange_token")
+    public @ResponseBody String saveStravaToken(@RequestParam(required = false) String error,
+            @RequestParam("code") String authCode,
+            @RequestParam("scope") String scope) {
+
+        if (error != null && error.equals("access_denied")) {
+            System.out.println("Access denied");
+            return "ERROR, Access denied";
         }
 
-        // return "Password has been reset";
+        if (!scope.contains("activity:read")) {
+            return "ERROR: User must accept activity:read";
+        }
+
+        try {
+            StravaService myExchanger = new StravaService(stravaUserRepository);
+
+            StravaUser newUser = myExchanger.exchangeToken(authCode);
+            newUser.setScope(scope);
+
+            String result = "ID: " + newUser.getId() + "\nName: " + newUser.getFirstName() + "\n Scope: "
+                    + newUser.getScope() + "\nAccess token: " + newUser.getAccessToken() + "\nRefresh token: "
+                    + newUser.getRefreshToken() + "\nExpires at: " + newUser.getExpiresAt();
+
+            stravaUserRepository.save(newUser);
+            return result;
+
+        } catch (Exception e) {
+            return "Error: " + e;
+        }
+
+    }
+
+    @GetMapping(value = "/getrunsfrom/{stravaID}/{unixTime}")
+    public @ResponseBody String getRunsFrom(@PathVariable int stravaID, @PathVariable int unixTime) {
+        StravaUser myUser = stravaUserRepository.findById(stravaID);
+        StravaService myService = new StravaService(stravaUserRepository);
+        long currentSystemTime = System.currentTimeMillis() / 1000L;
+
+        // If the access token has expired,
+        // request a new one and add it to the database
+        if (myUser.getExpiresAt() < currentSystemTime) {
+            boolean result = myService.requestNewTokens(myUser.getRefreshToken(), stravaID);
+            if (result){
+                System.out.println("New token successfully fetched");
+            } else {
+                return "Error: token has not been updated";
+            }
+        }
+
+        // TODO: run getRunsAfter method
+        myService.getRunsAfter(stravaID, unixTime);
+        return "asd";
+
+
     }
 
 }

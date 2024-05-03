@@ -2,8 +2,8 @@ package com.pvt.groupOne.model;
 
 public class EmailRequest {
 
-    private String subject;
-    private String text;
+    String subject;
+    String text;
 
     public String getSubject() {
         return subject;
