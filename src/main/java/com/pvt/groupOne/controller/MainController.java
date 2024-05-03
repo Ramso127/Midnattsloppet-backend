@@ -96,8 +96,9 @@ public class MainController {
     }
 
     @PostMapping(value = "/addgroup")
-    public @ResponseBody String addGroup(@RequestBody GroupRequest groupRequest, String username) {
+    public @ResponseBody String addGroup(@RequestBody GroupRequest groupRequest) {
         String teamName = groupRequest.getTeamName();
+        String username = groupRequest.getUser();
         try {
             User user = accountRepository.findByUsername(username);
 
@@ -111,7 +112,7 @@ public class MainController {
             e.printStackTrace();
         }
 
-        return teamName + " has been added to the database.";
+        return teamName + " and user " + username + " has been added to the database.";
     }
 
     @PostMapping(value = "/addusertogroup")
