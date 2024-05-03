@@ -18,10 +18,9 @@ public class RunnerGroupService {
         this.runnerGroupRepository = runnerGroupRepository;
     }
 
-    public RunnerGroup createRunnerGroup(String teamName, byte[] image, User user) {
+    public RunnerGroup createRunnerGroup(String teamName, User user) {
         RunnerGroup runnerGroup = new RunnerGroup();
         runnerGroup.setTeamName(teamName);
-        runnerGroup.setGroupPicture(image);
         runnerGroup.addUser(user);
         runnerGroup.setInviteCode(generateInviteCode());
         runnerGroupRepository.save(runnerGroup);

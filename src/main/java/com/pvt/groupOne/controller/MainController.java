@@ -98,13 +98,12 @@ public class MainController {
     @PostMapping(value = "/addgroup")
     public @ResponseBody String addGroup(@RequestBody GroupRequest groupRequest, String username) {
         String teamName = groupRequest.getTeamName();
-        byte[] image = groupRequest.getImage();
         User user = accountRepository.findByUsername(username);
 
         if (groupRepository.existsByTeamName(teamName))
             return "Groupname already exists";
 
-        runnerGroupService.createRunnerGroup(teamName, image, user);
+        runnerGroupService.createRunnerGroup(teamName, user);
 
         try {
             accountRepository.save(user);
