@@ -195,7 +195,7 @@ public class MainController {
     }
 
     @GetMapping(value = "/getUserInfo")
-    public @ResponseBody String getUserInfo(@RequestBody User user) {
+    public @ResponseBody String getUserInfo(@RequestParam("username") User user) {
             return user.toString();
         }
 
