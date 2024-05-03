@@ -23,7 +23,6 @@ public class RunnerGroupService {
         runnerGroup.setTeamName(teamName);
         runnerGroup.addUser(user);
         runnerGroup.setInviteCode(generateInviteCode());
-        runnerGroupRepository.save(runnerGroup);
         return runnerGroupRepository.save(runnerGroup);
     }
 
