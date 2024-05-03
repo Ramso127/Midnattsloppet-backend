@@ -27,7 +27,7 @@ public class PasswordResetToken {
 
     }
 
-    public PasswordResetToken(String token, User user)  {
+    public PasswordResetToken(String token, User user) {
         this.token = token;
         this.user = user;
         long expiryTime = System.currentTimeMillis() + EXPIRATION;
@@ -37,7 +37,6 @@ public class PasswordResetToken {
     public Date getExpiryDate() {
         return expiryDate;
     }
-
 
     public String getToken() {
         return token;
@@ -61,5 +60,15 @@ public class PasswordResetToken {
 
     public void setUser(User user) {
         this.user = user;
+    }
+
+    @Override
+    public String toString() {
+        return "PasswordResetToken{" +
+                "token='" + token + '\'' +
+                ", id=" + id +
+                ", user=" + user +
+                ", expiryDate=" + expiryDate +
+                '}';
     }
 }

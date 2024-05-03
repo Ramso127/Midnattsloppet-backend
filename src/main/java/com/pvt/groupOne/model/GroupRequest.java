@@ -2,21 +2,24 @@ package com.pvt.groupOne.model;
 
 public class GroupRequest {
     String groupName;
-    String groupType;
+    String companyName;
+    byte[] image;
+    User user;
 
-    public String getGroupName() {
+    public User getUser() {
+        return user;
+    }
+
+    public byte[] getImage() {
+        return image;
+    }
+
+    public String getCompanyName() {
+        return companyName;
+    }
+
+    public String getTeamName() {
         return groupName;
     }
 
-    public void setGroupName(String groupName) {
-        this.groupName = groupName;
-    }
-
-    public String getGroupType() {
-        return groupType;
-    }
-
-    public void setGroupType(String groupType) {
-        this.groupType = groupType;
-    }
 }
