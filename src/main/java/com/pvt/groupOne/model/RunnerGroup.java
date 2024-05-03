@@ -26,6 +26,11 @@ public class RunnerGroup {
     private String companyName;
     private String teamName;
     private String inviteCode;
+    private boolean isFull = false;
+
+    public boolean isFull() {
+        return isFull;
+    }
 
     @Lob
     private byte[] groupPicture;
@@ -88,6 +93,9 @@ public class RunnerGroup {
     public void addUser(User user) {
         users.add(user);
         user.setRunnerGroup(this); // Set the association in the User entity
+        if (users.size() == 5) {
+            isFull = true;
+        }
     }
 
     private String generateInviteCode() {

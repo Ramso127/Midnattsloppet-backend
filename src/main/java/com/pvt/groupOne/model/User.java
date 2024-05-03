@@ -78,4 +78,12 @@ public class User {
         }
     }
 
+    public String getUsername() {
+        return username;
+    }
+
+    public RunnerGroup getRunnerGroup() {
+        return runnerGroup;
+    }
+
 }

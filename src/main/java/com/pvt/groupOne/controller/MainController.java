@@ -118,6 +118,27 @@ public class MainController {
         return teamName + " of company " + companyName + " has been added to the database.";
     }
 
+    @PostMapping(value = "/addusertogroup}")
+    public @ResponseBody String addUserToGroup(@RequestBody User user, @RequestParam String inviteCode) {
+        RunnerGroup runnerGroup = groupRepository.findGroupByInviteCode(inviteCode);
+
+        if (runnerGroup == null) {
+            return "Group with invite code " + inviteCode + " not found";
+        }
+
+        if (user.getRunnerGroup() != null) {
+            return "Already in a group";
+        }
+
+        if (runnerGroup.isFull()) {
+            return "Group is full";
+        }
+        runnerGroup.addUser(user);
+        groupRepository.save(runnerGroup);
+        accountRepository.save(user);
+        return user.getUserName() + " added to " + runnerGroup.getTeamName();
+    }
+
     @DeleteMapping(value = "/removeGroup")
     public @ResponseBody String removeGroup(@RequestBody RunnerGroup group) {
         if (!groupRepository.existsByGroupName(group.getTeamName())) {

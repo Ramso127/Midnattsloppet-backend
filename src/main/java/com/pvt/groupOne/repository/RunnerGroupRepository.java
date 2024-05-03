@@ -7,4 +7,6 @@ public interface RunnerGroupRepository extends CrudRepository<RunnerGroup, Integ
     boolean existsByGroupName(String groupName);
 
     boolean existsByInviteCode(String inviteCode);
+
+    RunnerGroup findGroupByInviteCode(String inviteCode);
 }
