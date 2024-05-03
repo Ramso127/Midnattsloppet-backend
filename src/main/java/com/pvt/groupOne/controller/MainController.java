@@ -143,8 +143,7 @@ public class MainController {
     }
 
     // TODO DIDDE Make this return a boolean when everything works 100%
-    // the initial /controller URL might be an issue when testing from Strava
-    @GetMapping("/exchange_token")
+    @GetMapping("/saveauthenticateduser")
     public @ResponseBody String saveStravaToken(@RequestParam(required = false) String error,
             @RequestParam("code") String authCode,
             @RequestParam("scope") String scope) {
