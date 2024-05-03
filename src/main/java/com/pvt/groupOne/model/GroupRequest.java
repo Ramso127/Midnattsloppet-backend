@@ -1,12 +1,12 @@
 package com.pvt.groupOne.model;
 
 public class GroupRequest {
-    String groupName;
+    String teamname;
     byte[] image;
-    String user;
+    String username;
 
     public String getUser() {
-        return user;
+        return username;
     }
 
     public byte[] getImage() {
@@ -14,7 +14,7 @@ public class GroupRequest {
     }
 
     public String getTeamName() {
-        return groupName;
+        return teamname;
     }
 
 }
