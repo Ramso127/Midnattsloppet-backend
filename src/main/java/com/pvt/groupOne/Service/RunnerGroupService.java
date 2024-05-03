@@ -18,9 +18,8 @@ public class RunnerGroupService {
         this.runnerGroupRepository = runnerGroupRepository;
     }
 
-    public RunnerGroup createRunnerGroup(String companyName, String teamName, byte[] image, User user) {
+    public RunnerGroup createRunnerGroup(String teamName, byte[] image, User user) {
         RunnerGroup runnerGroup = new RunnerGroup();
-        runnerGroup.setCompanyName(companyName);
         runnerGroup.setTeamName(teamName);
         runnerGroup.setGroupPicture(image);
         runnerGroup.addUser(user);

@@ -97,7 +97,6 @@ public class MainController {
 
     @PostMapping(value = "/addgroup")
     public @ResponseBody String addGroup(@RequestBody GroupRequest groupRequest, String username) {
-        String companyName = groupRequest.getCompanyName();
         String teamName = groupRequest.getTeamName();
         byte[] image = groupRequest.getImage();
         User user = accountRepository.findByUsername(username);
@@ -105,7 +104,7 @@ public class MainController {
         if (groupRepository.existsByTeamName(teamName))
             return "Groupname already exists";
 
-        runnerGroupService.createRunnerGroup(companyName, teamName, image, user);
+        runnerGroupService.createRunnerGroup(teamName, image, user);
 
         try {
             accountRepository.save(user);
@@ -113,7 +112,7 @@ public class MainController {
             return "Error: " + e;
         }
 
-        return teamName + " of company " + companyName + " has been added to the database.";
+        return teamName + " has been added to the database.";
     }
 
     @PostMapping(value = "/addusertogroup")

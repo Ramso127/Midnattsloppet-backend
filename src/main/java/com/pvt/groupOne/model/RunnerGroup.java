@@ -16,7 +16,6 @@ public class RunnerGroup {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer groupId;
 
-    private String companyName;
     private String teamName;
     private String inviteCode;
     private boolean isFull = false;
@@ -37,14 +36,6 @@ public class RunnerGroup {
 
     public void setGroupId(Integer groupId) {
         this.groupId = groupId;
-    }
-
-    public String getCompanyName() {
-        return companyName;
-    }
-
-    public void setCompanyName(String companyName) {
-        this.companyName = companyName;
     }
 
     public String getTeamName() {
