@@ -4,9 +4,9 @@ public class GroupRequest {
     String groupName;
     String companyName;
     byte[] image;
-    User user;
+    String user;
 
-    public User getUser() {
+    public String getUser() {
         return user;
     }
 

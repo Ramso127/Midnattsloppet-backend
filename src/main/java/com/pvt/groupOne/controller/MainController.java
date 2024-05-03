@@ -93,11 +93,11 @@ public class MainController {
     }
 
     @PostMapping(value = "/addgroup}")
-    public @ResponseBody String addGroup(@RequestBody GroupRequest groupRequest) {
+    public @ResponseBody String addGroup(@RequestBody GroupRequest groupRequest, String username) {
         String companyName = groupRequest.getCompanyName();
         String teamName = groupRequest.getTeamName();
         byte[] image = groupRequest.getImage();
-        User user = groupRequest.getUser();
+        User user = accountRepository.findByUsername(username);
 
         if (groupRepository.existsByGroupName(teamName))
             return "Groupname already exists";
@@ -110,7 +110,7 @@ public class MainController {
 
         try {
             groupRepository.save(newGroup);
-
+            accountRepository.save(user);
         } catch (Exception e) {
             return "Error: " + e;
         }
@@ -119,8 +119,9 @@ public class MainController {
     }
 
     @PostMapping(value = "/addusertogroup}")
-    public @ResponseBody String addUserToGroup(@RequestBody User user, @RequestParam String inviteCode) {
+    public @ResponseBody String addUserToGroup(@RequestBody String username, @RequestParam String inviteCode) {
         RunnerGroup runnerGroup = groupRepository.findGroupByInviteCode(inviteCode);
+        User user = accountRepository.findByUsername(username);
 
         if (runnerGroup == null) {
             return "Group with invite code " + inviteCode + " not found";
