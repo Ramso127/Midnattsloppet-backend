@@ -5,6 +5,8 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToOne;
 
 @Entity
@@ -20,6 +22,10 @@ public class User {
     private String password;
 
     private String email;
+
+    @ManyToOne
+    @JoinColumn(name = "runner_group_id")
+    private RunnerGroup runnerGroup;
 
     public String getUserName() {
         return username;
@@ -48,5 +54,12 @@ public class User {
     public void setEmail(String email) {
         this.email = email;
     }
-    
+
+    public void setRunnerGroup(RunnerGroup runnerGroup) {
+        this.runnerGroup = runnerGroup;
+        if (!runnerGroup.getUsers().contains(this)) {
+            runnerGroup.getUsers().add(this);
+        }
+    }
+
 }

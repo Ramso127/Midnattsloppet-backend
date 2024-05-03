@@ -43,11 +43,6 @@ public class MainController {
         return "Hello this is Didrik's test";
     }
 
-    @GetMapping(value = "/greet/{firstName}/{lastName}")
-    public @ResponseBody String greetUser(@PathVariable String firstName, @PathVariable String lastName) {
-        return "Hello, " + firstName + " " + lastName + "!";
-    }
-
     @PostMapping(value = "/adduser")
     public @ResponseBody String addUser(@RequestBody UserRequest userRequest) {
         try {
@@ -90,13 +85,21 @@ public class MainController {
         }
     }
 
-    @GetMapping(value = "/addgroup/{groupName}/{groupType}")
-    public @ResponseBody String addGroup(@PathVariable String groupName, @PathVariable String groupType) {
-        if (groupRepository.existsByGroupName(groupName))
+    @PostMapping(value = "/addgroup}")
+    public @ResponseBody String addGroup(@RequestBody GroupRequest groupRequest) {
+        String companyName = groupRequest.getCompanyName();
+        String teamName = groupRequest.getTeamName();
+        byte[] image = groupRequest.getImage();
+        User user = groupRequest.getUser();
+
+        if (groupRepository.existsByGroupName(teamName))
             return "Groupname already exists";
-        RunnerGroup newGroup = new RunnerGroup();
-        newGroup.setGroupName(groupName);
-        newGroup.setGroupType(groupType);
+
+        RunnerGroup newGroup = new RunnerGroup(groupRepository);
+        newGroup.setCompanyName(companyName);
+        newGroup.setTeamName(teamName);
+        newGroup.setGroupPicture(image);
+        newGroup.addUser(user);
 
         try {
             groupRepository.save(newGroup);
@@ -105,12 +108,12 @@ public class MainController {
             return "Error: " + e;
         }
 
-        return groupName + " of type " + groupType + " has been added to the database.";
+        return teamName + " of company " + companyName + " has been added to the database.";
     }
 
     @DeleteMapping(value = "/removeGroup")
     public @ResponseBody String removeGroup(@RequestBody RunnerGroup group) {
-        if (!groupRepository.existsByGroupName(group.getGroupName())) {
+        if (!groupRepository.existsByGroupName(group.getTeamName())) {
             return "No such group exists";
         }
         groupRepository.delete(group);
@@ -180,7 +183,7 @@ public class MainController {
         // request a new one and add it to the database
         if (myUser.getExpiresAt() < currentSystemTime) {
             boolean result = myService.requestNewTokens(myUser.getRefreshToken(), stravaID);
-            if (result){
+            if (result) {
                 System.out.println("New token successfully fetched");
             } else {
                 return "Error: token has not been updated";
@@ -190,7 +193,6 @@ public class MainController {
         // TODO: run getRunsAfter method
         myService.getRunsAfter(stravaID, unixTime);
         return "asd";
-
 
     }
 
