@@ -3,6 +3,9 @@ package com.pvt.groupOne.controller;
 import com.pvt.groupOne.model.*;
 import com.pvt.groupOne.Service.StravaService;
 import com.pvt.groupOne.Service.UserService;
+
+import java.util.ArrayList;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.pvt.groupOne.repository.RunnerGroupRepository;
+import com.pvt.groupOne.repository.StravaRunRepository;
 import com.pvt.groupOne.repository.StravaUserRepository;
 import com.pvt.groupOne.repository.AccountRepository;
 
@@ -34,6 +38,9 @@ public class MainController {
 
     @Autowired
     private StravaUserRepository stravaUserRepository;
+
+    @Autowired
+    private StravaRunRepository stravaRunRepository;
 
     @Autowired
     private UserService userService;
@@ -170,10 +177,11 @@ public class MainController {
 
     }
 
-    @GetMapping(value = "/getrunsfrom/{stravaID}/{unixTime}")
-    public @ResponseBody String getRunsFrom(@PathVariable int stravaID, @PathVariable int unixTime) {
+    @GetMapping(value = "/saverunsfrom/{stravaID}/{unixTime}")
+    public @ResponseBody String saveRunsFrom(@PathVariable int stravaID, @PathVariable int unixTime) {
         StravaUser myUser = stravaUserRepository.findById(stravaID);
         StravaService myService = new StravaService(stravaUserRepository);
+        String accessToken = myUser.getAccessToken();
         long currentSystemTime = System.currentTimeMillis() / 1000L;
 
         // If the access token has expired,
@@ -187,9 +195,11 @@ public class MainController {
             }
         }
 
-        // TODO: run getRunsAfter method
-        myService.getRunsAfter(stravaID, unixTime);
-        return "asd";
+        ArrayList<StravaRun> runList = myService.saveRunsFrom(stravaID, unixTime, accessToken);
+        for (StravaRun run : runList){
+            stravaRunRepository.save(run);
+        }
+        return "Done";
 
 
     }
