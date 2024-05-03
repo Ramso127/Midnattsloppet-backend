@@ -98,17 +98,17 @@ public class MainController {
     @PostMapping(value = "/addgroup")
     public @ResponseBody String addGroup(@RequestBody GroupRequest groupRequest, String username) {
         String teamName = groupRequest.getTeamName();
-        User user = accountRepository.findByUsername(username);
-
-        if (groupRepository.existsByTeamName(teamName)) {
-            return "Groupname already exists";
-        }
-        runnerGroupService.createRunnerGroup(teamName, user);
-
         try {
+            User user = accountRepository.findByUsername(username);
+
+            if (groupRepository.existsByTeamName(teamName)) {
+                return "Groupname already exists";
+            }
+            runnerGroupService.createRunnerGroup(teamName, user);
+
             accountRepository.save(user);
         } catch (Exception e) {
-            return "Error: " + e;
+            e.printStackTrace();
         }
 
         return teamName + " has been added to the database.";
