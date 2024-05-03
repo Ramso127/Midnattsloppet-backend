@@ -3,7 +3,7 @@ package com.pvt.groupOne.controller;
 import com.pvt.groupOne.model.*;
 import com.pvt.groupOne.Service.StravaService;
 import com.pvt.groupOne.Service.UserService;
-
+import com.pvt.groupOne.Service.RunnerGroupService;
 import java.util.ArrayList;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,14 +45,12 @@ public class MainController {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private RunnerGroupService runnerGroupService;
+
     @GetMapping(value = "/hello")
     public @ResponseBody String testMethod() {
         return "Hello this is Didrik's test";
-    }
-
-    @GetMapping(value = "/greet/{firstName}/{lastName}")
-    public @ResponseBody String greetUser(@PathVariable String firstName, @PathVariable String lastName) {
-        return "Hello, " + firstName + " " + lastName + "!";
     }
 
     @PostMapping(value = "/adduser")
@@ -97,27 +95,50 @@ public class MainController {
         }
     }
 
-    @GetMapping(value = "/addgroup/{groupName}/{groupType}")
-    public @ResponseBody String addGroup(@PathVariable String groupName, @PathVariable String groupType) {
-        if (groupRepository.existsByGroupName(groupName))
+    @PostMapping(value = "/addgroup")
+    public @ResponseBody String addGroup(@RequestBody GroupRequest groupRequest, String username) {
+        String teamName = groupRequest.getTeamName();
+        User user = accountRepository.findByUsername(username);
+
+        if (groupRepository.existsByTeamName(teamName))
             return "Groupname already exists";
-        RunnerGroup newGroup = new RunnerGroup();
-        newGroup.setGroupName(groupName);
-        newGroup.setGroupType(groupType);
+
+        runnerGroupService.createRunnerGroup(teamName, user);
 
         try {
-            groupRepository.save(newGroup);
-
+            accountRepository.save(user);
         } catch (Exception e) {
             return "Error: " + e;
         }
 
-        return groupName + " of type " + groupType + " has been added to the database.";
+        return teamName + " has been added to the database.";
+    }
+
+    @PostMapping(value = "/addusertogroup")
+    public @ResponseBody String addUserToGroup(@RequestBody String username, @RequestParam String inviteCode) {
+        RunnerGroup runnerGroup = groupRepository.findGroupByInviteCode(inviteCode);
+        User user = accountRepository.findByUsername(username);
+
+        if (runnerGroup == null) {
+            return "Group with invite code " + inviteCode + " not found";
+        }
+
+        if (user.getRunnerGroup() != null) {
+            return "Already in a group";
+        }
+
+        if (runnerGroup.isFull()) {
+            return "Group is full";
+        }
+        runnerGroup.addUser(user);
+        groupRepository.save(runnerGroup);
+        accountRepository.save(user);
+        return user.getUserName() + " added to " + runnerGroup.getTeamName();
     }
 
     @DeleteMapping(value = "/removeGroup")
     public @ResponseBody String removeGroup(@RequestBody RunnerGroup group) {
-        if (!groupRepository.existsByGroupName(group.getGroupName())) {
+        if (!groupRepository.existsByTeamName(group.getTeamName())) {
             return "No such group exists";
         }
         groupRepository.delete(group);
@@ -187,7 +208,7 @@ public class MainController {
         // request a new one and add it to the database
         if (myUser.getExpiresAt() < currentSystemTime) {
             boolean result = myService.requestNewTokens(myUser.getRefreshToken(), stravaID);
-            if (result){
+            if (result) {
                 System.out.println("New token successfully fetched");
             } else {
                 return "Error: token has not been updated";
@@ -195,18 +216,16 @@ public class MainController {
         }
 
         ArrayList<StravaRun> runList = myService.saveRunsFrom(stravaID, unixTime, accessToken);
-        for (StravaRun run : runList){
+        for (StravaRun run : runList) {
             stravaRunRepository.save(run);
         }
         return "Done";
 
-
     }
 
     @GetMapping(value = "/getUserInfo")
-    public @ResponseBody String getUserInfo(@RequestParam("username") String username) {
-        User user = accountRepository.findByUsername(username);
-
+    public @ResponseBody String getUserInfo(@RequestBody UserRequest userRequest) {
+        User user = accountRepository.findByUsername(userRequest.getUsername());
         if (user == null) {
             return "User does not exist";
         } else {
@@ -214,6 +233,5 @@ public class MainController {
         }
 
     }
-
 
 }

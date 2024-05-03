@@ -2,9 +2,9 @@ package com.pvt.groupOne.model;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToOne;
 
 @Entity
@@ -20,6 +20,10 @@ public class User {
     private String password;
 
     private String email;
+
+    @ManyToOne
+    @JoinColumn(name = "runner_group_id")
+    private RunnerGroup runnerGroup;
 
     public String getUserName() {
         return username;
@@ -51,10 +55,33 @@ public class User {
 
     @Override
     public String toString() {
-        return "User{" +
-                "username='" + username + '\'' +
-                ", userInfo=" + userInfo.toString() +
-                ", password='" + password + '\'' + ", email='" + email;
+        if (userInfo == null) {
+            return "?User= " +
+                    "username='" + username + '\'' +
+                    ", password='" + password + '\'' + ", email='" + email + '\'';
+
+        } else {
+            return "User:" +
+                    "username='" + username + '\'' +
+                    ", userInfo=" + userInfo.toString() +
+                    ", password='" + password + '\'' + ", email='" + '\'';
+        }
 
     }
+
+    public void setRunnerGroup(RunnerGroup runnerGroup) {
+        this.runnerGroup = runnerGroup;
+        if (!runnerGroup.getUsers().contains(this)) {
+            runnerGroup.getUsers().add(this);
+        }
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public RunnerGroup getRunnerGroup() {
+        return runnerGroup;
+    }
+
 }
