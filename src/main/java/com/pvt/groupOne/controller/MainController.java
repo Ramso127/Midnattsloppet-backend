@@ -194,4 +194,16 @@ public class MainController {
 
     }
 
+    @GetMapping(value = "/getUserInfo")
+    public @ResponseBody String getUserInfo(@RequestBody UserRequest userRequest) {
+        User user = accountRepository.findByUsername(userRequest.getUsername());
+
+        if(user == null) {
+            return "User does not exist";
+        }
+        else{
+            return user.toString();
+        }
+    }
+
 }
