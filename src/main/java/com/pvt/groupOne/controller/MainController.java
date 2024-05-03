@@ -199,7 +199,7 @@ public class MainController {
         }
 
         ArrayList<StravaRun> runList = myService.saveRunsFrom(stravaID, unixTime, accessToken);
-        for (StravaRun run : runList){
+        for (StravaRun run : runList) {
             stravaRunRepository.save(run);
         }
         return "Done";
@@ -216,6 +216,5 @@ public class MainController {
         }
 
     }
-
 
 }
