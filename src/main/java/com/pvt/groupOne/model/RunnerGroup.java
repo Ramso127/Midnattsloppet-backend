@@ -71,10 +71,14 @@ public class RunnerGroup {
     }
 
     public void addUser(User user) {
-        users.add(user);
-        user.setRunnerGroup(this); // Set the association in the User entity
-        if (users.size() == 5) {
-            isFull = true;
+        if (!isFull) {
+            users.add(user);
+            user.setRunnerGroup(this); // Set the association in the User entity
+            if (users.size() == 5) {
+                isFull = true;
+            }
+        } else {
+            throw new IllegalStateException("Cannot add more users. Group is already full.");
         }
     }
 
