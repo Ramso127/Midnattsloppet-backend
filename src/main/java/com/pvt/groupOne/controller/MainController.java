@@ -100,9 +100,9 @@ public class MainController {
         String teamName = groupRequest.getTeamName();
         User user = accountRepository.findByUsername(username);
 
-        if (groupRepository.existsByTeamName(teamName))
+        if (groupRepository.existsByTeamName(teamName)) {
             return "Groupname already exists";
-
+        }
         runnerGroupService.createRunnerGroup(teamName, user);
 
         try {
