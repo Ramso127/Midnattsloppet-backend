@@ -1,8 +1,5 @@
 package com.pvt.groupOne.model;
 
-import com.pvt.groupOne.repository.AccountRepository;
-import com.pvt.groupOne.repository.RunnerGroupRepository;
-
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -10,14 +7,9 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Lob;
 import jakarta.persistence.OneToMany;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-
 import java.util.List;
-import java.util.UUID;
 
 @Entity
-@Component
 public class RunnerGroup {
 
     @Id
@@ -38,14 +30,6 @@ public class RunnerGroup {
 
     @OneToMany(mappedBy = "runnerGroup")
     private List<User> users;
-
-    private final RunnerGroupRepository runnerRep;
-
-    @Autowired
-    public RunnerGroup(RunnerGroupRepository runnerRep) {
-        this.runnerRep = runnerRep;
-        this.inviteCode = generateInviteCode();
-    }
 
     public Integer getGroupId() {
         return groupId;
@@ -75,6 +59,10 @@ public class RunnerGroup {
         return inviteCode;
     }
 
+    public void setInviteCode(String inviteCode) {
+        this.inviteCode = inviteCode;
+    }
+
     public byte[] getGroupPicture() {
         return groupPicture;
     }
@@ -97,17 +85,6 @@ public class RunnerGroup {
         if (users.size() == 5) {
             isFull = true;
         }
-    }
-
-    private String generateInviteCode() {
-        String inviteCode;
-        boolean isUnique = false;
-        do {
-            inviteCode = UUID.randomUUID().toString().substring(0, 8); // You can adjust the length as needed
-            // Check if the invite code is unique
-            isUnique = !runnerRep.existsByInviteCode(inviteCode);
-        } while (!isUnique);
-        return inviteCode;
     }
 
 }

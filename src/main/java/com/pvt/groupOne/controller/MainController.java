@@ -3,7 +3,7 @@ package com.pvt.groupOne.controller;
 import com.pvt.groupOne.model.*;
 import com.pvt.groupOne.Service.StravaService;
 import com.pvt.groupOne.Service.UserService;
-
+import com.pvt.groupOne.Service.RunnerGroupService;
 import java.util.ArrayList;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,6 +44,9 @@ public class MainController {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private RunnerGroupService runnerGroupService;
 
     @GetMapping(value = "/hello")
     public @ResponseBody String testMethod() {
@@ -92,24 +95,19 @@ public class MainController {
         }
     }
 
-    @PostMapping(value = "/addgroup}")
+    @PostMapping(value = "/addgroup")
     public @ResponseBody String addGroup(@RequestBody GroupRequest groupRequest, String username) {
         String companyName = groupRequest.getCompanyName();
         String teamName = groupRequest.getTeamName();
         byte[] image = groupRequest.getImage();
         User user = accountRepository.findByUsername(username);
 
-        if (groupRepository.existsByGroupName(teamName))
+        if (groupRepository.existsByTeamName(teamName))
             return "Groupname already exists";
 
-        RunnerGroup newGroup = new RunnerGroup(groupRepository);
-        newGroup.setCompanyName(companyName);
-        newGroup.setTeamName(teamName);
-        newGroup.setGroupPicture(image);
-        newGroup.addUser(user);
+        runnerGroupService.createRunnerGroup(companyName, teamName, image, user);
 
         try {
-            groupRepository.save(newGroup);
             accountRepository.save(user);
         } catch (Exception e) {
             return "Error: " + e;
@@ -118,7 +116,7 @@ public class MainController {
         return teamName + " of company " + companyName + " has been added to the database.";
     }
 
-    @PostMapping(value = "/addusertogroup}")
+    @PostMapping(value = "/addusertogroup")
     public @ResponseBody String addUserToGroup(@RequestBody String username, @RequestParam String inviteCode) {
         RunnerGroup runnerGroup = groupRepository.findGroupByInviteCode(inviteCode);
         User user = accountRepository.findByUsername(username);
@@ -142,7 +140,7 @@ public class MainController {
 
     @DeleteMapping(value = "/removeGroup")
     public @ResponseBody String removeGroup(@RequestBody RunnerGroup group) {
-        if (!groupRepository.existsByGroupName(group.getTeamName())) {
+        if (!groupRepository.existsByTeamName(group.getTeamName())) {
             return "No such group exists";
         }
         groupRepository.delete(group);
