@@ -115,7 +115,7 @@ public class MainController {
     public @ResponseBody String addGroup(@RequestBody GroupRequest groupRequest) {
         String teamName = groupRequest.getTeamName();
         String username = groupRequest.getUser();
-        return groupRequest.toString();
+        return "TEAMNAME: " + teamName + "USERNAME: " + username + "GROUPREQUEST TOSTRING: " + groupRequest.toString();
         // try {
         //     User user = accountRepository.findByUsername(username);
 
@@ -127,6 +127,7 @@ public class MainController {
         //     accountRepository.save(user);
         // } catch (Exception e) {
         //     e.printStackTrace();
+        //     return "ERROR: " + e;
         // }
 
         // return teamName + " and user " + username + " has been added to the database.";
