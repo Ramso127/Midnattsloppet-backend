@@ -224,9 +224,9 @@ public class MainController {
 
     }
 
-    @GetMapping(value = "/getUserInfo")
-    public @ResponseBody String getUserInfo(@RequestBody UserRequest userRequest) {
-        User user = accountRepository.findByUsername(userRequest.getUsername());
+    @GetMapping(value = "/getUserInfo/{username}")
+    public @ResponseBody String getUserInfo(@PathVariable String username) {
+        User user = accountRepository.findByUsername(username);
         if (user == null) {
             return "User does not exist";
         } else {
