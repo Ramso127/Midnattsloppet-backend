@@ -1,9 +1,8 @@
 package com.pvt.groupOne.model;
 
 public class GroupRequest {
-    String teamname;
-
-    String username;
+    private String teamname;
+    private String username;
 
     public String getUser() {
         return username;
@@ -19,3 +18,4 @@ public class GroupRequest {
     }
 
 }
+
