@@ -68,6 +68,9 @@ public class MainController {
             if (accountRepository.existsByUsername(username))
                 return "{\"message\": \"Username already exists\"}";
 
+            if (accountRepository.existsByEmail(email))
+                return "{\"message\": \"Email already exists\"}";
+
             User newUser = new User();
             newUser.setUserName(username);
             newUser.setPassword(password);
