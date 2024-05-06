@@ -121,7 +121,7 @@ public class MainController {
             User user = accountRepository.findByUsername(username);
 
             if (groupRepository.existsByTeamName(teamName)) {
-                return "Groupname already exists";
+                return "{\"message\": \"Group name already exists\"}";
             }
             runnerGroup = runnerGroupService.createRunnerGroup(teamName, user);
 
