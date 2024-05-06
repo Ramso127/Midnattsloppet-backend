@@ -7,6 +7,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Lob;
 import jakarta.persistence.OneToMany;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -28,7 +29,7 @@ public class RunnerGroup {
     }
 
     @OneToMany(mappedBy = "runnerGroup")
-    private List<User> users;
+    private ArrayList<User> users = new ArrayList<>();
 
     public Integer getGroupId() {
         return groupId;
@@ -66,7 +67,7 @@ public class RunnerGroup {
         return users;
     }
 
-    public void setUsers(List<User> users) {
+    public void setUsers(ArrayList<User> users) {
         this.users = users;
     }
 
