@@ -68,12 +68,14 @@ public class MainController {
             String username = userRequest.getUsername();
             String password = userRequest.getPassword();
             String email = userRequest.getEmail();
+            String companyName =  userRequest.getCompanyname();
             if (accountRepository.existsByUsername(username))
                 return "Username already exists";
             User newUser = new User();
             newUser.setUserName(username);
             newUser.setPassword(password);
             newUser.setEmail(email);
+            newUser.setCompanyName(companyName);
             accountRepository.save(newUser);
 
             return "User " + username + " with password " + password + " has been added to the database.";

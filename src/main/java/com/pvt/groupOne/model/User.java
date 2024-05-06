@@ -24,6 +24,9 @@ public class User {
 
     private String email;
 
+    private String companyName;
+
+
     @ManyToOne
     @JoinColumn(name = "runner_group_id")
     private RunnerGroup runnerGroup;
@@ -76,6 +79,14 @@ public class User {
 
     public RunnerGroup getRunnerGroup() {
         return runnerGroup;
+    }
+
+    public String getCompanyName() {
+        return companyName;
+    }
+
+    public void setCompanyName(String companyName) {
+        this.companyName = companyName;
     }
 
 }
