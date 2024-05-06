@@ -99,18 +99,18 @@ public class StravaService {
     public boolean requestNewTokens(String currentRefreshToken, int userID) {
 
         final String URL = "https://www.strava.com/oauth/token";
-        final String clientID = "125803";
-        final String clientSecret = "3e9f7fcd913ece59cb5bccd8a89444ab9f452ec5";
-        final String grantType = "refresh_token";
+        final String CLIENT_ID = "125803";
+        final String CLIENT_SECRET = "3e9f7fcd913ece59cb5bccd8a89444ab9f452ec5";
+        final String GRANT_TYPE = "refresh_token";
 
         HttpClient httpClient = HttpClientBuilder.create().build();
 
         try {
             // Build the URI with parameters
             URI uri = new URIBuilder(URL)
-                    .setParameter("client_id", clientID)
-                    .setParameter("client_secret", clientSecret)
-                    .setParameter("grant_type", grantType)
+                    .setParameter("client_id", CLIENT_ID)
+                    .setParameter("client_secret", CLIENT_SECRET)
+                    .setParameter("grant_type", GRANT_TYPE)
                     .setParameter("refresh_token", currentRefreshToken)
                     .build();
 
