@@ -24,7 +24,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.pvt.groupOne.repository.RunnerGroupRepository;
 import com.pvt.groupOne.repository.StravaRunRepository;
 import com.pvt.groupOne.repository.StravaUserRepository;
-import com.pvt.groupOne.repository.AccountInfoRepository;
 import com.pvt.groupOne.repository.AccountRepository;
 import com.pvt.groupOne.repository.ImageRepository;
 
@@ -35,9 +34,6 @@ public class MainController {
 
     @Autowired
     private AccountRepository accountRepository;
-
-    @Autowired
-    private AccountInfoRepository accountInfoRepository;
 
     @Autowired
     private RunnerGroupRepository groupRepository;
@@ -62,15 +58,16 @@ public class MainController {
         return "Hello this is Didrik's test";
     }
 
-    @PostMapping(value = "/adduser")
+    @PostMapping(value = "/adduser", produces = "application/json")
     public @ResponseBody String addUser(@RequestBody UserRequest userRequest) {
         try {
             String username = userRequest.getUsername();
             String password = userRequest.getPassword();
             String email = userRequest.getEmail();
-            String companyName =  userRequest.getCompanyname();
+            String companyName = userRequest.getCompanyname();
             if (accountRepository.existsByUsername(username))
-                return "Username already exists";
+                return "{\"message\": \"Username already exists\"}";
+
             User newUser = new User();
             newUser.setUserName(username);
             newUser.setPassword(password);
@@ -78,9 +75,9 @@ public class MainController {
             newUser.setCompanyName(companyName);
             accountRepository.save(newUser);
 
-            return "User " + username + " with password " + password + " has been added to the database.";
+            return "{\"message\": \"User " + username + " with password " + password + " has been added to the database.\"}";
         } catch (Exception e) {
-            return e.toString();
+            return "{\"error\": \"" + e.toString() + "\"}";
         }
     }
 
@@ -243,7 +240,7 @@ public class MainController {
     @PostMapping(value = "/addimage")
     public @ResponseBody String addImage(@RequestParam String username, @RequestParam String base64image) {
         if (imageRepository.findByuserName(username) != null){
-            return "ERROR: An image already exists for this user: " + username;
+            return "ERROR: Image already exists for user.";
         }
 
         Image myImage = new Image(username, base64image);
