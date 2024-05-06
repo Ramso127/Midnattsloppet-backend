@@ -113,8 +113,8 @@ public class MainController {
 
     @PostMapping(value = "/addgroup")
     public @ResponseBody String addGroup(@RequestBody GroupRequest groupRequest) {
-        String teamName = groupRequest.getTeamName();
-        String username = groupRequest.getUser();
+        String teamName = groupRequest.getTeamname();
+        String username = groupRequest.getUsername();
         return "TEAMNAME: " + teamName + "USERNAME: " + username + "GROUPREQUEST TOSTRING: " + groupRequest.toString();
         // try {
         //     User user = accountRepository.findByUsername(username);
