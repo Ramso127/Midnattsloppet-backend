@@ -29,7 +29,7 @@ public class RunnerGroup {
     }
 
     @OneToMany(mappedBy = "runnerGroup")
-    private ArrayList<User> users = new ArrayList<>();
+    private List<User> users = new ArrayList<>();
 
     public Integer getGroupId() {
         return groupId;
