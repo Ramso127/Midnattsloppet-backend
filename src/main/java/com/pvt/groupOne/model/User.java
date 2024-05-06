@@ -57,7 +57,6 @@ public class User {
     public String toString() {
         return "User:" +
                     "username='" + username + '\'' +
-                    ", userInfo=" + userInfo.toString() +'\'' +
                     ", email='" + email + '\'';
         }
 
