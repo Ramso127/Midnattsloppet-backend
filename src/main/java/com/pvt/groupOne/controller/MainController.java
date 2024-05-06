@@ -237,12 +237,12 @@ public class MainController {
     }
 
     @PostMapping(value = "/addimage")
-    public @ResponseBody String addImage(@RequestParam String username, @RequestParam String base64Image) {
+    public @ResponseBody String addImage(@RequestParam String username, @RequestParam String base64image) {
         if (imageRepository.findByuserName(username) != null){
             return "ERROR: Image already exists for user.";
         }
 
-        Image myImage = new Image(username, base64Image);
+        Image myImage = new Image(username, base64image);
         imageRepository.save(myImage);
         return "Image for " + username + " successfully saved.";
     }
