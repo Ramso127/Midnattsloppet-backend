@@ -128,10 +128,8 @@ public class MainController {
 
         } catch (Exception e) {
             e.printStackTrace();
+            return "ERROR: " + e;
         }
-
-        return "ERROR: Something went wrong";
-
     }
 
     @PostMapping(value = "/addusertogroup")
