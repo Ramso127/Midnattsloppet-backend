@@ -129,7 +129,7 @@ public class MainController {
         //     e.printStackTrace();
         // }
 
-        return teamName + " and user " + username + " has been added to the database.";
+        // return teamName + " and user " + username + " has been added to the database.";
     }
 
     @PostMapping(value = "/addusertogroup")
