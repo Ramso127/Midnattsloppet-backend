@@ -3,6 +3,7 @@ package com.pvt.groupOne.model;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import jakarta.persistence.Column;
@@ -21,7 +22,8 @@ public class User {
 
     @OneToOne(mappedBy = "user")
     private UserInfo userInfo;
-
+    
+    @JsonIgnore
     private String password;
 
     private String email;
