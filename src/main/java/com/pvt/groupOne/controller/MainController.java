@@ -115,21 +115,21 @@ public class MainController {
     public @ResponseBody String addGroup(@RequestBody GroupRequest groupRequest) {
         String teamName = groupRequest.getTeamName();
         String username = groupRequest.getUser();
-        try {
-            User user = accountRepository.findByUsername(username);
+        return groupRequest.toString();
+        // try {
+        //     User user = accountRepository.findByUsername(username);
 
-            if (groupRepository.existsByTeamName(teamName)) {
-                return "Groupname already exists";
-            }
-            runnerGroupService.createRunnerGroup(teamName, user);
+        //     if (groupRepository.existsByTeamName(teamName)) {
+        //         return "Groupname already exists";
+        //     }
+        //     runnerGroupService.createRunnerGroup(teamName, user);
 
-            accountRepository.save(user);
-            return teamName + " and user " + username + " has been added to the database.";
+        //     accountRepository.save(user);
+        // } catch (Exception e) {
+        //     e.printStackTrace();
+        // }
 
-        } catch (Exception e) {
-            e.printStackTrace();
-            return "ERROR: " + e;
-        }
+        // return teamName + " and user " + username + " has been added to the database.";
     }
 
     @PostMapping(value = "/addusertogroup")
