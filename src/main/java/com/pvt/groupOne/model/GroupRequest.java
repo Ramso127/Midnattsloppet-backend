@@ -13,4 +13,9 @@ public class GroupRequest {
         return teamname;
     }
 
+    @Override
+    public String toString() {
+        return "GroupRequest [teamname=" + teamname + ", username=" + username + "]";
+    }
+
 }
