@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.pvt.groupOne.repository.RunnerGroupRepository;
 import com.pvt.groupOne.repository.StravaRunRepository;
 import com.pvt.groupOne.repository.StravaUserRepository;
+import com.pvt.groupOne.repository.AccountInfoRepository;
 import com.pvt.groupOne.repository.AccountRepository;
 
 @Controller
@@ -32,6 +33,9 @@ public class MainController {
 
     @Autowired
     private AccountRepository accountRepository;
+
+    @Autowired
+    private AccountInfoRepository accountInfoRepository;
 
     @Autowired
     private RunnerGroupRepository groupRepository;
@@ -223,14 +227,14 @@ public class MainController {
         return "Done";
 
     }
-
-    @GetMapping(value = "/getUserInfo/{username}")
+    // 
+    @GetMapping(value = "/getuserinfo/{username}")
     public @ResponseBody String getUserInfo(@PathVariable String username) {
-        User user = accountRepository.findByUsername(username);
-        if (user == null) {
+        UserInfo userInfo = accountInfoRepository.findByUser_username(username);
+        if (userInfo == null) {
             return "User does not exist";
         } else {
-            return user.toString();
+            return userInfo.toString();
         }
 
     }
