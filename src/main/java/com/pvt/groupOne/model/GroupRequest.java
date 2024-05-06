@@ -4,11 +4,11 @@ public class GroupRequest {
     private String teamname;
     private String username;
 
-    public String getUser() {
+    public String getUsername() {
         return username;
     }
 
-    public String getTeamName() {
+    public String getTeamname() {
         return teamname;
     }
 
