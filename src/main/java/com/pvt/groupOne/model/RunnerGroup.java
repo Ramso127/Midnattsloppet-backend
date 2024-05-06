@@ -19,14 +19,13 @@ public class RunnerGroup {
     private String teamName;
     private String inviteCode;
     private boolean isFull = false;
-    
+
     @Lob
     private byte[] groupPicture;
-    
+
     public boolean isFull() {
         return isFull;
     }
-
 
     @OneToMany(mappedBy = "runnerGroup")
     private List<User> users;
