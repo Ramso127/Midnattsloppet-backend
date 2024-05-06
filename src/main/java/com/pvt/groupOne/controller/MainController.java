@@ -129,7 +129,7 @@ public class MainController {
         //     e.printStackTrace();
         // }
 
-        // return teamName + " and user " + username + " has been added to the database.";
+        return teamName + " and user " + username + " has been added to the database.";
     }
 
     @PostMapping(value = "/addusertogroup")
@@ -243,7 +243,7 @@ public class MainController {
 
     @PostMapping(value = "/addimage")
     public @ResponseBody String addImage(@RequestParam String username, @RequestParam String base64image) {
-        if (imageRepository.findByuserName(username) != null){
+        if (imageRepository.findByuserName(username) != null) {
             return "ERROR: Image already exists for user.";
         }
 
