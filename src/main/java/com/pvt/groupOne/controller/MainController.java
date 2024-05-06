@@ -75,7 +75,8 @@ public class MainController {
             newUser.setCompanyName(companyName);
             accountRepository.save(newUser);
 
-            return "{\"message\": \"User " + username + " with password " + password + " has been added to the database.\"}";
+            return "{\"message\": \"User " + username + " with password " + password
+                    + " has been added to the database.\"}";
         } catch (Exception e) {
             return "{\"error\": \"" + e.toString() + "\"}";
         }
@@ -121,11 +122,14 @@ public class MainController {
             runnerGroupService.createRunnerGroup(teamName, user);
 
             accountRepository.save(user);
+            return teamName + " and user " + username + " has been added to the database.";
+
         } catch (Exception e) {
             e.printStackTrace();
         }
 
-        return teamName + " and user " + username + " has been added to the database.";
+        return "ERROR: Something went wrong";
+
     }
 
     @PostMapping(value = "/addusertogroup")
@@ -239,7 +243,7 @@ public class MainController {
 
     @PostMapping(value = "/addimage")
     public @ResponseBody String addImage(@RequestParam String username, @RequestParam String base64image) {
-        if (imageRepository.findByuserName(username) != null){
+        if (imageRepository.findByuserName(username) != null) {
             return "ERROR: Image already exists for user.";
         }
 
