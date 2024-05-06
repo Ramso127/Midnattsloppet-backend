@@ -112,26 +112,24 @@ public class MainController {
         }
     }
 
-    @PostMapping(value = "/addgroup")
+    @PostMapping(value = "/addgroup",  produces = "application/json")
     public @ResponseBody String addGroup(@RequestBody GroupRequest groupRequest) throws JsonProcessingException {
         String teamName = groupRequest.getTeamname();
         String username = groupRequest.getUsername();
-        RunnerGroup runnerGroup;
         try {
             User user = accountRepository.findByUsername(username);
 
             if (groupRepository.existsByTeamName(teamName)) {
                 return "{\"message\": \"Group name already exists\"}";
             }
-            runnerGroup = runnerGroupService.createRunnerGroup(teamName, user);
-
+            RunnerGroup runnerGroup = runnerGroupService.createRunnerGroup(teamName, user);
             accountRepository.save(user);
+            ObjectMapper om = new ObjectMapper();
+            return om.writeValueAsString(runnerGroup);
         } catch (Exception e) {
             e.printStackTrace();
             return "ERROR: " + e;
         }
-        ObjectMapper om = new ObjectMapper();
-        return om.writeValueAsString(runnerGroup);
     }
 
     @PostMapping(value = "/addusertogroup")
