@@ -3,6 +3,7 @@ package com.pvt.groupOne.controller;
 import com.pvt.groupOne.model.*;
 import com.pvt.groupOne.Service.StravaService;
 import com.pvt.groupOne.Service.UserService;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.pvt.groupOne.Service.RunnerGroupService;
 import java.util.ArrayList;
@@ -112,24 +113,25 @@ public class MainController {
     }
 
     @PostMapping(value = "/addgroup")
-    public @ResponseBody String addGroup(@RequestBody GroupRequest groupRequest) {
+    public @ResponseBody String addGroup(@RequestBody GroupRequest groupRequest) throws JsonProcessingException {
         String teamName = groupRequest.getTeamname();
         String username = groupRequest.getUsername();
+        RunnerGroup runnerGroup;
         try {
             User user = accountRepository.findByUsername(username);
 
             if (groupRepository.existsByTeamName(teamName)) {
                 return "Groupname already exists";
             }
-            runnerGroupService.createRunnerGroup(teamName, user);
+            runnerGroup = runnerGroupService.createRunnerGroup(teamName, user);
 
             accountRepository.save(user);
         } catch (Exception e) {
             e.printStackTrace();
             return "ERROR: " + e;
         }
-
-        return teamName + " and user " + username + " has been added to the database.";
+        ObjectMapper om = new ObjectMapper();
+        return om.writeValueAsString(runnerGroup);
     }
 
     @PostMapping(value = "/addusertogroup")
@@ -250,18 +252,6 @@ public class MainController {
         Image myImage = new Image(username, base64image);
         imageRepository.save(myImage);
         return "Image for " + username + " successfully saved.";
-    }
-
-    @GetMapping(value = "/getimage/{username}")
-    public @ResponseBody String getImage(@PathVariable String username) {
-
-        Image myImage = imageRepository.findByuserName(username);
-        if (myImage == null) {
-            return "ERROR: user " + username + " not found.";
-        }
-
-        return myImage.getBase64Image();
-
     }
 
 }
