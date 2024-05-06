@@ -68,15 +68,17 @@ public class MainController {
             if (accountRepository.existsByUsername(username))
                 return "{\"message\": \"Username already exists\"}";
 
+            if (accountRepository.existsByEmail(email))
+                return "{\"message\": \"Email already exists\"}";
+
             User newUser = new User();
             newUser.setUserName(username);
             newUser.setPassword(password);
             newUser.setEmail(email);
             newUser.setCompanyName(companyName);
             accountRepository.save(newUser);
-
-            return "{\"message\": \"User " + username + " with password " + password
-                    + " has been added to the database.\"}";
+            ObjectMapper om = new ObjectMapper();
+            return om.writeValueAsString(newUser);
         } catch (Exception e) {
             return "{\"error\": \"" + e.toString() + "\"}";
         }
@@ -250,18 +252,6 @@ public class MainController {
         Image myImage = new Image(username, base64image);
         imageRepository.save(myImage);
         return "Image for " + username + " successfully saved.";
-    }
-
-    @GetMapping(value = "/getimage/{username}")
-    public @ResponseBody String getImage(@PathVariable String username) {
-
-        Image myImage = imageRepository.findByuserName(username);
-        if (myImage == null) {
-            return "ERROR: user " + username + " not found.";
-        }
-
-        return myImage.getBase64Image();
-
     }
 
 }
