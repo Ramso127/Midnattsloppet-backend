@@ -3,11 +3,11 @@ package com.pvt.groupOne.controller;
 import com.pvt.groupOne.model.*;
 import com.pvt.groupOne.Service.StravaService;
 import com.pvt.groupOne.Service.UserService;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.pvt.groupOne.Service.RunnerGroupService;
 import java.util.ArrayList;
 
+import com.pvt.groupOne.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,12 +21,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
-
-import com.pvt.groupOne.repository.RunnerGroupRepository;
-import com.pvt.groupOne.repository.StravaRunRepository;
-import com.pvt.groupOne.repository.StravaUserRepository;
-import com.pvt.groupOne.repository.AccountRepository;
-import com.pvt.groupOne.repository.ImageRepository;
 
 @Controller
 @RequestMapping(path = "/controller")
@@ -52,7 +46,10 @@ public class MainController {
     private RunnerGroupService runnerGroupService;
 
     @Autowired
-    private ImageRepository imageRepository;
+    private UserImageRepository userImageRepository;
+
+    @Autowired
+    private GroupImageRepository groupImageRepository;
 
     @GetMapping(value = "/hello")
     public @ResponseBody String testMethod() {
@@ -114,10 +111,10 @@ public class MainController {
 
     @PostMapping(value = "/addgroup",  produces = "application/json")
     public @ResponseBody String addGroup(@RequestBody GroupRequest groupRequest) {
-        String teamName = groupRequest.getTeamname();
-        String username = groupRequest.getUsername();
+        String teamName = groupRequest.getTeamName();
+        String userName = groupRequest.getUserName();
         try {
-            User user = accountRepository.findByUsername(username);
+            User user = accountRepository.findByUsername(userName);
 
             if (groupRepository.existsByTeamName(teamName)) {
                 return "{\"message\": \"Group name already exists\"}";
@@ -241,15 +238,73 @@ public class MainController {
 
     }
 
-    @PostMapping(value = "/addimage")
-    public @ResponseBody String addImage(@RequestParam String username, @RequestParam String base64image) {
-        if (imageRepository.findByuserName(username) != null) {
+    @PostMapping(value = "/addUserImage")
+    public @ResponseBody String addUserImage(@RequestParam String userName, @RequestParam String base64) {
+        if (userImageRepository.findByUserName(userName) != null) {
             return "ERROR: Image already exists for user.";
         }
 
-        Image myImage = new Image(username, base64image);
-        imageRepository.save(myImage);
-        return "Image for " + username + " successfully saved.";
+        UserImage myImage = new UserImage(userName, base64);
+        userImageRepository.save(myImage);
+        return "Image for " + userName + " successfully saved.";
     }
+
+    @PostMapping(value = "/addGroupImage")
+    public @ResponseBody String addGroupImage(@RequestParam String groupName, @RequestParam String base64) {
+        if (groupImageRepository.findByGroupName(groupName) != null) {
+            return "ERROR: Image already exists for group.";
+        }
+        GroupImage myImage = new GroupImage(groupName, base64);
+        groupImageRepository.save(myImage);
+        return "Image for group " + groupName + " successfully saved.";
+    }
+
+    @DeleteMapping(value = "/removeUserImage")
+    public @ResponseBody String removeUserImage(@RequestParam String userName) {
+        UserImage myImage = userImageRepository.findByUserName(userName);
+        if (myImage == null) {
+            return "ERROR: Image does not exist for user.";
+        }
+
+        userImageRepository.delete(myImage);
+        return "Image for " + userName + " successfully removed.";
+    }
+
+    @DeleteMapping(value = "/removeGroupImage")
+    public @ResponseBody String removeGroupImage(@RequestParam String groupName) {
+        GroupImage myImage = groupImageRepository.findByGroupName(groupName);
+        if (myImage == null) {
+            return "ERROR: Image does not exist for group.";
+        }
+
+        groupImageRepository.delete(myImage);
+        return "Image for " + groupName + " successfully removed.";
+    }
+
+    @PostMapping(value = "/updateUserImage")
+    public @ResponseBody String updateUserImage(@RequestParam String userName, @RequestParam String base64) {
+        UserImage myImage = userImageRepository.findByUserName(userName);
+        if (myImage == null) {
+            return "ERROR: Image does not exist for user.";
+        }
+
+        myImage.setBase64Image(base64);
+        userImageRepository.save(myImage);
+        return "Image for " + userName + " successfully updated.";
+    }
+
+    @PostMapping(value = "/updateGroupImage")
+    public @ResponseBody String updateGroupImage(@RequestParam String groupName, @RequestParam String base64) {
+        GroupImage myImage = groupImageRepository.findByGroupName(groupName);
+        if (myImage == null) {
+            return "ERROR: Image does not exist for group.";
+        }
+
+        myImage.setBase64Image(base64);
+        groupImageRepository.save(myImage);
+        return "Image for " + groupName + " successfully updated.";
+    }
+
+
 
 }
