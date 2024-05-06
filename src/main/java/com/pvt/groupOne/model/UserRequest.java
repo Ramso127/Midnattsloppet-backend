@@ -4,8 +4,16 @@ public class UserRequest {
     private String username;
     private String password;
     private String email;
-
+    private String companyname;
     
+    public String getCompanyname() {
+        return companyname;
+    }
+
+    public void setCompanyname(String companyname) {
+        this.companyname = companyname;
+    }
+
     public String getEmail() {
         return email;
     }
