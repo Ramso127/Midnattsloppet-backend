@@ -1,5 +1,8 @@
 package com.pvt.groupOne.model;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
@@ -55,10 +58,8 @@ public class User {
 
     @Override
     public String toString() {
-        return "User:" +
-                    "username='" + username + '\'' +
-                    ", email='" + email + '\'';
-        }
+        return "{\"username\": \"" + username + "\", \"email\": \"" + email + "\"}";
+    }
 
     
 

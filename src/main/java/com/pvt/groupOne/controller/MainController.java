@@ -3,6 +3,7 @@ package com.pvt.groupOne.controller;
 import com.pvt.groupOne.model.*;
 import com.pvt.groupOne.Service.StravaService;
 import com.pvt.groupOne.Service.UserService;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.pvt.groupOne.Service.RunnerGroupService;
 import java.util.ArrayList;
 
@@ -96,7 +97,8 @@ public class MainController {
         try {
             if (userService.authenticateUser(username, password)) {
                 User user = accountRepository.findByUsername(username);
-                return ResponseEntity.ok(user.toString());
+                ObjectMapper om = new ObjectMapper();
+                return ResponseEntity.ok(om.writeValueAsString(user));
             } else {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid username or password");
             }
