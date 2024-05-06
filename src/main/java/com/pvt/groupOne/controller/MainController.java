@@ -60,29 +60,28 @@ public class MainController {
 
     @PostMapping(value = "/adduser", produces = "application/json")
     public @ResponseBody String addUser(@RequestBody UserRequest userRequest) {
-        return userRequest.toString();
-        // try {
-        //     String username = userRequest.getUsername();
-        //     String password = userRequest.getPassword();
-        //     String email = userRequest.getEmail();
-        //     String companyName = userRequest.getCompanyname();
-        //     if (accountRepository.existsByUsername(username))
-        //         return "{\"message\": \"Username already exists\"}";
+        try {
+            String username = userRequest.getUsername();
+            String password = userRequest.getPassword();
+            String email = userRequest.getEmail();
+            String companyName = userRequest.getCompanyname();
+            if (accountRepository.existsByUsername(username))
+                return "{\"message\": \"Username already exists\"}";
 
-        //     if (accountRepository.existsByEmail(email))
-        //         return "{\"message\": \"Email already exists\"}";
+            if (accountRepository.existsByEmail(email))
+                return "{\"message\": \"Email already exists\"}";
 
-        //     User newUser = new User();
-        //     newUser.setUserName(username);
-        //     newUser.setPassword(password);
-        //     newUser.setEmail(email);
-        //     newUser.setCompanyName(companyName);
-        //     accountRepository.save(newUser);
-        //     ObjectMapper om = new ObjectMapper();
-        //     return om.writeValueAsString(newUser);
-        // } catch (Exception e) {
-        //     return "{\"error\": \"" + e.toString() + "\"}";
-        // }
+            User newUser = new User();
+            newUser.setUserName(username);
+            newUser.setPassword(password);
+            newUser.setEmail(email);
+            newUser.setCompanyName(companyName);
+            accountRepository.save(newUser);
+            ObjectMapper om = new ObjectMapper();
+            return om.writeValueAsString(newUser);
+        } catch (Exception e) {
+            return "{\"error\": \"" + e.toString() + "\"}";
+        }
     }
 
     @DeleteMapping(value = "/removeuser") // eller "/removeuser/{userId}"
@@ -116,22 +115,21 @@ public class MainController {
     public @ResponseBody String addGroup(@RequestBody GroupRequest groupRequest) {
         String teamName = groupRequest.getTeamname();
         String username = groupRequest.getUsername();
-        return "TEAMNAME: " + teamName + "USERNAME: " + username + "GROUPREQUEST TOSTRING: " + groupRequest.toString();
-        // try {
-        //     User user = accountRepository.findByUsername(username);
+        try {
+            User user = accountRepository.findByUsername(username);
 
-        //     if (groupRepository.existsByTeamName(teamName)) {
-        //         return "Groupname already exists";
-        //     }
-        //     runnerGroupService.createRunnerGroup(teamName, user);
+            if (groupRepository.existsByTeamName(teamName)) {
+                return "Groupname already exists";
+            }
+            runnerGroupService.createRunnerGroup(teamName, user);
 
-        //     accountRepository.save(user);
-        // } catch (Exception e) {
-        //     e.printStackTrace();
-        //     return "ERROR: " + e;
-        // }
+            accountRepository.save(user);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "ERROR: " + e;
+        }
 
-        // return teamName + " and user " + username + " has been added to the database.";
+        return teamName + " and user " + username + " has been added to the database.";
     }
 
     @PostMapping(value = "/addusertogroup")
