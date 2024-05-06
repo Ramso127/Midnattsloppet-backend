@@ -19,6 +19,8 @@ public class UserInfo {
     private User user;
 
     private String firstName;
+    private String lastName;
+    private String age;
 
     public String getFirstName() {
         return firstName;
@@ -28,7 +30,6 @@ public class UserInfo {
         this.firstName = firstName;
     }
 
-    private String lastName;
 
     public String getLastName() {
         return lastName;
@@ -38,7 +39,6 @@ public class UserInfo {
         this.lastName = lastName;
     }
 
-    private String age;
 
     public String getAge() {
         return age;
