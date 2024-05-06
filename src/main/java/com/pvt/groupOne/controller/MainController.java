@@ -252,4 +252,16 @@ public class MainController {
         return "Image for " + username + " successfully saved.";
     }
 
+    @GetMapping(value = "/getimage/{username}")
+    public @ResponseBody String getImage(@PathVariable String username) {
+
+        Image myImage = imageRepository.findByuserName(username);
+        if (myImage == null) {
+            return "ERROR: user " + username + " not found.";
+        }
+
+        return myImage.getBase64Image();
+
+    }
+
 }
