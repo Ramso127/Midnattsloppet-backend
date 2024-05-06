@@ -5,7 +5,7 @@ public class UserRequest {
     private String password;
     private String email;
     private String companyname;
-    
+
     public String getCompanyname() {
         return companyname;
     }
@@ -20,6 +20,11 @@ public class UserRequest {
 
     public String getPassword() {
         return password;
+    }
+
+    public String toString() {
+        return "Company name: " + getCompanyname() + " Email: " + getEmail() + " Username: " + getUsername()
+                + "Password: " + getPassword();
     }
 
 }

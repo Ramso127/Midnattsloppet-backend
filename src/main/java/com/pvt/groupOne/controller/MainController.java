@@ -60,28 +60,29 @@ public class MainController {
 
     @PostMapping(value = "/adduser", produces = "application/json")
     public @ResponseBody String addUser(@RequestBody UserRequest userRequest) {
-        try {
-            String username = userRequest.getUsername();
-            String password = userRequest.getPassword();
-            String email = userRequest.getEmail();
-            String companyName = userRequest.getCompanyname();
-            if (accountRepository.existsByUsername(username))
-                return "{\"message\": \"Username already exists\"}";
+        return userRequest.toString();
+        // try {
+        //     String username = userRequest.getUsername();
+        //     String password = userRequest.getPassword();
+        //     String email = userRequest.getEmail();
+        //     String companyName = userRequest.getCompanyname();
+        //     if (accountRepository.existsByUsername(username))
+        //         return "{\"message\": \"Username already exists\"}";
 
-            if (accountRepository.existsByEmail(email))
-                return "{\"message\": \"Email already exists\"}";
+        //     if (accountRepository.existsByEmail(email))
+        //         return "{\"message\": \"Email already exists\"}";
 
-            User newUser = new User();
-            newUser.setUserName(username);
-            newUser.setPassword(password);
-            newUser.setEmail(email);
-            newUser.setCompanyName(companyName);
-            accountRepository.save(newUser);
-            ObjectMapper om = new ObjectMapper();
-            return om.writeValueAsString(newUser);
-        } catch (Exception e) {
-            return "{\"error\": \"" + e.toString() + "\"}";
-        }
+        //     User newUser = new User();
+        //     newUser.setUserName(username);
+        //     newUser.setPassword(password);
+        //     newUser.setEmail(email);
+        //     newUser.setCompanyName(companyName);
+        //     accountRepository.save(newUser);
+        //     ObjectMapper om = new ObjectMapper();
+        //     return om.writeValueAsString(newUser);
+        // } catch (Exception e) {
+        //     return "{\"error\": \"" + e.toString() + "\"}";
+        // }
     }
 
     @DeleteMapping(value = "/removeuser") // eller "/removeuser/{userId}"
