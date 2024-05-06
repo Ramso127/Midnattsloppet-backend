@@ -88,9 +88,11 @@ public class MainController {
     @GetMapping(value = "/login/{username}/{password}")
     public ResponseEntity<String> login(@PathVariable String username, @PathVariable String password) {
         // Perform user authentication
+        
         try {
             if (userService.authenticateUser(username, password)) {
-                return ResponseEntity.ok("Login successful");
+                User user = accountRepository.findByUsername(username);
+                return ResponseEntity.ok(user.toString());
             } else {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid username or password");
             }
@@ -225,17 +227,6 @@ public class MainController {
             stravaRunRepository.save(run);
         }
         return "Done";
-
-    }
-    // 
-    @GetMapping(value = "/getuserinfo/{username}")
-    public @ResponseBody String getUserInfo(@PathVariable String username) {
-        UserInfo userInfo = accountInfoRepository.findByUser_username(username);
-        if (userInfo == null) {
-            return "User does not exist";
-        } else {
-            return userInfo.toString();
-        }
 
     }
 

@@ -55,19 +55,13 @@ public class User {
 
     @Override
     public String toString() {
-        if (userInfo == null) {
-            return "?User= " +
+        return "User:" +
                     "username='" + username + '\'' +
-                    ", password='" + password + '\'' + ", email='" + email + '\'';
-
-        } else {
-            return "User:" +
-                    "username='" + username + '\'' +
-                    ", userInfo=" + userInfo.toString() +
-                    ", password='" + password + '\'' + ", email='" + '\'';
+                    ", userInfo=" + userInfo.toString() +'\'' +
+                    ", email='" + email + '\'';
         }
 
-    }
+    
 
     public void setRunnerGroup(RunnerGroup runnerGroup) {
         this.runnerGroup = runnerGroup;
