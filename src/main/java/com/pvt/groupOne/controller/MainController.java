@@ -25,6 +25,7 @@ import com.pvt.groupOne.repository.StravaRunRepository;
 import com.pvt.groupOne.repository.StravaUserRepository;
 import com.pvt.groupOne.repository.AccountInfoRepository;
 import com.pvt.groupOne.repository.AccountRepository;
+import com.pvt.groupOne.repository.ImageRepository;
 
 @Controller
 @RequestMapping(path = "/controller")
@@ -51,6 +52,9 @@ public class MainController {
 
     @Autowired
     private RunnerGroupService runnerGroupService;
+
+    @Autowired
+    private ImageRepository imageRepository;
 
     @GetMapping(value = "/hello")
     public @ResponseBody String testMethod() {
@@ -88,7 +92,7 @@ public class MainController {
     @GetMapping(value = "/login/{username}/{password}")
     public ResponseEntity<String> login(@PathVariable String username, @PathVariable String password) {
         // Perform user authentication
-        
+
         try {
             if (userService.authenticateUser(username, password)) {
                 User user = accountRepository.findByUsername(username);
@@ -228,6 +232,17 @@ public class MainController {
         }
         return "Done";
 
+    }
+
+    @PostMapping(value = "/addimage")
+    public @ResponseBody String addImage(@RequestBody String userName, @RequestParam String base64Image) {
+        if (imageRepository.findByuserName(userName) != null){
+            return "ERROR: Image already exists for user.";
+        }
+        
+        Image myImage = new Image(userName, base64Image);
+        imageRepository.save(myImage);
+        return "Image for " + userName + " successfully saved.";
     }
 
 }

@@ -1,8 +1,13 @@
 package com.pvt.groupOne.model;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+@Entity
 public class Image {
     
+    @Id
     private String userName;
+    
     private String base64Image;
 
     public Image(){
