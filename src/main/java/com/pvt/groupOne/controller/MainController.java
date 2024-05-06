@@ -68,7 +68,7 @@ public class MainController {
             String username = userRequest.getUsername();
             String password = userRequest.getPassword();
             String email = userRequest.getEmail();
-            String companyName =  userRequest.getCompanyname();
+            String companyName = userRequest.getCompanyname();
             if (accountRepository.existsByUsername(username))
                 return "Username already exists";
             User newUser = new User();
@@ -242,13 +242,25 @@ public class MainController {
 
     @PostMapping(value = "/addimage")
     public @ResponseBody String addImage(@RequestParam String username, @RequestParam String base64image) {
-        if (imageRepository.findByuserName(username) != null){
+        if (imageRepository.findByuserName(username) != null) {
             return "ERROR: An image already exists for this user: " + username;
         }
 
         Image myImage = new Image(username, base64image);
         imageRepository.save(myImage);
         return "Image for " + username + " successfully saved.";
+    }
+
+    @GetMapping(value = "/getimage/{username}")
+    public @ResponseBody String getImage(@PathVariable String username) {
+
+        Image myImage = imageRepository.findByuserName(username);
+        if (myImage == null) {
+            return "ERROR: user " + username + " not found.";
+        }
+
+        return myImage.getBase64Image();
+
     }
 
 }
