@@ -3,6 +3,8 @@ package com.pvt.groupOne.model;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
@@ -28,6 +30,7 @@ public class User {
 
 
     @ManyToOne
+    @JsonIgnoreProperties("users") // Ignore the bidirectional relationship during serialization
     @JoinColumn(name = "runner_group_id")
     private RunnerGroup runnerGroup;
 

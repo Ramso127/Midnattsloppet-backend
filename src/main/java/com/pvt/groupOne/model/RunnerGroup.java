@@ -10,6 +10,8 @@ import jakarta.persistence.OneToMany;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 @Entity
 public class RunnerGroup {
 
@@ -29,6 +31,7 @@ public class RunnerGroup {
     }
 
     @OneToMany(mappedBy = "runnerGroup")
+    @JsonIgnoreProperties("runnerGroup") // Ignore the bidirectional relationship during serialization
     private List<User> users = new ArrayList<>();
 
     public Integer getGroupId() {
