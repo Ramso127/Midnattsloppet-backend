@@ -113,7 +113,7 @@ public class MainController {
     }
 
     @PostMapping(value = "/addgroup",  produces = "application/json")
-    public @ResponseBody String addGroup(@RequestBody GroupRequest groupRequest) throws JsonProcessingException {
+    public @ResponseBody String addGroup(@RequestBody GroupRequest groupRequest) {
         String teamName = groupRequest.getTeamname();
         String username = groupRequest.getUsername();
         try {
