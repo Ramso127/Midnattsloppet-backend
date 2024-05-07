@@ -242,6 +242,8 @@ public class MainController {
         StravaService myService = new StravaService(stravaUserRepository);
         String accessToken = stravaUser.getAccessToken();
         long currentSystemTime = System.currentTimeMillis() / 1000L;
+        int counter = 0;
+        String runWord = " run";
 
         // If the access token has expired,
         // request a new one and add it to the database
@@ -264,10 +266,15 @@ public class MainController {
 
         for (StravaRun run : runList) {
             stravaRunRepository.save(run);
+            counter++;
         }
         stravaUser.setTimeOfLatestFetchUNIX(currentSystemTime);
         stravaUserRepository.save(stravaUser);
-        return "Done: " + stravaUser.toString();
+
+        if (counter > 1){
+            runWord += "s";
+        }
+        return "Done. " + counter + runWord + " added.";
 
     }
 
