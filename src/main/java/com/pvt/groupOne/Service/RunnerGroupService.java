@@ -6,6 +6,10 @@ import org.springframework.stereotype.Service;
 import com.pvt.groupOne.model.RunnerGroup;
 import com.pvt.groupOne.model.User;
 import com.pvt.groupOne.repository.RunnerGroupRepository;
+
+import java.time.LocalDate;
+import java.time.temporal.TemporalAdjusters;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -36,5 +40,24 @@ public class RunnerGroupService {
             isUnique = !runnerGroupRepository.existsByInviteCode(inviteCode);
         } while (!isUnique);
         return inviteCode;
+    }
+
+        // Get a sorted list of team members based on distance for a specific group
+    public List<Object[]> getSortedTeamMembersByDistance(Integer groupId) {
+        return runnerGroupRepository.findTeamMembersByDistance(groupId);
+    }
+
+    public List<Object[]> getTopGroupsByDistanceForWeek(LocalDate startOfWeek) {
+        LocalDate endOfWeek = startOfWeek.plusDays(6);
+        return runnerGroupRepository.findTopGroupsByDistance(startOfWeek, endOfWeek);
+    }
+
+    public List<Object[]> getTopGroupsByDistanceForMonth(LocalDate startOfMonth) {
+        LocalDate endOfMonth = startOfMonth.with(TemporalAdjusters.lastDayOfMonth());
+        return runnerGroupRepository.findTopGroupsByDistance(startOfMonth, endOfMonth);
+    }
+
+    public List<Object[]> getTopGroupsByTotalDistance() {
+        return runnerGroupRepository.findTopGroupsByTotalDistance();
     }
 }

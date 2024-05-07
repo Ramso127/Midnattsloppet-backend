@@ -3,7 +3,9 @@ package com.pvt.groupOne.controller;
 import com.pvt.groupOne.model.*;
 import com.pvt.groupOne.Service.StravaService;
 import com.pvt.groupOne.Service.UserService;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.pvt.groupOne.Service.RunService;
 import com.pvt.groupOne.Service.RunnerGroupService;
 import java.util.ArrayList;
 
@@ -44,6 +46,9 @@ public class MainController {
 
     @Autowired
     private RunnerGroupService runnerGroupService;
+
+    @Autowired
+    private RunService runService;
 
     @GetMapping(value = "/hello")
     public @ResponseBody String testMethod() {
@@ -145,6 +150,7 @@ public class MainController {
         return user.getUserName() + " added to " + runnerGroup.getTeamName();
     }
 
+
     @DeleteMapping(value = "/removeGroup")
     public @ResponseBody String removeGroup(@RequestBody RunnerGroup group) {
         if (!groupRepository.existsByTeamName(group.getTeamName())) {
@@ -244,6 +250,25 @@ public class MainController {
         stravaUser.setTimeOfLatestFetchUNIX(currentSystemTime);
         return "Done";
 
+    }
+    @PostMapping(value = "/addrun", produces = "application/json")
+    public ResponseEntity<?> addRun(@RequestBody RunRequest runRequest) {
+        // Check if the user exists
+        User user = accountRepository.findByUsername(runRequest.getUsername());
+        if (user == null) {
+            return ResponseEntity.badRequest().body("{\"error\":\"User does not exist\"}");
+        }
+
+        // Create and save the new run
+        Run newRun = new Run();
+        newRun.setUser(user);
+        newRun.setDate(runRequest.getDate());
+        newRun.setTotalDistance(runRequest.getTotalDistance());
+        newRun.setTotalTime(runRequest.getTotalTime());
+
+        runService.saveRun(newRun);
+
+        return ResponseEntity.ok(newRun);
     }
 
 }
