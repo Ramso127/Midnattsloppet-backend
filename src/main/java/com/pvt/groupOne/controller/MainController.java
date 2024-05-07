@@ -3,6 +3,7 @@ package com.pvt.groupOne.controller;
 import com.pvt.groupOne.model.*;
 import com.pvt.groupOne.Service.StravaService;
 import com.pvt.groupOne.Service.UserService;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.pvt.groupOne.Service.RunnerGroupService;
 import java.util.ArrayList;
@@ -127,25 +128,30 @@ public class MainController {
     public @ResponseBody String addUserToGroup(@RequestBody AddUserToGroupRequest addUserToGroupRequest) {
         String inviteCode = addUserToGroupRequest.getInviteCode();
         String username = addUserToGroupRequest.getUsername();
+        try {
+            RunnerGroup runnerGroup = groupRepository.findGroupByInviteCode(inviteCode);
+            User user = accountRepository.findByUsername(username);
 
-        RunnerGroup runnerGroup = groupRepository.findGroupByInviteCode(inviteCode);
-        User user = accountRepository.findByUsername(username);
+            if (runnerGroup == null) {
+                return "Group with invite code " + inviteCode + " not found";
+            }
 
-        if (runnerGroup == null) {
-            return "Group with invite code " + inviteCode + " not found";
+            if (user.getRunnerGroup() != null) {
+                return "Already in a group";
+            }
+
+            if (runnerGroup.isFull()) {
+                return "Group is full";
+            }
+            runnerGroup.addUser(user);
+            groupRepository.save(runnerGroup);
+            accountRepository.save(user);
+            ObjectMapper om = new ObjectMapper();
+            return om.writeValueAsString(runnerGroup);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+            return "ERROR: " + e;
         }
-
-        if (user.getRunnerGroup() != null) {
-            return "Already in a group";
-        }
-
-        if (runnerGroup.isFull()) {
-            return "Group is full";
-        }
-        runnerGroup.addUser(user);
-        groupRepository.save(runnerGroup);
-        accountRepository.save(user);
-        return user.getUserName() + " added to " + runnerGroup.getTeamName();
     }
 
     @DeleteMapping(value = "/removeGroup")
