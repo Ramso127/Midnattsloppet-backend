@@ -255,7 +255,8 @@ public class MainController {
         }
 
         long latestFetch = stravaUser.getTimeOfLatestFetchUNIX();
-
+        // TODO REMOVE THIS TEST UNDER
+        latestFetch = 1711973796;
         ArrayList<StravaRun> runList = myService.saveRunsFrom(stravaID, latestFetch, accessToken);
         for (StravaRun run : runList) {
             stravaRunRepository.save(run);
