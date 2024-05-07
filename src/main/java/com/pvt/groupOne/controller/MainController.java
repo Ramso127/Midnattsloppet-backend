@@ -8,6 +8,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.pvt.groupOne.Service.RunService;
 import com.pvt.groupOne.Service.RunnerGroupService;
 import java.util.ArrayList;
+import java.util.Date;
 
 import com.pvt.groupOne.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -158,7 +159,6 @@ public class MainController {
         }
     }
 
-
     @DeleteMapping(value = "/removeGroup")
     public @ResponseBody String removeGroup(@RequestBody RunnerGroup group) {
         if (!groupRepository.existsByTeamName(group.getTeamName())) {
@@ -233,7 +233,7 @@ public class MainController {
     @GetMapping(value = "/fetchruns/{username}")
     public @ResponseBody String fetchRuns(@PathVariable String username) {
 
-        if (stravaUserRepository.findByUser_Username(username) == null){
+        if (stravaUserRepository.findByUser_Username(username) == null) {
             return "ERROR: User " + username + " not found.";
         }
 
@@ -256,9 +256,12 @@ public class MainController {
 
         long latestFetch = stravaUser.getTimeOfLatestFetchUNIX();
         ArrayList<StravaRun> runList = myService.saveRunsFrom(stravaID, latestFetch, accessToken);
-        if (runList.isEmpty()){
-            return "ERROR: No runs available";
+        if (runList.isEmpty()) {
+            Date myDate = new Date();
+            myDate.setTime(latestFetch * 1000L);
+            return "ERROR: No new runs available since: \n" + myDate.toString();
         }
+
         for (StravaRun run : runList) {
             stravaRunRepository.save(run);
         }
