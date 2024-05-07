@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.pvt.groupOne.model.User;
-import com.pvt.groupOne.model.UserInfo;
 import com.pvt.groupOne.repository.AccountRepository;
 
 import java.util.Calendar;
@@ -28,9 +27,6 @@ public class UserService {
             return false;
         }
 
-        // Retrieve userinfo associated with the user
-        UserInfo userInfo = user.getUserInfo();
-
         // Verify password
         if (password.equals(user.getPassword())) {
             // Passwords match, login successful
@@ -41,24 +37,23 @@ public class UserService {
         return false;
     }
 
-    public PasswordResetToken createPasswordResetToken(User user){
+    public PasswordResetToken createPasswordResetToken(User user) {
         String token = generateToken();
         PasswordResetToken passwordResetToken = new PasswordResetToken(token, user);
         passwordTokenRepository.save(passwordResetToken);
         return passwordResetToken;
     }
 
-    private String generateToken(){
+    private String generateToken() {
         return java.util.UUID.randomUUID().toString();
     }
 
     public String validatePasswordResetToken(String token) {
         PasswordResetToken passReset = passwordTokenRepository.findByToken(token);
 
-        if(!isTokenFound(passReset)) {
+        if (!isTokenFound(passReset)) {
             return "The token is invalid. Please request a new one.";
-        }
-        else if(isTokenExpired(passReset)) {
+        } else if (isTokenExpired(passReset)) {
             return "The token is expired. Please request a new one.";
         }
         return null;
@@ -72,6 +67,5 @@ public class UserService {
         Calendar time = Calendar.getInstance();
         return token.getExpiryDate().before(time.getTime());
     }
-
 
 }

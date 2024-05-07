@@ -177,6 +177,8 @@ public class MainController {
     @GetMapping("/saveauthenticateduser/{username}")
     public @ResponseBody String saveStravaToken(@PathVariable String username,
             @RequestParam(required = false) String error,
+    public @ResponseBody String saveStravaToken(@PathVariable String username,
+            @RequestParam(required = false) String error,
             @RequestParam("code") String authCode,
             @RequestParam("scope") String scope) {
 
@@ -196,11 +198,14 @@ public class MainController {
             stravaUser.setScope(scope);
 
             if (accountRepository.findByUsername(username) == null) {
+            if (accountRepository.findByUsername(username) == null) {
                 return "ERROR: username not found";
             }
 
+
             User newUser = accountRepository.findByUsername(username);
             stravaUser.setUser(newUser);
+
 
             String result = "ID: " + stravaUser.getId() + "\nName: " + stravaUser.getFirstName() + "\n Scope: "
                     + stravaUser.getScope() + "\nAccess token: " + stravaUser.getAccessToken() + "\nRefresh token: "
