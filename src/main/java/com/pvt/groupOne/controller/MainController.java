@@ -45,7 +45,6 @@ public class MainController {
     @Autowired
     private RunnerGroupService runnerGroupService;
 
-
     @GetMapping(value = "/hello")
     public @ResponseBody String testMethod() {
         return "Hello this is Didrik's test";
@@ -104,10 +103,10 @@ public class MainController {
         }
     }
 
-    @PostMapping(value = "/addgroup",  produces = "application/json")
+    @PostMapping(value = "/addgroup", produces = "application/json")
     public @ResponseBody String addGroup(@RequestBody GroupRequest groupRequest) {
-        String teamName = groupRequest.getTeamName();
-        String userName = groupRequest.getUserName();
+        String teamName = groupRequest.getTeamname();
+        String userName = groupRequest.getUsername();
         try {
             User user = accountRepository.findByUsername(userName);
 
@@ -232,7 +231,5 @@ public class MainController {
         return "Done";
 
     }
-
-
 
 }
