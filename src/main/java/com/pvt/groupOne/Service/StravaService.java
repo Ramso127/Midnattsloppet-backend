@@ -26,16 +26,18 @@ public class StravaService {
 
     private final StravaUserRepository stravaUserRepository;
 
+    private final String URL = "https://www.strava.com/oauth/token";
+    private final String CLIENT_ID = "125803";
+    private final String CLIENT_SECRET = "3e9f7fcd913ece59cb5bccd8a89444ab9f452ec5";
+    private String grantType;
+
     public StravaService(StravaUserRepository stravaUserRepository) {
         this.stravaUserRepository = stravaUserRepository;
     }
 
     public StravaUser exchangeToken(String authCode) {
 
-        final String URL = "https://www.strava.com/oauth/token";
-        final String CLIENT_ID = "125803";
-        final String CLIENT_SECRET = "3e9f7fcd913ece59cb5bccd8a89444ab9f452ec5";
-        final String GRANT_TYPE = "authorization_code";
+        grantType = "authorization_code";
 
         HttpClient httpClient = HttpClientBuilder.create().build();
 
@@ -45,7 +47,7 @@ public class StravaService {
                     .setParameter("client_id", CLIENT_ID)
                     .setParameter("client_secret", CLIENT_SECRET)
                     .setParameter("code", authCode)
-                    .setParameter("grant_type", GRANT_TYPE)
+                    .setParameter("grant_type", grantType)
                     .build();
 
             HttpPost httpPost = new HttpPost(uri);
@@ -99,10 +101,7 @@ public class StravaService {
 
     public boolean requestNewTokens(String currentRefreshToken, int userID) {
 
-        final String URL = "https://www.strava.com/oauth/token";
-        final String CLIENT_ID = "125803";
-        final String CLIENT_SECRET = "3e9f7fcd913ece59cb5bccd8a89444ab9f452ec5";
-        final String GRANT_TYPE = "refresh_token";
+        grantType = "refresh_token";
 
         HttpClient httpClient = HttpClientBuilder.create().build();
 
@@ -111,7 +110,7 @@ public class StravaService {
             URI uri = new URIBuilder(URL)
                     .setParameter("client_id", CLIENT_ID)
                     .setParameter("client_secret", CLIENT_SECRET)
-                    .setParameter("grant_type", GRANT_TYPE)
+                    .setParameter("grant_type", grantType)
                     .setParameter("refresh_token", currentRefreshToken)
                     .build();
 
