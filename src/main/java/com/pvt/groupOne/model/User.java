@@ -5,8 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
+
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
@@ -18,9 +17,6 @@ public class User {
     @Id
     @Column(name = "user_name", unique = true)
     private String username;
-
-    @OneToOne(mappedBy = "user")
-    private UserInfo userInfo;
 
     @JsonIgnore
     private String password;
@@ -64,10 +60,6 @@ public class User {
 
     public void setPassword(String password) {
         this.password = password;
-    }
-
-    public UserInfo getUserInfo() {
-        return userInfo;
     }
 
     public String getEmail() {

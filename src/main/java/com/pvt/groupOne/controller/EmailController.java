@@ -28,10 +28,9 @@ public class EmailController {
     @Autowired
     private UserService userService;
 
-
     @PostMapping("/sendEmail/{reciever}")
     public String sendEmail(@PathVariable String reciever,
-                            @RequestBody EmailRequest emailRequest) {
+            @RequestBody EmailRequest emailRequest) {
         emailService.sendSimpleMessage(reciever, emailRequest.getSubject(), emailRequest.getText());
         return "Email Sent!";
     }
@@ -55,7 +54,8 @@ public class EmailController {
 
             PasswordResetToken token = userService.createPasswordResetToken(user);
 
-            String url = "https://" + request.getServerName() + ":" + request.getServerPort() + request.getContextPath() + "/resetPassword?token=" + token.getToken();
+            String url = "https://" + request.getServerName() + ":" + request.getServerPort() + request.getContextPath()
+                    + "/resetPassword?token=" + token.getToken();
             EmailRequest emailRequest = new EmailRequest();
             emailRequest.setSubject("Reset Password");
             emailRequest.setText("Hello " + user.getUserName() + ", \r\n" +
@@ -69,4 +69,3 @@ public class EmailController {
     }
 
 }
-

@@ -175,7 +175,8 @@ public class MainController {
     // TODO DIDDE change return statements
     // TODO LÄGG IN CURRENT UNIX TIME TILL STRAVA USER
     @GetMapping("/saveauthenticateduser/{username}")
-    public @ResponseBody String saveStravaToken(@PathVariable String username, @RequestParam(required = false) String error,
+    public @ResponseBody String saveStravaToken(@PathVariable String username,
+            @RequestParam(required = false) String error,
             @RequestParam("code") String authCode,
             @RequestParam("scope") String scope) {
 
@@ -194,13 +195,13 @@ public class MainController {
             StravaUser stravaUser = myExchanger.exchangeToken(authCode);
             stravaUser.setScope(scope);
 
-            if (accountRepository.findByUsername(username) == null){
+            if (accountRepository.findByUsername(username) == null) {
                 return "ERROR: username not found";
             }
-            
+
             User newUser = accountRepository.findByUsername(username);
             stravaUser.setUser(newUser);
-            
+
             String result = "ID: " + stravaUser.getId() + "\nName: " + stravaUser.getFirstName() + "\n Scope: "
                     + stravaUser.getScope() + "\nAccess token: " + stravaUser.getAccessToken() + "\nRefresh token: "
                     + stravaUser.getRefreshToken() + "\nExpires at: " + stravaUser.getExpiresAt();
@@ -213,6 +214,7 @@ public class MainController {
         }
 
     }
+
     // TODO DIDDE TA BORT UNIXTIME
     @GetMapping(value = "/saverunsfrom/{username}/{unixTime}")
     public @ResponseBody String saveRunsFrom(@PathVariable String username, @PathVariable int unixTime) {
