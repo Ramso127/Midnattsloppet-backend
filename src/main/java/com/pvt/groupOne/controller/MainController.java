@@ -129,25 +129,33 @@ public class MainController {
     }
 
     @PostMapping(value = "/addusertogroup")
-    public @ResponseBody String addUserToGroup(@RequestBody String username, @RequestParam String inviteCode) {
-        RunnerGroup runnerGroup = groupRepository.findGroupByInviteCode(inviteCode);
-        User user = accountRepository.findByUsername(username);
+    public @ResponseBody String addUserToGroup(@RequestBody AddUserToGroupRequest addUserToGroupRequest) {
+        String inviteCode = addUserToGroupRequest.getInviteCode();
+        String username = addUserToGroupRequest.getUsername();
+        try {
+            RunnerGroup runnerGroup = groupRepository.findGroupByInviteCode(inviteCode);
+            User user = accountRepository.findByUsername(username);
 
-        if (runnerGroup == null) {
-            return "Group with invite code " + inviteCode + " not found";
-        }
+            if (runnerGroup == null) {
+                return "Group with invite code " + inviteCode + " not found";
+            }
 
-        if (user.getRunnerGroup() != null) {
-            return "Already in a group";
-        }
+            if (user.getRunnerGroup() != null) {
+                return "Already in a group";
+            }
 
-        if (runnerGroup.isFull()) {
-            return "Group is full";
+            if (runnerGroup.isFull()) {
+                return "Group is full";
+            }
+            runnerGroup.addUser(user);
+            groupRepository.save(runnerGroup);
+            accountRepository.save(user);
+            ObjectMapper om = new ObjectMapper();
+            return om.writeValueAsString(runnerGroup);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+            return "ERROR: " + e;
         }
-        runnerGroup.addUser(user);
-        groupRepository.save(runnerGroup);
-        accountRepository.save(user);
-        return user.getUserName() + " added to " + runnerGroup.getTeamName();
     }
 
 
@@ -224,6 +232,11 @@ public class MainController {
     // TODO DIDDE Gör om till PostMapping?
     @GetMapping(value = "/fetchruns/{username}")
     public @ResponseBody String fetchRuns(@PathVariable String username) {
+
+        if (stravaUserRepository.findByUser_Username(username) == null){
+            return "ERROR: User " + username + " not found.";
+        }
+
         StravaUser stravaUser = stravaUserRepository.findByUser_Username(username);
         int stravaID = stravaUser.getId();
         StravaService myService = new StravaService(stravaUserRepository);
@@ -248,7 +261,8 @@ public class MainController {
             stravaRunRepository.save(run);
         }
         stravaUser.setTimeOfLatestFetchUNIX(currentSystemTime);
-        return "Done";
+        stravaUserRepository.save(stravaUser);
+        return "Done: " + stravaUser.toString();
 
     }
     @PostMapping(value = "/addrun", produces = "application/json")

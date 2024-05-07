@@ -85,4 +85,15 @@ public class ImageController {
         groupImageRepository.save(myImage);
         return "Image for " + groupName + " successfully updated.";
     }
+
+    @GetMapping(value = "/getUserImage/{userName}")
+    public @ResponseBody String getUserImage(@PathVariable String userName) {
+        if (userImageRepository.findByUserName(userName) == null) {
+            return "ERROR: No image exists for user.";
+        }
+        UserImage myImage = userImageRepository.findByUserName(userName);
+        String base64 = myImage.getBase64Image();
+
+        return base64;
+    }
 }
