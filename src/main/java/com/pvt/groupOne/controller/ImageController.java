@@ -28,9 +28,9 @@ public class ImageController {
             return "ERROR: Image already exists for user.";
         }
 
-        return "USERNAME: " + username + "BASE64: " + base64;
-
-        // UserImage myImage = new UserImage(username, base64);
+        
+        UserImage myImage = new UserImage(username, base64);
+        return "USERNAME: " + myImage.getUserName() + "BASE64: " + myImage.getBase64Image();
         // userImageRepository.save(myImage);
         // return "Image for " + username + " successfully saved.";
     }
