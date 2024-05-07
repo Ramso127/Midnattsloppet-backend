@@ -256,6 +256,9 @@ public class MainController {
 
         long latestFetch = stravaUser.getTimeOfLatestFetchUNIX();
         ArrayList<StravaRun> runList = myService.saveRunsFrom(stravaID, latestFetch, accessToken);
+        if (runList.isEmpty()){
+            return "ERROR: No runs available";
+        }
         for (StravaRun run : runList) {
             stravaRunRepository.save(run);
         }
@@ -264,6 +267,7 @@ public class MainController {
         return "Done: " + stravaUser.toString();
 
     }
+
     @PostMapping(value = "/addrun", produces = "application/json")
     public ResponseEntity<?> addRun(@RequestBody RunRequest runRequest) {
         // Check if the user exists
