@@ -1,8 +1,8 @@
 package com.pvt.groupOne.model;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
-import jakarta.persistence.Lob;
 import jakarta.persistence.Table;
 
 @Entity
@@ -11,7 +11,7 @@ public class UserImage {
     @Id
     private String userName;
 
-    @Lob
+    @Column(length = 150000)
     private String base64Image;
 
     public UserImage(String userName, String base64Image) {
