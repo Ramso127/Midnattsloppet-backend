@@ -104,4 +104,11 @@ public class StravaUser {
     public void setUser(User user) {
         this.user = user;
     }
+
+    @Override
+    public String toString() {
+        return "StravaUser [id=" + id + ", firstName=" + firstName + ", scope=" + scope + ", accessToken=" + accessToken
+                + ", refreshToken=" + refreshToken + ", expiresAt=" + expiresAt + ", timeOfLatestFetchUNIX="
+                + timeOfLatestFetchUNIX + ", user=" + user + "]";
+    }
 }
