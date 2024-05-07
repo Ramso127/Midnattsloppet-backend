@@ -86,8 +86,8 @@ public class ImageController {
         return "Image for " + groupName + " successfully updated.";
     }
 
-    @GetMapping(value = "/getUserImage")
-    public @ResponseBody String getUserImage(@RequestParam String userName) {
+    @GetMapping(value = "/getUserImage/{userName}")
+    public @ResponseBody String getUserImage(@PathVariable String userName) {
         if (userImageRepository.findByUserName(userName) == null) {
             return "ERROR: No image exists for user.";
         }
