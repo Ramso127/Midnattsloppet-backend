@@ -3,25 +3,30 @@ package com.pvt.groupOne.model;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.PrimaryKeyJoinColumn;
 
 @Entity
 public class StravaUser {
 
-    
     @Id
     @Column(name = "user_id")
     private int id;
-    
+
     private String firstName;
     private String scope;
     private String accessToken;
     private String refreshToken;
     private long expiresAt;
 
-    public StravaUser(){
-        
+    @OneToOne
+    @PrimaryKeyJoinColumn
+    private User user;
+
+    public StravaUser() {
+
     }
-    
+
     public StravaUser(int id, String firstName, String accessToken, String refreshToken, long expiresAt) {
         this.id = id;
         this.firstName = firstName;
@@ -78,4 +83,11 @@ public class StravaUser {
         this.expiresAt = expiresAt;
     }
 
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
 }
