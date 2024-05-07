@@ -255,13 +255,14 @@ public class MainController {
         }
 
         long latestFetch = stravaUser.getTimeOfLatestFetchUNIX();
-        ArrayList<StravaRun> runList = myService.saveRunsFrom(stravaID, latestFetch, accessToken);
-        for (StravaRun run : runList) {
-            stravaRunRepository.save(run);
-        }
-        stravaUser.setTimeOfLatestFetchUNIX(currentSystemTime);
-        stravaUserRepository.save(stravaUser);
-        return "Done: " + stravaUser.toString();
+        return String.valueOf(latestFetch);
+        // ArrayList<StravaRun> runList = myService.saveRunsFrom(stravaID, latestFetch, accessToken);
+        // for (StravaRun run : runList) {
+        //     stravaRunRepository.save(run);
+        // }
+        // stravaUser.setTimeOfLatestFetchUNIX(currentSystemTime);
+        // stravaUserRepository.save(stravaUser);
+        // return "Done: " + stravaUser.toString();
 
     }
     @PostMapping(value = "/addrun", produces = "application/json")
