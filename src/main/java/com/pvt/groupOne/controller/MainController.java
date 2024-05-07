@@ -177,8 +177,6 @@ public class MainController {
     @GetMapping("/saveauthenticateduser/{username}")
     public @ResponseBody String saveStravaToken(@PathVariable String username,
             @RequestParam(required = false) String error,
-    public @ResponseBody String saveStravaToken(@PathVariable String username,
-            @RequestParam(required = false) String error,
             @RequestParam("code") String authCode,
             @RequestParam("scope") String scope) {
 
@@ -197,7 +195,6 @@ public class MainController {
             StravaUser stravaUser = myExchanger.exchangeToken(authCode);
             stravaUser.setScope(scope);
 
-            if (accountRepository.findByUsername(username) == null) {
             if (accountRepository.findByUsername(username) == null) {
                 return "ERROR: username not found";
             }
@@ -219,6 +216,7 @@ public class MainController {
         }
 
     }
+    
 
     // TODO DIDDE Gör om till PostMapping?
     @GetMapping(value = "/saverunsfrom/{username}")
@@ -250,5 +248,6 @@ public class MainController {
         return "Done";
 
     }
+    
 
 }
