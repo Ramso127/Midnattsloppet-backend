@@ -20,7 +20,7 @@ public class ImageController {
     private GroupImageRepository groupImageRepository;
 
     @PostMapping(value = "/addUserImage")
-    public @ResponseBody String addUserImage(@RequestParam String userName, @RequestParam String base64) {
+    public @ResponseBody String addUserImage(@RequestParam String userName, @RequestBody String base64) {
         if (userImageRepository.findByUserName(userName) != null) {
             return "ERROR: Image already exists for user.";
         }
