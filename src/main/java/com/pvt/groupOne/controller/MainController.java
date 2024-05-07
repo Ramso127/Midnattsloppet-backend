@@ -173,7 +173,7 @@ public class MainController {
     }
 
     // TODO DIDDE change return statements
-    // TODO LÄGG IN CURRENT UNIX TIME TILL STRAVA USER
+    // TODO Ändra till PostMapping? Behöver något mer ändras än så?
     @GetMapping("/saveauthenticateduser/{username}")
     public @ResponseBody String saveStravaToken(@PathVariable String username,
             @RequestParam(required = false) String error,
@@ -215,9 +215,9 @@ public class MainController {
 
     }
 
-    // TODO DIDDE TA BORT UNIXTIME
-    @GetMapping(value = "/saverunsfrom/{username}/{unixTime}")
-    public @ResponseBody String saveRunsFrom(@PathVariable String username, @PathVariable int unixTime) {
+    // TODO DIDDE Gör om till PostMapping?
+    @GetMapping(value = "/fetchruns/{username}")
+    public @ResponseBody String fetchRuns(@PathVariable String username) {
         StravaUser stravaUser = stravaUserRepository.findByUser_Username(username);
         int stravaID = stravaUser.getId();
         StravaService myService = new StravaService(stravaUserRepository);
@@ -235,10 +235,13 @@ public class MainController {
             }
         }
 
-        ArrayList<StravaRun> runList = myService.saveRunsFrom(stravaID, unixTime, accessToken);
+        long latestFetch = stravaUser.getTimeOfLatestFetchUNIX();
+
+        ArrayList<StravaRun> runList = myService.saveRunsFrom(stravaID, latestFetch, accessToken);
         for (StravaRun run : runList) {
             stravaRunRepository.save(run);
         }
+        stravaUser.setTimeOfLatestFetchUNIX(currentSystemTime);
         return "Done";
 
     }

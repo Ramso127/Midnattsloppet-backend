@@ -26,24 +26,26 @@ public class StravaService {
 
     private final StravaUserRepository stravaUserRepository;
 
+    private final String URL = "https://www.strava.com/oauth/token";
+    private final String CLIENT_ID = "125803";
+    private final String CLIENT_SECRET = "3e9f7fcd913ece59cb5bccd8a89444ab9f452ec5";
+    private String grantType;
+
     public StravaService(StravaUserRepository stravaUserRepository) {
         this.stravaUserRepository = stravaUserRepository;
     }
 
     public StravaUser exchangeToken(String authCode) {
 
-        final String URL = "https://www.strava.com/oauth/token";
-        final String clientID = "125803";
-        final String clientSecret = "3e9f7fcd913ece59cb5bccd8a89444ab9f452ec5";
-        final String grantType = "authorization_code";
+        grantType = "authorization_code";
 
         HttpClient httpClient = HttpClientBuilder.create().build();
 
         try {
             // Build the URI with parameters
             URI uri = new URIBuilder(URL)
-                    .setParameter("client_id", clientID)
-                    .setParameter("client_secret", clientSecret)
+                    .setParameter("client_id", CLIENT_ID)
+                    .setParameter("client_secret", CLIENT_SECRET)
                     .setParameter("code", authCode)
                     .setParameter("grant_type", grantType)
                     .build();
@@ -81,8 +83,9 @@ public class StravaService {
                 int id = athleteNode.has("id") ? athleteNode.get("id").asInt() : null;
                 String firstName = athleteNode.has("firstname") ? athleteNode.get("firstname").asText() : null;
 
+                long currentSystemTime = System.currentTimeMillis() / 1000L;
                 return new StravaUser(id, firstName, accessToken, refreshToken,
-                        expiresAt);
+                        expiresAt, currentSystemTime);
 
             }
 
@@ -98,10 +101,7 @@ public class StravaService {
 
     public boolean requestNewTokens(String currentRefreshToken, int userID) {
 
-        final String URL = "https://www.strava.com/oauth/token";
-        final String CLIENT_ID = "125803";
-        final String CLIENT_SECRET = "3e9f7fcd913ece59cb5bccd8a89444ab9f452ec5";
-        final String GRANT_TYPE = "refresh_token";
+        grantType = "refresh_token";
 
         HttpClient httpClient = HttpClientBuilder.create().build();
 
@@ -110,7 +110,7 @@ public class StravaService {
             URI uri = new URIBuilder(URL)
                     .setParameter("client_id", CLIENT_ID)
                     .setParameter("client_secret", CLIENT_SECRET)
-                    .setParameter("grant_type", GRANT_TYPE)
+                    .setParameter("grant_type", grantType)
                     .setParameter("refresh_token", currentRefreshToken)
                     .build();
 
@@ -161,7 +161,7 @@ public class StravaService {
 
     // TODO DIDDE: Finish this method, change from Post to Get, possibly change
     // return type from boolean
-    public ArrayList<StravaRun> saveRunsFrom(int stravaID, int unixTimeStamp, String accessToken) {
+    public ArrayList<StravaRun> saveRunsFrom(int stravaID, long unixTimeStamp, String accessToken) {
 
         final String URL = "https://www.strava.com/api/v3/athlete/activities";
 
@@ -197,7 +197,7 @@ public class StravaService {
                 }
 
                 return runs;
-                
+
             } else {
                 System.out.println("Failed to retrieve data. Status code: " + response.getStatusLine().getStatusCode());
                 return null;
