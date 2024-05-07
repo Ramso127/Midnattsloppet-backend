@@ -16,9 +16,6 @@ import jakarta.persistence.OneToOne;
 public class User {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
-
     @Column(name = "user_name", unique = true)
     private String username;
 

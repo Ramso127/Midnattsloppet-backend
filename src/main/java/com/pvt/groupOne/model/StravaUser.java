@@ -5,8 +5,8 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
-import jakarta.persistence.PrimaryKeyJoinColumn;
 
 @Entity
 public class StravaUser {
@@ -22,7 +22,7 @@ public class StravaUser {
     private long expiresAt;
 
     @OneToOne
-    @PrimaryKeyJoinColumn
+    @JoinColumn(name = "user_name", referencedColumnName = "user_name")
     @JsonIgnoreProperties("stravaUser")
     private User user;
 
