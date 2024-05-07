@@ -30,9 +30,8 @@ public class ImageController {
 
         
         UserImage myImage = new UserImage(username, base64);
-        return "USERNAME: " + myImage.getUserName() + "BASE64: " + myImage.getBase64Image();
-        // userImageRepository.save(myImage);
-        // return "Image for " + username + " successfully saved.";
+        userImageRepository.save(myImage);
+        return "Image for " + username + " successfully saved.";
     }
 
     @PostMapping(value = "/addGroupImage")
