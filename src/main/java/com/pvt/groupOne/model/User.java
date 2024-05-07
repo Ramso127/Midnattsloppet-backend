@@ -1,13 +1,12 @@
 package com.pvt.groupOne.model;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
@@ -17,12 +16,12 @@ import jakarta.persistence.OneToOne;
 public class User {
 
     @Id
-    @Column(name = "user_name")
+    @Column(name = "user_name", unique = true)
     private String username;
 
     @OneToOne(mappedBy = "user")
     private UserInfo userInfo;
-    
+
     @JsonIgnore
     private String password;
 
@@ -30,11 +29,26 @@ public class User {
 
     private String companyName;
 
-
     @ManyToOne
     @JsonIgnoreProperties("users") // Ignore the bidirectional relationship during serialization
     @JoinColumn(name = "runner_group_id")
     private RunnerGroup runnerGroup;
+
+    @OneToOne(mappedBy = "user")
+    @JsonIgnoreProperties("user")
+    private StravaUser stravaUser;
+
+    public User() {
+
+    }
+
+    public StravaUser getStravaUser() {
+        return stravaUser;
+    }
+
+    public void setStravaUser(StravaUser stravaUser) {
+        this.stravaUser = stravaUser;
+    }
 
     public String getUserName() {
         return username;
@@ -68,8 +82,6 @@ public class User {
     public String toString() {
         return "{\"username\": \"" + username + "\", \"email\": \"" + email + "\"}";
     }
-
-    
 
     public void setRunnerGroup(RunnerGroup runnerGroup) {
         this.runnerGroup = runnerGroup;

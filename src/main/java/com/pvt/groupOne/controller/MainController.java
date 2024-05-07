@@ -45,7 +45,6 @@ public class MainController {
     @Autowired
     private RunnerGroupService runnerGroupService;
 
-
     @GetMapping(value = "/hello")
     public @ResponseBody String testMethod() {
         return "Hello this is Didrik's test";
@@ -104,10 +103,10 @@ public class MainController {
         }
     }
 
-    @PostMapping(value = "/addgroup",  produces = "application/json")
+    @PostMapping(value = "/addgroup", produces = "application/json")
     public @ResponseBody String addGroup(@RequestBody GroupRequest groupRequest) {
-        String teamName = groupRequest.getTeamName();
-        String userName = groupRequest.getUserName();
+        String teamName = groupRequest.getTeamname();
+        String userName = groupRequest.getUsername();
         try {
             User user = accountRepository.findByUsername(userName);
 
@@ -173,9 +172,10 @@ public class MainController {
             return false;
     }
 
-    // TODO DIDDE Make this return a boolean when everything works 100%
-    @GetMapping("/saveauthenticateduser")
-    public @ResponseBody String saveStravaToken(@RequestParam(required = false) String error,
+    // TODO DIDDE change return statements
+    // TODO LÄGG IN CURRENT UNIX TIME TILL STRAVA USER
+    @GetMapping("/saveauthenticateduser/{username}")
+    public @ResponseBody String saveStravaToken(@PathVariable String username, @RequestParam(required = false) String error,
             @RequestParam("code") String authCode,
             @RequestParam("scope") String scope) {
 
@@ -191,33 +191,41 @@ public class MainController {
         try {
             StravaService myExchanger = new StravaService(stravaUserRepository);
 
-            StravaUser newUser = myExchanger.exchangeToken(authCode);
-            newUser.setScope(scope);
+            StravaUser stravaUser = myExchanger.exchangeToken(authCode);
+            stravaUser.setScope(scope);
 
-            String result = "ID: " + newUser.getId() + "\nName: " + newUser.getFirstName() + "\n Scope: "
-                    + newUser.getScope() + "\nAccess token: " + newUser.getAccessToken() + "\nRefresh token: "
-                    + newUser.getRefreshToken() + "\nExpires at: " + newUser.getExpiresAt();
+            if (accountRepository.findByUsername(username) == null){
+                return "ERROR: username not found";
+            }
+            
+            User newUser = accountRepository.findByUsername(username);
+            stravaUser.setUser(newUser);
+            
+            String result = "ID: " + stravaUser.getId() + "\nName: " + stravaUser.getFirstName() + "\n Scope: "
+                    + stravaUser.getScope() + "\nAccess token: " + stravaUser.getAccessToken() + "\nRefresh token: "
+                    + stravaUser.getRefreshToken() + "\nExpires at: " + stravaUser.getExpiresAt();
 
-            stravaUserRepository.save(newUser);
-            return result;
+            stravaUserRepository.save(stravaUser);
+            return "Strava account with this information successfully connected: " + result;
 
         } catch (Exception e) {
             return "Error: " + e;
         }
 
     }
-
-    @GetMapping(value = "/saverunsfrom/{stravaID}/{unixTime}")
-    public @ResponseBody String saveRunsFrom(@PathVariable int stravaID, @PathVariable int unixTime) {
-        StravaUser myUser = stravaUserRepository.findById(stravaID);
+    // TODO DIDDE TA BORT UNIXTIME
+    @GetMapping(value = "/saverunsfrom/{username}/{unixTime}")
+    public @ResponseBody String saveRunsFrom(@PathVariable String username, @PathVariable int unixTime) {
+        StravaUser stravaUser = stravaUserRepository.findByUsername(username);
+        int stravaID = stravaUser.getId();
         StravaService myService = new StravaService(stravaUserRepository);
-        String accessToken = myUser.getAccessToken();
+        String accessToken = stravaUser.getAccessToken();
         long currentSystemTime = System.currentTimeMillis() / 1000L;
 
         // If the access token has expired,
         // request a new one and add it to the database
-        if (myUser.getExpiresAt() < currentSystemTime) {
-            boolean result = myService.requestNewTokens(myUser.getRefreshToken(), stravaID);
+        if (stravaUser.getExpiresAt() < currentSystemTime) {
+            boolean result = myService.requestNewTokens(stravaUser.getRefreshToken(), stravaID);
             if (result) {
                 System.out.println("New token successfully fetched");
             } else {
@@ -232,7 +240,5 @@ public class MainController {
         return "Done";
 
     }
-
-
 
 }
