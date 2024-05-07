@@ -174,8 +174,8 @@ public class MainController {
     }
 
     // TODO DIDDE Make this return a boolean when everything works 100%
-    @GetMapping("/saveauthenticateduser")
-    public @ResponseBody String saveStravaToken(@RequestParam(required = false) String error,
+    @GetMapping("/saveauthenticateduser/{username}")
+    public @ResponseBody String saveStravaToken(@PathVariable String username, @RequestParam(required = false) String error,
             @RequestParam("code") String authCode,
             @RequestParam("scope") String scope) {
 
@@ -191,14 +191,21 @@ public class MainController {
         try {
             StravaService myExchanger = new StravaService(stravaUserRepository);
 
-            StravaUser newUser = myExchanger.exchangeToken(authCode);
-            newUser.setScope(scope);
+            StravaUser stravaUser = myExchanger.exchangeToken(authCode);
+            stravaUser.setScope(scope);
 
-            String result = "ID: " + newUser.getId() + "\nName: " + newUser.getFirstName() + "\n Scope: "
-                    + newUser.getScope() + "\nAccess token: " + newUser.getAccessToken() + "\nRefresh token: "
-                    + newUser.getRefreshToken() + "\nExpires at: " + newUser.getExpiresAt();
+            if (accountRepository.findByUsername(username) == null){
+                return "ERROR: username not found";
+            }
+            
+            User newUser = accountRepository.findByUsername(username);
+            stravaUser.setUser(newUser);
+            
+            String result = "ID: " + stravaUser.getId() + "\nName: " + stravaUser.getFirstName() + "\n Scope: "
+                    + stravaUser.getScope() + "\nAccess token: " + stravaUser.getAccessToken() + "\nRefresh token: "
+                    + stravaUser.getRefreshToken() + "\nExpires at: " + stravaUser.getExpiresAt();
 
-            stravaUserRepository.save(newUser);
+            stravaUserRepository.save(stravaUser);
             return result;
 
         } catch (Exception e) {
