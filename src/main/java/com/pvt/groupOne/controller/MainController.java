@@ -221,6 +221,11 @@ public class MainController {
     // TODO DIDDE Gör om till PostMapping?
     @GetMapping(value = "/fetchruns/{username}")
     public @ResponseBody String fetchRuns(@PathVariable String username) {
+
+        if (stravaUserRepository.findByUser_Username(username) == null){
+            return "ERROR: User " + username + " not found.";
+        }
+
         StravaUser stravaUser = stravaUserRepository.findByUser_Username(username);
         int stravaID = stravaUser.getId();
         StravaService myService = new StravaService(stravaUserRepository);
@@ -246,7 +251,7 @@ public class MainController {
         }
         stravaUser.setTimeOfLatestFetchUNIX(currentSystemTime);
         stravaUserRepository.save(stravaUser);
-        return "Done";
+        return "Done: " + stravaUser.toString();
 
     }
 
