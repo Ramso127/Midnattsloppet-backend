@@ -8,6 +8,7 @@ import jakarta.persistence.Table;
 @Entity
 @Table(name = "UserImage")
 public class UserImage {
+
     @Id
     private String userName;
 
@@ -36,5 +37,10 @@ public class UserImage {
 
     public void setBase64Image(String base64Image) {
         this.base64Image = base64Image;
+    }
+
+    @Override
+    public String toString() {
+        return "UserImage [userName=" + userName + ", base64Image=" + base64Image + "]";
     }
 }
