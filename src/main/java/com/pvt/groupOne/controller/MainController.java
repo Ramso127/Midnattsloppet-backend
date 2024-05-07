@@ -199,10 +199,8 @@ public class MainController {
                 return "ERROR: username not found";
             }
 
-
             User newUser = accountRepository.findByUsername(username);
             stravaUser.setUser(newUser);
-
 
             String result = "ID: " + stravaUser.getId() + "\nName: " + stravaUser.getFirstName() + "\n Scope: "
                     + stravaUser.getScope() + "\nAccess token: " + stravaUser.getAccessToken() + "\nRefresh token: "
@@ -216,11 +214,10 @@ public class MainController {
         }
 
     }
-    
 
     // TODO DIDDE Gör om till PostMapping?
-    @GetMapping(value = "/saverunsfrom/{username}")
-    public @ResponseBody String saveRunsFrom(@PathVariable String username) {
+    @GetMapping(value = "/fetchruns/{username}")
+    public @ResponseBody String fetchRuns(@PathVariable String username) {
         StravaUser stravaUser = stravaUserRepository.findByUsername(username);
         int stravaID = stravaUser.getId();
         StravaService myService = new StravaService(stravaUserRepository);
@@ -248,6 +245,5 @@ public class MainController {
         return "Done";
 
     }
-    
 
 }
