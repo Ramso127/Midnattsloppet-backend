@@ -245,6 +245,7 @@ public class MainController {
             stravaRunRepository.save(run);
         }
         stravaUser.setTimeOfLatestFetchUNIX(currentSystemTime);
+        stravaUserRepository.save(stravaUser);
         return "Done";
 
     }
