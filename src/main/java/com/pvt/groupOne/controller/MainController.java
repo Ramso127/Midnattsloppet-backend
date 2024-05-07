@@ -271,7 +271,7 @@ public class MainController {
         stravaUser.setTimeOfLatestFetchUNIX(currentSystemTime);
         stravaUserRepository.save(stravaUser);
 
-        if (counter > 1){
+        if (counter > 1) {
             runWord += "s";
         }
         return "Done. " + counter + runWord + " added.";
