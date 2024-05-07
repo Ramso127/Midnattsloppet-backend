@@ -6,6 +6,7 @@ import com.pvt.groupOne.model.StravaUser;
 
 public interface StravaUserRepository extends CrudRepository<StravaUser, Integer> {
     StravaUser findById(int id);
-    StravaUser findByUsername(String username);
+
+    StravaUser findByUser_Username(String username);
 
 }

@@ -218,7 +218,7 @@ public class MainController {
     // TODO DIDDE TA BORT UNIXTIME
     @GetMapping(value = "/saverunsfrom/{username}/{unixTime}")
     public @ResponseBody String saveRunsFrom(@PathVariable String username, @PathVariable int unixTime) {
-        StravaUser stravaUser = stravaUserRepository.findByUsername(username);
+        StravaUser stravaUser = stravaUserRepository.findByUser_Username(username);
         int stravaID = stravaUser.getId();
         StravaService myService = new StravaService(stravaUserRepository);
         String accessToken = stravaUser.getAccessToken();
