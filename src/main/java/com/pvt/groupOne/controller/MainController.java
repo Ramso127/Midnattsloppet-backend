@@ -172,7 +172,8 @@ public class MainController {
             return false;
     }
 
-    // TODO DIDDE Make this return a boolean when everything works 100%
+    // TODO DIDDE change return statements
+    // TODO LÄGG IN CURRENT UNIX TIME TILL STRAVA USER
     @GetMapping("/saveauthenticateduser/{username}")
     public @ResponseBody String saveStravaToken(@PathVariable String username, @RequestParam(required = false) String error,
             @RequestParam("code") String authCode,
@@ -205,25 +206,26 @@ public class MainController {
                     + stravaUser.getRefreshToken() + "\nExpires at: " + stravaUser.getExpiresAt();
 
             stravaUserRepository.save(stravaUser);
-            return result;
+            return "Strava account with this information successfully connected: " + result;
 
         } catch (Exception e) {
             return "Error: " + e;
         }
 
     }
-
-    @GetMapping(value = "/saverunsfrom/{stravaID}/{unixTime}")
-    public @ResponseBody String saveRunsFrom(@PathVariable int stravaID, @PathVariable int unixTime) {
-        StravaUser myUser = stravaUserRepository.findById(stravaID);
+    // TODO DIDDE TA BORT UNIXTIME
+    @GetMapping(value = "/saverunsfrom/{username}/{unixTime}")
+    public @ResponseBody String saveRunsFrom(@PathVariable String username, @PathVariable int unixTime) {
+        StravaUser stravaUser = stravaUserRepository.findByUsername(username);
+        int stravaID = stravaUser.getId();
         StravaService myService = new StravaService(stravaUserRepository);
-        String accessToken = myUser.getAccessToken();
+        String accessToken = stravaUser.getAccessToken();
         long currentSystemTime = System.currentTimeMillis() / 1000L;
 
         // If the access token has expired,
         // request a new one and add it to the database
-        if (myUser.getExpiresAt() < currentSystemTime) {
-            boolean result = myService.requestNewTokens(myUser.getRefreshToken(), stravaID);
+        if (stravaUser.getExpiresAt() < currentSystemTime) {
+            boolean result = myService.requestNewTokens(stravaUser.getRefreshToken(), stravaID);
             if (result) {
                 System.out.println("New token successfully fetched");
             } else {
