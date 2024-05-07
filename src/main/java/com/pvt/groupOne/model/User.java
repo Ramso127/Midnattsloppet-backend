@@ -33,7 +33,12 @@ public class User {
     private RunnerGroup runnerGroup;
 
     @OneToOne(mappedBy = "user")
+    @JsonIgnoreProperties("user")
     private StravaUser stravaUser;
+
+    public User() {
+
+    }
 
     public StravaUser getStravaUser() {
         return stravaUser;
