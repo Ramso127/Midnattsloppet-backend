@@ -28,9 +28,11 @@ public class ImageController {
             return "ERROR: Image already exists for user.";
         }
 
-        UserImage myImage = new UserImage(username, base64);
-        userImageRepository.save(myImage);
-        return "Image for " + username + " successfully saved.";
+        return "USERNAME: " + username + "BASE64: " + base64;
+
+        // UserImage myImage = new UserImage(username, base64);
+        // userImageRepository.save(myImage);
+        // return "Image for " + username + " successfully saved.";
     }
 
     @PostMapping(value = "/addGroupImage")
