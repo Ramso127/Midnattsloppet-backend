@@ -28,9 +28,6 @@ public class Run {
     @Column(nullable = false)
     private String totalTime;  // Total time as String, can be in format HH:mm:ss
 
-    @Column(nullable = false)
-    private double averageSpeed;  // Average speed in km/h
-
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private User user;  // Link to User entity
@@ -68,14 +65,6 @@ public class Run {
         this.totalTime = totalTime;
     }
 
-    public double getAverageSpeed() {
-        return averageSpeed;
-    }
-
-    public void setAverageSpeed(double averageSpeed) {
-        this.averageSpeed = averageSpeed;
-    }
-
     public User getUser() {
         return user;
     }
@@ -91,7 +80,6 @@ public class Run {
                ", date=" + date +
                ", totalDistance=" + totalDistance +
                ", totalTime='" + totalTime + '\'' +
-               ", averageSpeed=" + averageSpeed +
                ", user=" + user +
                '}';
     }
