@@ -20,6 +20,7 @@ public class StravaUser {
     private String accessToken;
     private String refreshToken;
     private long expiresAt;
+    private long timeOfLatestFetchUNIX;
 
     @OneToOne
     @JoinColumn(name = "user_name", referencedColumnName = "user_name")
@@ -30,12 +31,22 @@ public class StravaUser {
 
     }
 
-    public StravaUser(int id, String firstName, String accessToken, String refreshToken, long expiresAt) {
+    public StravaUser(int id, String firstName, String accessToken, String refreshToken, long expiresAt,
+            long timeOfLatestFetchUNIX) {
         this.id = id;
         this.firstName = firstName;
         this.accessToken = accessToken;
         this.refreshToken = refreshToken;
         this.expiresAt = expiresAt;
+        this.timeOfLatestFetchUNIX = timeOfLatestFetchUNIX;
+    }
+
+    public long getTimeOfLatestFetchUNIX() {
+        return timeOfLatestFetchUNIX;
+    }
+
+    public void setTimeOfLatestFetchUNIX(long timeOfLatestFetchUNIX) {
+        this.timeOfLatestFetchUNIX = timeOfLatestFetchUNIX;
     }
 
     public String getFirstName() {

@@ -173,9 +173,10 @@ public class MainController {
     }
 
     // TODO DIDDE change return statements
-    // TODO LÄGG IN CURRENT UNIX TIME TILL STRAVA USER
+    // TODO Ändra till PostMapping? Behöver något mer ändras än så?
     @GetMapping("/saveauthenticateduser/{username}")
-    public @ResponseBody String saveStravaToken(@PathVariable String username, @RequestParam(required = false) String error,
+    public @ResponseBody String saveStravaToken(@PathVariable String username,
+            @RequestParam(required = false) String error,
             @RequestParam("code") String authCode,
             @RequestParam("scope") String scope) {
 
@@ -194,13 +195,13 @@ public class MainController {
             StravaUser stravaUser = myExchanger.exchangeToken(authCode);
             stravaUser.setScope(scope);
 
-            if (accountRepository.findByUsername(username) == null){
+            if (accountRepository.findByUsername(username) == null) {
                 return "ERROR: username not found";
             }
-            
+
             User newUser = accountRepository.findByUsername(username);
             stravaUser.setUser(newUser);
-            
+
             String result = "ID: " + stravaUser.getId() + "\nName: " + stravaUser.getFirstName() + "\n Scope: "
                     + stravaUser.getScope() + "\nAccess token: " + stravaUser.getAccessToken() + "\nRefresh token: "
                     + stravaUser.getRefreshToken() + "\nExpires at: " + stravaUser.getExpiresAt();
@@ -213,10 +214,11 @@ public class MainController {
         }
 
     }
-    // TODO DIDDE TA BORT UNIXTIME
-    @GetMapping(value = "/saverunsfrom/{username}/{unixTime}")
-    public @ResponseBody String saveRunsFrom(@PathVariable String username, @PathVariable int unixTime) {
-        StravaUser stravaUser = stravaUserRepository.findByUsername(username);
+
+    // TODO DIDDE Gör om till PostMapping?
+    @GetMapping(value = "/fetchruns/{username}")
+    public @ResponseBody String fetchRuns(@PathVariable String username) {
+        StravaUser stravaUser = stravaUserRepository.findByUser_Username(username);
         int stravaID = stravaUser.getId();
         StravaService myService = new StravaService(stravaUserRepository);
         String accessToken = stravaUser.getAccessToken();
@@ -233,10 +235,13 @@ public class MainController {
             }
         }
 
-        ArrayList<StravaRun> runList = myService.saveRunsFrom(stravaID, unixTime, accessToken);
+        long latestFetch = stravaUser.getTimeOfLatestFetchUNIX();
+
+        ArrayList<StravaRun> runList = myService.saveRunsFrom(stravaID, latestFetch, accessToken);
         for (StravaRun run : runList) {
             stravaRunRepository.save(run);
         }
+        stravaUser.setTimeOfLatestFetchUNIX(currentSystemTime);
         return "Done";
 
     }
