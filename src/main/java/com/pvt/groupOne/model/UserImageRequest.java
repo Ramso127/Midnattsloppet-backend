@@ -1,6 +1,6 @@
 package com.pvt.groupOne.model;
 
-public class AddUserImageRequest {
+public class UserImageRequest {
     String username;
     String base64;
 
