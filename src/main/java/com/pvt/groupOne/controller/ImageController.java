@@ -1,5 +1,6 @@
 package com.pvt.groupOne.controller;
 
+import com.pvt.groupOne.model.AddUserImageRequest;
 import com.pvt.groupOne.model.GroupImage;
 import com.pvt.groupOne.model.UserImage;
 import com.pvt.groupOne.repository.GroupImageRepository;
@@ -20,14 +21,16 @@ public class ImageController {
     private GroupImageRepository groupImageRepository;
 
     @PostMapping(value = "/addUserImage")
-    public @ResponseBody String addUserImage(@RequestParam String userName, @RequestBody String base64) {
-        if (userImageRepository.findByUserName(userName) != null) {
+    public @ResponseBody String addUserImage(@RequestBody AddUserImageRequest addUserImageRequest) {
+        String username = addUserImageRequest.getUsername();
+        String base64 = addUserImageRequest.getBase64();
+        if (userImageRepository.findByUserName(username) != null) {
             return "ERROR: Image already exists for user.";
         }
 
-        UserImage myImage = new UserImage(userName, base64);
+        UserImage myImage = new UserImage(username, base64);
         userImageRepository.save(myImage);
-        return "Image for " + userName + " successfully saved.";
+        return "Image for " + username + " successfully saved.";
     }
 
     @PostMapping(value = "/addGroupImage")
