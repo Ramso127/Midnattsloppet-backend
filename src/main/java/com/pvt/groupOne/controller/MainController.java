@@ -124,7 +124,10 @@ public class MainController {
     }
 
     @PostMapping(value = "/addusertogroup")
-    public @ResponseBody String addUserToGroup(@RequestBody String username, @RequestParam String inviteCode) {
+    public @ResponseBody String addUserToGroup(@RequestBody AddUserToGroupRequest addUserToGroupRequest) {
+        String inviteCode = addUserToGroupRequest.getInviteCode();
+        String username = addUserToGroupRequest.getUsername();
+
         RunnerGroup runnerGroup = groupRepository.findGroupByInviteCode(inviteCode);
         User user = accountRepository.findByUsername(username);
 
