@@ -32,6 +32,7 @@ public class Run {
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
+    @JsonIgnoreProperties("user") // Ignore the user field in User entity during serialization
     private User user; // Link to User entity
 
     public Long getId() {
