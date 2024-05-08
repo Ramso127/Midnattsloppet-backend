@@ -39,7 +39,7 @@ public class EmailController {
         String url = contextPath + "/resetPassword?token=" + token.getToken();
         EmailRequest emailRequest = new EmailRequest();
         emailRequest.setSubject("Reset Password");
-        emailRequest.setText("Hello " + user.getUserName() + ", \r\n" +
+        emailRequest.setText("Hello " + user.getUsername() + ", \r\n" +
                 "Please click the following link to reset your password: \r\n" + url);
         return sendEmail(user.getEmail(), emailRequest);
     }
@@ -58,7 +58,7 @@ public class EmailController {
                     + "/resetPassword?token=" + token.getToken();
             EmailRequest emailRequest = new EmailRequest();
             emailRequest.setSubject("Reset Password");
-            emailRequest.setText("Hello " + user.getUserName() + ", \r\n" +
+            emailRequest.setText("Hello " + user.getUsername() + ", \r\n" +
                     "Please click the following link to reset your password: \r\n" + url);
             sendEmail(user.getEmail(), emailRequest);
 

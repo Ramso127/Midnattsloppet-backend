@@ -52,7 +52,7 @@ public class User {
         this.stravaUser = stravaUser;
     }
 
-    public String getUserName() {
+    public String getUsername() {
         return username;
     }
 
@@ -86,10 +86,6 @@ public class User {
         if (!runnerGroup.getUsers().contains(this)) {
             runnerGroup.getUsers().add(this);
         }
-    }
-
-    public String getUsername() {
-        return username;
     }
 
     public RunnerGroup getRunnerGroup() {

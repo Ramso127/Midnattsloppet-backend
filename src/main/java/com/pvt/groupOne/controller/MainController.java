@@ -84,7 +84,7 @@ public class MainController {
 
     @DeleteMapping(value = "/removeuser") // eller "/removeuser/{userId}"
     public @ResponseBody String removeUser(@RequestBody User user) {
-        if (!accountRepository.existsByUsername(user.getUserName())) {
+        if (!accountRepository.existsByUsername(user.getUsername())) {
             return "No such user exists";
         }
         accountRepository.delete(user);
@@ -193,9 +193,15 @@ public class MainController {
             @RequestParam(required = false) String error,
             @RequestParam("code") String authCode,
             @RequestParam("scope") String scope) {
+
+        StravaUser myUser = stravaUserRepository.findByUser_Username(username);
+
+        if (myUser != null && myUser.getUser().getUsername().equals(username)){
+            return "ERROR: user " + username + " is already connected to this Strava account.";
+        }
         
-        if (stravaUserRepository.findByUser_Username(username) != null){
-            return "ERROR: User " + username + " already has a connected Strava account.";
+        if (myUser != null){
+            return "ERROR: user " + username + " already has a connected Strava account.";
         }
 
         if (error != null && error.equals("access_denied")) {
