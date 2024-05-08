@@ -24,6 +24,23 @@ public interface RunRepository extends JpaRepository<Run, Long> {
     @Query("SELECT r.user FROM Run r WHERE r.id = :id")
     User findUserFromRunById(@Param("id") Long id);
 
+    @Query("SELECT r.totalTime FROM Run r WHERE r.user.username = :username")
+    List<String> getAllRunTimeByUser(@Param("username") String username);
+
+    @Query("SELECT r.totalDistance FROM Run r WHERE r.user.username = :username")
+    List<Double> getAllRunDistanceByUser(@Param("username") String username);
+
+    @Query("SELECT r.date FROM Run r WHERE r.user.username = :username")
+    List<LocalDate> getAllRunDates(@Param("username") String username);
+
+    @Query("SELECT r FROM Run r WHERE r.user.username = :username")
+    List<Run> getAllRunsByUser(@Param("username") String username);
+
+    @Query("SELECT r.id FROM Run r WHERE r.user.username = :username")
+    List<Long> getAllRunIdsByUser(@Param("username") String username);
+
+
+
     // Find top 3 runs for a user ordered by distance
     @Query("SELECT r FROM Run r WHERE r.user.username = :username ORDER BY r.totalDistance DESC")
     List<Run> findTop3RunsByDistance(String username);
