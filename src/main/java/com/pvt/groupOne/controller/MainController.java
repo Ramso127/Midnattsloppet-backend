@@ -216,12 +216,8 @@ public class MainController {
             User newUser = accountRepository.findByUsername(username);
             stravaUser.setUser(newUser);
 
-            String result = "ID: " + stravaUser.getId() + "\nName: " + stravaUser.getFirstName() + "\n Scope: "
-                    + stravaUser.getScope() + "\nAccess token: " + stravaUser.getAccessToken() + "\nRefresh token: "
-                    + stravaUser.getRefreshToken() + "\nExpires at: " + stravaUser.getExpiresAt();
-
             stravaUserRepository.save(stravaUser);
-            return "Strava account with this information successfully connected: " + result;
+            return "Success! Thank you " + stravaUser.getFirstName() + ".";
 
         } catch (Exception e) {
             return "Error: " + e;
