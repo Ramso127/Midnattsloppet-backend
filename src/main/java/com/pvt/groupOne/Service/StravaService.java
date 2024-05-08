@@ -190,7 +190,7 @@ public class StravaService {
                     if (activityNode.get("type").asText().equals("Run")) {
                         double distance = activityNode.get("distance").asDouble();
                         int elapsedTime = activityNode.get("elapsed_time").asInt();
-                        String date = activityNode.get("start_date").asText();
+                        String date = activityNode.get("start_date_local").asText();
                         StravaRun currentRun = new StravaRun(date, distance, elapsedTime);
                         runs.add(currentRun);
                     }
