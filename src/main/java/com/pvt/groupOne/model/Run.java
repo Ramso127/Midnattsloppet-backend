@@ -2,6 +2,8 @@ package com.pvt.groupOne.model;
 
 import java.time.LocalDate;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -23,15 +25,15 @@ public class Run {
     private LocalDate date;
 
     @Column(nullable = false)
-    private double totalDistance;  // Total distance in kilometers
+    private double totalDistance; // Total distance in kilometers
 
     @Column(nullable = false)
-    private String totalTime;  // Total time as String, can be in format HH:mm:ss
+    private String totalTime; // Total time as String, can be in format HH:mm:ss
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
-    private User user;  // Link to User entity
-
+    @JsonIgnoreProperties("user") // Ignore the user field in User entity during serialization
+    private User user; // Link to User entity
 
     public Long getId() {
         return id;
@@ -72,16 +74,15 @@ public class Run {
     public void setUser(User user) {
         this.user = user;
     }
-    
+
     @Override
     public String toString() {
         return "Run{" +
-               "id=" + id +
-               ", date=" + date +
-               ", totalDistance=" + totalDistance +
-               ", totalTime='" + totalTime + '\'' +
-               ", user=" + user +
-               '}';
+                "id=" + id +
+                ", date=" + date +
+                ", totalDistance=" + totalDistance +
+                ", totalTime='" + totalTime + '\'' +
+                ", user=" + user +
+                '}';
     }
 }
-
