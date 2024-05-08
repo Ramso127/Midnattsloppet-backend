@@ -193,6 +193,10 @@ public class MainController {
             @RequestParam(required = false) String error,
             @RequestParam("code") String authCode,
             @RequestParam("scope") String scope) {
+        
+        if (stravaUserRepository.findByUser_Username(username) != null){
+            return "ERROR: User " + username + " already has a connected Strava account.";
+        }
 
         if (error != null && error.equals("access_denied")) {
             System.out.println("Access denied");
