@@ -40,6 +40,10 @@ public class User {
     @JsonIgnoreProperties("user") // Ignore the user field in Run entity during serialization
     private List<Run> runs = new ArrayList<>();
 
+    @OneToOne(mappedBy = "user")
+    @JoinColumn(name = "username", referencedColumnName = "username")
+    private UserImage userImage;
+
     public User() {
 
     }
