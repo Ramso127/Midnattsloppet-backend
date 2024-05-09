@@ -41,7 +41,6 @@ public class User {
     private List<Run> runs = new ArrayList<>();
 
     @OneToOne(mappedBy = "user")
-    @JoinColumn(name = "username", referencedColumnName = "username")
     private UserImage userImage;
 
     public User() {
