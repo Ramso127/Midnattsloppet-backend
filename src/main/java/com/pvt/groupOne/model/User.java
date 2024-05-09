@@ -40,9 +40,6 @@ public class User {
     @JsonIgnoreProperties("user") // Ignore the user field in Run entity during serialization
     private List<Run> runs = new ArrayList<>();
 
-    @OneToOne(mappedBy = "user")
-    private UserImage userImage;
-
     public User() {
 
     }
@@ -55,7 +52,7 @@ public class User {
         this.stravaUser = stravaUser;
     }
 
-    public String getUsername() {
+    public String getUserName() {
         return username;
     }
 
@@ -89,6 +86,10 @@ public class User {
         if (!runnerGroup.getUsers().contains(this)) {
             runnerGroup.getUsers().add(this);
         }
+    }
+
+    public String getUsername() {
+        return username;
     }
 
     public RunnerGroup getRunnerGroup() {
