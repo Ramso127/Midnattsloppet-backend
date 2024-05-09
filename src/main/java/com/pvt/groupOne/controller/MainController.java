@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
 
@@ -187,20 +188,20 @@ public class MainController {
     }
 
     // TODO DIDDE change return statements
-    // TODO Ändra till PostMapping? Behöver något mer ändras än så?
-    @GetMapping("/saveauthenticateduser/{username}")
-    public @ResponseBody String saveStravaToken(@PathVariable String username,
+    @PostMapping("/saveauthenticateduser")
+    public @ResponseBody String saveStravaToken(
             @RequestParam(required = false) String error,
             @RequestParam("code") String authCode,
-            @RequestParam("scope") String scope) {
+            @RequestParam("scope") String scope,
+            @RequestParam("username") String username) {
 
         StravaUser myUser = stravaUserRepository.findByUser_Username(username);
 
-        if (myUser != null && myUser.getUser().getUsername().equals(username)){
+        if (myUser != null && myUser.getUser().getUsername().equals(username)) {
             return "ERROR: user " + username + " is already connected to this Strava account.";
         }
-        
-        if (myUser != null){
+
+        if (myUser != null) {
             return "ERROR: user " + username + " already has a connected Strava account.";
         }
 
@@ -235,9 +236,8 @@ public class MainController {
 
     }
 
-    // TODO DIDDE Gör om till PostMapping?
-    @GetMapping(value = "/fetchruns/{username}")
-    public @ResponseBody String fetchRuns(@PathVariable String username) {
+    @PutMapping(value = "/fetchruns")
+    public @ResponseBody String fetchRuns(@RequestParam("username") String username) {
 
         if (stravaUserRepository.findByUser_Username(username) == null) {
             return "ERROR: User " + username + " not found.";
