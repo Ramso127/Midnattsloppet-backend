@@ -33,6 +33,14 @@ public interface RunnerGroupRepository extends CrudRepository<RunnerGroup, Integ
        @Query("SELECT r.user.runnerGroup.groupId, r.user.runnerGroup.teamName, SUM(r.totalDistance) " +
                      "FROM Run r " +
                      "WHERE r.user.runnerGroup.groupId IS NOT NULL " +
+                     "GROUP BY r.user.runnerGroup.groupId, r.user.runnerGroup.teamName " +
+                     "ORDER BY SUM(r.totalDistance) DESC " +
+                     "LIMIT 3")
+       List<Object[]> findTop3GroupsByTotalDistance();
+
+       @Query("SELECT r.user.runnerGroup.groupId, r.user.runnerGroup.teamName, SUM(r.totalDistance) " +
+                     "FROM Run r " +
+                     "WHERE r.user.runnerGroup.groupId IS NOT NULL " +
                      "AND r.date BETWEEN :startDate AND :endDate " +
                      "GROUP BY r.user.runnerGroup.groupId, r.user.runnerGroup.teamName " +
                      "ORDER BY SUM(r.totalDistance) DESC")

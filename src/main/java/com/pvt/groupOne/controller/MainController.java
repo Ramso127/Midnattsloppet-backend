@@ -352,4 +352,14 @@ public class MainController {
             return e.toString();
         }
     }
+
+    @GetMapping(value = "/gettop3")
+    public @ResponseBody String getTeamMembers() {
+        ObjectMapper om = new ObjectMapper();
+        try {
+            return om.writeValueAsString(groupRepository.findTop3GroupsByTotalDistance());
+        } catch (JsonProcessingException e) {
+            return e.toString();
+        }
+    }
 }
