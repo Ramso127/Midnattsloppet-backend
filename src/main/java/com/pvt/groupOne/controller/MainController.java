@@ -315,8 +315,10 @@ public class MainController {
     }
 
     @GetMapping(value = "/getNumberOfTeams")
-    public @ResponseBody int getNumberOfTeams() {
-        return groupRepository.countDistinctTeams();
+    public @ResponseBody String getNumberOfTeams() {
+        int numberOfTeams = groupRepository.countDistinctTeams();
+        String response = "{\"numberOfTeams\": \"" + numberOfTeams + "\"}";
+        return response;
     }
 
 }
