@@ -314,4 +314,9 @@ public class MainController {
         return ResponseEntity.ok(newRun);
     }
 
+    @GetMapping(value = "/getNumberOfTeams")
+    public @ResponseBody int getNumberOfTeams() {
+        return groupRepository.countDistinctTeams();
+    }
+
 }
