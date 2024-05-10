@@ -232,10 +232,11 @@ public class StravaService {
         int seconds = remainingSeconds % 60;
 
         // Extract milliseconds
-        int milliseconds = Math.round((elapsedTimeInSeconds % 1000) / 10.0f);
+        int milliseconds = elapsedTimeInSeconds % 1000;
+
         // Format the time
-        String formattedTime = String.format("%02d:%02d:%02d:%03d", hours, minutes, seconds,
-                milliseconds);
+        String formattedTime = String.format("%02d:%02d:%02d:%03d.%02d", hours, minutes, seconds,
+                milliseconds / 10, milliseconds % 10);
         return formattedTime;
     }
 
