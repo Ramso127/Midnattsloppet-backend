@@ -16,6 +16,8 @@ public interface RunnerGroupRepository extends CrudRepository<RunnerGroup, Integ
 
        RunnerGroup findGroupByInviteCode(String inviteCode);
 
+       RunnerGroup findGroupByTeamName(String groupName);
+
        @Query("SELECT r.user.username, SUM(r.totalDistance) FROM Run r " +
                      "WHERE r.user.runnerGroup.groupId = :groupId " +
                      "GROUP BY r.user.username ORDER BY SUM(r.totalDistance) DESC")

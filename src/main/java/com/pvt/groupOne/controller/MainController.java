@@ -17,6 +17,7 @@ import java.util.List;
 
 import com.pvt.groupOne.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.repository.query.Param;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -339,5 +340,16 @@ public class MainController {
         int numberOfTeams = groupRepository.countDistinctTeams();
         String response = "{\"numberOfTeams\": \"" + numberOfTeams + "\"}";
         return response;
+    }
+
+    @GetMapping(value = "/getteammembers/{groupname}")
+    public @ResponseBody String getTeamMembers(@PathVariable String groupname) {
+        RunnerGroup runnerGroup = groupRepository.findGroupByTeamName(groupname);
+        ObjectMapper om = new ObjectMapper();
+        try {
+            return om.writeValueAsString(runnerGroup.getUsers());
+        } catch (JsonProcessingException e) {
+            return e.toString();
+        }
     }
 }
