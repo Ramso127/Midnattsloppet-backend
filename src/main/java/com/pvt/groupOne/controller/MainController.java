@@ -324,6 +324,7 @@ public class MainController {
         return ResponseEntity.ok(newRun);
     }
 
+    // TODO ÄNDRA FORMATET PÅ DENNA METOD SÅ DE FUNKAR.
     @GetMapping("/getruns")
     public @ResponseBody String getRuns(@RequestParam String username) {
 
