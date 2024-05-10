@@ -266,7 +266,9 @@ public class MainController {
         ArrayList<Run> runList = myService.saveRunsFrom(stravaID, latestFetch, accessToken, user);
         if (runList.isEmpty()) {
             Date myDate = new Date();
-            myDate.setTime(latestFetch * 1000L);
+            // Add 7200 which is 2 hours in seconds to
+            // account for timezone of Tomcat container
+            myDate.setTime((latestFetch + 7200) * 1000L);
             return "ERROR: No new runs available since: \n" + myDate.toString();
         }
 
