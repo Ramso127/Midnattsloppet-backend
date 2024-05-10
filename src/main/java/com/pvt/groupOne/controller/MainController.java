@@ -319,20 +319,19 @@ public class MainController {
 
         return ResponseEntity.ok(newRun);
     }
-    
+
     @GetMapping("/getruns")
     public @ResponseBody String getRuns(@RequestParam String username) {
 
         List<Run> runs = runRepository.getAllRunsByUser(username);
         ObjectMapper om = new ObjectMapper();
         om.registerModule(new JavaTimeModule());
-        
+
         try {
             return om.writeValueAsString(runs);
         } catch (JsonProcessingException e) {
             return e.toString();
         }
-        
     }
 
     @GetMapping(value = "/getNumberOfTeams")
@@ -341,5 +340,4 @@ public class MainController {
         String response = "{\"numberOfTeams\": \"" + numberOfTeams + "\"}";
         return response;
     }
-
 }
