@@ -188,12 +188,11 @@ public class MainController {
     }
 
     // TODO DIDDE change return statements
-    @PostMapping("/saveauthenticateduser")
-    public @ResponseBody String saveStravaToken(
+    @GetMapping("/saveauthenticateduser/{username}")
+    public @ResponseBody String saveStravaToken(@PathVariable String username,
             @RequestParam(required = false) String error,
             @RequestParam("code") String authCode,
-            @RequestParam("scope") String scope,
-            @RequestParam("username") String username) {
+            @RequestParam("scope") String scope) {
 
         StravaUser myUser = stravaUserRepository.findByUser_Username(username);
 
