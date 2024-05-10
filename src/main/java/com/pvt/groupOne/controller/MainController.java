@@ -5,7 +5,6 @@ import com.pvt.groupOne.Service.StravaService;
 import com.pvt.groupOne.Service.UserService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.pvt.groupOne.Service.RunService;
 import com.pvt.groupOne.Service.RunnerGroupService;
@@ -17,7 +16,6 @@ import java.util.List;
 
 import com.pvt.groupOne.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.repository.query.Param;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -207,7 +205,9 @@ public class MainController {
 
         StravaUser myUser = stravaUserRepository.findByUser_Username(username);
 
-        if (myUser != null && myUser.getUser().getUsername().equals(username)) {
+        boolean isUserConnected = myUser != null && myUser.getUser().getUsername().equals(username);
+
+        if (isUserConnected) {
             return "ERROR: user " + username + " is already connected to this Strava account.";
         }
 
@@ -215,7 +215,9 @@ public class MainController {
             return "ERROR: user " + username + " already has a connected Strava account.";
         }
 
-        if (error != null && error.equals("access_denied")) {
+        boolean isAccessDenied = error != null && error.equals("access_denied");
+
+        if (isAccessDenied) {
             System.out.println("Access denied");
             return "ERROR, Access denied";
         }
