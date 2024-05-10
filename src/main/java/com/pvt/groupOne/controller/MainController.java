@@ -5,12 +5,14 @@ import com.pvt.groupOne.Service.StravaService;
 import com.pvt.groupOne.Service.UserService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import com.pvt.groupOne.Service.RunService;
 import com.pvt.groupOne.Service.RunnerGroupService;
 import java.time.format.DateTimeFormatter;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import com.pvt.groupOne.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,6 +52,9 @@ public class MainController {
 
     @Autowired
     private RunService runService;
+
+    @Autowired
+    private RunRepository runRepository;
 
     @GetMapping(value = "/hello")
     public @ResponseBody String testMethod() {
@@ -312,6 +317,20 @@ public class MainController {
         runService.saveRun(newRun);
 
         return ResponseEntity.ok(newRun);
+    }
+    // TODO DIDDE This method throws an exception because Jackson can't parse LocalTime
+    @GetMapping("/getruns")
+    public @ResponseBody String getRuns(@RequestParam String username) {
+
+        List<Run> runs = runRepository.getAllRunsByUser(username);
+        ObjectMapper om = new ObjectMapper();
+
+        try {
+            return om.writeValueAsString(runs);
+        } catch (JsonProcessingException e) {
+            return e.toString();
+        }
+        
     }
 
 }
