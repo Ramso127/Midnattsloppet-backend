@@ -8,7 +8,6 @@ public class RunRequest {
     private double totalDistance;
     private String totalTime;
 
-
     public String getUsername() {
         return username;
     }

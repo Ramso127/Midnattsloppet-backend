@@ -7,6 +7,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.pvt.groupOne.Service.RunService;
 import com.pvt.groupOne.Service.RunnerGroupService;
+import java.time.format.DateTimeFormatter;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -39,9 +41,6 @@ public class MainController {
 
     @Autowired
     private StravaUserRepository stravaUserRepository;
-
-    @Autowired
-    private StravaRunRepository stravaRunRepository;
 
     @Autowired
     private UserService userService;
@@ -188,11 +187,12 @@ public class MainController {
     }
 
     // TODO DIDDE change return statements
-    @GetMapping("/saveauthenticateduser/{username}")
-    public @ResponseBody String saveStravaToken(@PathVariable String username,
+    @PostMapping("/saveauthenticateduser")
+    public @ResponseBody String saveStravaToken(
             @RequestParam(required = false) String error,
             @RequestParam("code") String authCode,
-            @RequestParam("scope") String scope) {
+            @RequestParam("scope") String scope,
+            @RequestParam("username") String username) {
 
         StravaUser myUser = stravaUserRepository.findByUser_Username(username);
 
@@ -237,12 +237,12 @@ public class MainController {
 
     @PutMapping(value = "/fetchruns")
     public @ResponseBody String fetchRuns(@RequestParam("username") String username) {
+        StravaUser stravaUser = stravaUserRepository.findByUser_Username(username);
 
-        if (stravaUserRepository.findByUser_Username(username) == null) {
+        if (stravaUser == null) {
             return "ERROR: User " + username + " not found.";
         }
-
-        StravaUser stravaUser = stravaUserRepository.findByUser_Username(username);
+        User user = accountRepository.findByUsername(username);
         int stravaID = stravaUser.getId();
         StravaService myService = new StravaService(stravaUserRepository);
         String accessToken = stravaUser.getAccessToken();
@@ -262,17 +262,16 @@ public class MainController {
         }
 
         long latestFetch = stravaUser.getTimeOfLatestFetchUNIX();
-        ArrayList<StravaRun> runList = myService.saveRunsFrom(stravaID, latestFetch, accessToken);
+
+        ArrayList<Run> runList = myService.saveRunsFrom(stravaID, latestFetch, accessToken, user);
         if (runList.isEmpty()) {
             Date myDate = new Date();
-            // Add 7200 which is 2 hours in seconds to
-            // account for timezone of Tomcat container
-            myDate.setTime((latestFetch + 7200) * 1000L);
+            myDate.setTime(latestFetch * 1000L);
             return "ERROR: No new runs available since: \n" + myDate.toString();
         }
 
-        for (StravaRun run : runList) {
-            stravaRunRepository.save(run);
+        for (Run run : runList) {
+            runService.saveRun(run);
             counter++;
         }
         stravaUser.setTimeOfLatestFetchUNIX(currentSystemTime);
@@ -292,13 +291,20 @@ public class MainController {
         if (user == null) {
             return ResponseEntity.badRequest().body("{\"error\":\"User does not exist\"}");
         }
+        // Assuming runRequest.getDate() returns a LocalDate object
+        LocalDate localDate = runRequest.getDate();
+
+        // Define the desired date format
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+
+        // Format the LocalDate object using the formatter
+        String formattedDate = localDate.format(formatter);
+
+        // Parse the formatted date string back into a LocalDate object
+        LocalDate formattedLocalDate = LocalDate.parse(formattedDate, formatter);
 
         // Create and save the new run
-        Run newRun = new Run();
-        newRun.setUser(user);
-        newRun.setDate(runRequest.getDate());
-        newRun.setTotalDistance(runRequest.getTotalDistance());
-        newRun.setTotalTime(runRequest.getTotalTime());
+        Run newRun = new Run(formattedLocalDate, runRequest.getTotalDistance(), runRequest.getTotalTime(), user);
 
         runService.saveRun(newRun);
 

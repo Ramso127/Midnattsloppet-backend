@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -18,8 +20,11 @@ import org.apache.http.util.EntityUtils;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.util.StdDateFormat;
+import com.pvt.groupOne.model.Run;
 import com.pvt.groupOne.model.StravaRun;
 import com.pvt.groupOne.model.StravaUser;
+import com.pvt.groupOne.model.User;
 import com.pvt.groupOne.repository.StravaUserRepository;
 
 public class StravaService {
@@ -161,7 +166,7 @@ public class StravaService {
 
     // TODO DIDDE: Finish this method, change from Post to Get, possibly change
     // return type from boolean
-    public ArrayList<StravaRun> saveRunsFrom(int stravaID, long unixTimeStamp, String accessToken) {
+    public ArrayList<Run> saveRunsFrom(int stravaID, long unixTimeStamp, String accessToken, User user) {
 
         final String URL = "https://www.strava.com/api/v3/athlete/activities";
 
@@ -185,13 +190,15 @@ public class StravaService {
                 JsonNode activitiesNode = objectMapper.readTree(jsonResponse);
 
                 // Now you can access information about the runs
-                ArrayList<StravaRun> runs = new ArrayList<>();
+                ArrayList<Run> runs = new ArrayList<>();
                 for (JsonNode activityNode : activitiesNode) {
                     if (activityNode.get("type").asText().equals("Run")) {
                         double distance = activityNode.get("distance").asDouble();
-                        int elapsedTime = activityNode.get("elapsed_time").asInt();
+                        String elapsedTime = activityNode.get("elapsed_time").asText();
                         String date = activityNode.get("start_date_local").asText();
-                        StravaRun currentRun = new StravaRun(date, distance, elapsedTime);
+                        date = date.substring(0, date.indexOf('T'));
+                        LocalDate localDate = LocalDate.parse(date);
+                        Run currentRun = new Run(localDate, distance, elapsedTime, user);
                         runs.add(currentRun);
                     }
                 }

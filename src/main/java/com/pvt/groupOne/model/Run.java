@@ -35,6 +35,13 @@ public class Run {
     @JsonIgnoreProperties("user") // Ignore the user field in User entity during serialization
     private User user; // Link to User entity
 
+    public Run(LocalDate date, double totalDistance, String totalTime, User user) {
+        this.date = date;
+        this.totalDistance = totalDistance;
+        this.totalTime = totalTime;
+        this.user = user;
+    }
+
     public Long getId() {
         return id;
     }
