@@ -232,7 +232,7 @@ public class StravaService {
         int seconds = remainingSeconds % 60;
 
         // Format the time
-        String formattedTime = String.format("%02d:%02d:%02d:%03d", hours, minutes, seconds);
+        String formattedTime = String.format("%02d:%02d:%02d:%02d", hours, minutes, seconds);
         return formattedTime;
     }
 
