@@ -190,7 +190,7 @@ public class StravaService {
                 ArrayList<Run> runs = new ArrayList<>();
                 for (JsonNode activityNode : activitiesNode) {
                     if (activityNode.get("type").asText().equals("Run")) {
-                        double distance = activityNode.get("distance").asDouble();
+                        double distance = activityNode.get("distance").asInt();
                         distance = distance / 1000;
                         DecimalFormat df = new DecimalFormat("#.##");
                         String formattedDistance = df.format(distance);
