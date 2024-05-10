@@ -20,9 +20,7 @@ import org.apache.http.util.EntityUtils;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.util.StdDateFormat;
 import com.pvt.groupOne.model.Run;
-import com.pvt.groupOne.model.StravaRun;
 import com.pvt.groupOne.model.StravaUser;
 import com.pvt.groupOne.model.User;
 import com.pvt.groupOne.repository.StravaUserRepository;
@@ -194,6 +192,7 @@ public class StravaService {
                 for (JsonNode activityNode : activitiesNode) {
                     if (activityNode.get("type").asText().equals("Run")) {
                         double distance = activityNode.get("distance").asDouble();
+                        distance = distance / 1000;
                         String elapsedTime = activityNode.get("elapsed_time").asText();
                         String date = activityNode.get("start_date_local").asText();
                         date = date.substring(0, date.indexOf('T'));

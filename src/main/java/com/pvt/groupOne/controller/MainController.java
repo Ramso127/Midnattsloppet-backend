@@ -194,7 +194,8 @@ public class MainController {
             @RequestParam("scope") String scope,
             @RequestParam("username") String username) {
 
-                // TODO DIDDE App crashes when trying to authenticate someone who's already authenticated
+        // TODO DIDDE App crashes when trying to authenticate someone who's already
+        // authenticated
 
         StravaUser myUser = stravaUserRepository.findByUser_Username(username);
 
