@@ -137,7 +137,7 @@ public class MainController {
     }
 
     @PostMapping(value = "/addusertogroup")
-    public @ResponseBody String addUserToGroup(@RequestBody AddUserToGroupRequest addUserToGroupRequest) {
+    public ResponseEntity<String> addUserToGroup(@RequestBody AddUserToGroupRequest addUserToGroupRequest) {
         String inviteCode = addUserToGroupRequest.getInviteCode();
         String username = addUserToGroupRequest.getUsername();
         try {
@@ -145,24 +145,25 @@ public class MainController {
             User user = accountRepository.findByUsername(username);
 
             if (runnerGroup == null) {
-                return "Group with invite code " + inviteCode + " not found";
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                        .body("{\"message\": \"Group with invite code " + inviteCode + " not found\"}");
             }
 
             if (user.getRunnerGroup() != null) {
-                return "Already in a group";
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("{\"message\": \"Already in a group!\"}");
             }
 
             if (runnerGroup.isFull()) {
-                return "Group is full";
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("{\"message\": \"Group is full!\"}");
             }
             runnerGroup.addUser(user);
             groupRepository.save(runnerGroup);
             accountRepository.save(user);
             ObjectMapper om = new ObjectMapper();
-            return om.writeValueAsString(runnerGroup);
+            return ResponseEntity.ok(om.writeValueAsString(runnerGroup));
         } catch (JsonProcessingException e) {
             e.printStackTrace();
-            return "ERROR: " + e;
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.toString());
         }
     }
 
