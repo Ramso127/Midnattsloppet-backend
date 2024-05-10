@@ -231,12 +231,8 @@ public class StravaService {
         // Calculate remaining seconds after removing minutes
         int seconds = remainingSeconds % 60;
 
-        // Extract milliseconds
-        int milliseconds = elapsedTimeInSeconds % 1000;
-
         // Format the time
-        String formattedTime = String.format("%02d:%02d:%02d:%03d.%02d", hours, minutes, seconds,
-                milliseconds / 10, milliseconds % 10);
+        String formattedTime = String.format("%02d:%02d:%02d:%03d", hours, minutes, seconds);
         return formattedTime;
     }
 
