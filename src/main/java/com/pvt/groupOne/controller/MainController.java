@@ -6,6 +6,7 @@ import com.pvt.groupOne.Service.UserService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.pvt.groupOne.Service.RunService;
 import com.pvt.groupOne.Service.RunnerGroupService;
 import java.time.format.DateTimeFormatter;
@@ -318,13 +319,14 @@ public class MainController {
 
         return ResponseEntity.ok(newRun);
     }
-    // TODO DIDDE This method throws an exception because Jackson can't parse LocalTime
+    
     @GetMapping("/getruns")
     public @ResponseBody String getRuns(@RequestParam String username) {
 
         List<Run> runs = runRepository.getAllRunsByUser(username);
         ObjectMapper om = new ObjectMapper();
-
+        om.registerModule(new JavaTimeModule());
+        
         try {
             return om.writeValueAsString(runs);
         } catch (JsonProcessingException e) {
