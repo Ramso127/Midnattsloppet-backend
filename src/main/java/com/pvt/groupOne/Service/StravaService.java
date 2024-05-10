@@ -193,11 +193,14 @@ public class StravaService {
                     if (activityNode.get("type").asText().equals("Run")) {
                         double distance = activityNode.get("distance").asDouble();
                         distance = distance / 1000;
-                        String elapsedTime = activityNode.get("elapsed_time").asText();
+                        int elapsedTimeInSeconds = activityNode.get("elapsed_time").asInt();
+
+                        String formattedTime = getFormattedTime(elapsedTimeInSeconds);
+
                         String date = activityNode.get("start_date_local").asText();
                         date = date.substring(0, date.indexOf('T'));
                         LocalDate localDate = LocalDate.parse(date);
-                        Run currentRun = new Run(localDate, distance, elapsedTime, user);
+                        Run currentRun = new Run(localDate, distance, formattedTime, user);
                         runs.add(currentRun);
                     }
                 }
@@ -212,6 +215,28 @@ public class StravaService {
             e.printStackTrace();
             return null;
         }
+    }
+
+    private String getFormattedTime(int elapsedTimeInSeconds) {
+        // Calculate hours
+        int hours = elapsedTimeInSeconds / 3600;
+
+        // Calculate remaining seconds after removing hours
+        int remainingSeconds = elapsedTimeInSeconds % 3600;
+
+        // Calculate minutes
+        int minutes = remainingSeconds / 60;
+
+        // Calculate remaining seconds after removing minutes
+        int seconds = remainingSeconds % 60;
+
+        // Extract milliseconds
+        int milliseconds = (elapsedTimeInSeconds % 1000) * 1000;
+
+        // Format the time
+        String formattedTime = String.format("%02d:%02d:%02d:%03d", hours, minutes, seconds,
+                milliseconds);
+        return formattedTime;
     }
 
 }
