@@ -5,8 +5,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-
+import java.text.DecimalFormat;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -193,14 +192,16 @@ public class StravaService {
                     if (activityNode.get("type").asText().equals("Run")) {
                         double distance = activityNode.get("distance").asDouble();
                         distance = distance / 1000;
+                        DecimalFormat df = new DecimalFormat("#.##");
+                        String formattedDistance = df.format(distance);
                         int elapsedTimeInSeconds = activityNode.get("elapsed_time").asInt();
 
                         String formattedTime = getFormattedTime(elapsedTimeInSeconds);
-
+                        double formattedDistanceDouble = Double.parseDouble(formattedDistance);
                         String date = activityNode.get("start_date_local").asText();
                         date = date.substring(0, date.indexOf('T'));
                         LocalDate localDate = LocalDate.parse(date);
-                        Run currentRun = new Run(localDate, distance, formattedTime, user);
+                        Run currentRun = new Run(localDate, formattedDistanceDouble, formattedTime, user);
                         runs.add(currentRun);
                     }
                 }
@@ -231,8 +232,7 @@ public class StravaService {
         int seconds = remainingSeconds % 60;
 
         // Extract milliseconds
-        int milliseconds = (elapsedTimeInSeconds % 1000) * 1000;
-
+        int milliseconds = Math.round((elapsedTimeInSeconds % 1000) / 10.0f);
         // Format the time
         String formattedTime = String.format("%02d:%02d:%02d:%03d", hours, minutes, seconds,
                 milliseconds);
