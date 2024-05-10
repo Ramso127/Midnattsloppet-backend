@@ -190,18 +190,16 @@ public class StravaService {
                 ArrayList<Run> runs = new ArrayList<>();
                 for (JsonNode activityNode : activitiesNode) {
                     if (activityNode.get("type").asText().equals("Run")) {
-                        double distance = activityNode.get("distance").asInt();
+                        double distance = activityNode.get("distance").asDouble();
                         distance = distance / 1000;
-                        DecimalFormat df = new DecimalFormat("#.##");
-                        String formattedDistance = df.format(distance);
+                        double truncated = Math.floor(distance * 100) / 100;
                         int elapsedTimeInSeconds = activityNode.get("elapsed_time").asInt();
 
                         String formattedTime = getFormattedTime(elapsedTimeInSeconds);
-                        double formattedDistanceDouble = Double.parseDouble(formattedDistance);
                         String date = activityNode.get("start_date_local").asText();
                         date = date.substring(0, date.indexOf('T'));
                         LocalDate localDate = LocalDate.parse(date);
-                        Run currentRun = new Run(localDate, formattedDistanceDouble, formattedTime, user);
+                        Run currentRun = new Run(localDate, truncated, formattedTime, user);
                         runs.add(currentRun);
                     }
                 }
