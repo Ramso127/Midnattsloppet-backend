@@ -56,7 +56,7 @@ public class UserService {
         } else if (isTokenExpired(passReset)) {
             return "The token is expired. Please request a new one.";
         }
-        return null;
+        return "202";
     }
 
     private boolean isTokenFound(PasswordResetToken token) {
