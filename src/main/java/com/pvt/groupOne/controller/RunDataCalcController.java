@@ -49,9 +49,9 @@ public class RunDataCalcController {
         jsonBuilder.append("{");
         for (int i = 0; i < runs.size(); i++) {
             Run run = runs.get(i);
-            jsonBuilder.append("\"RunID\": \"").append(run.getId()).append("\": {")
+            jsonBuilder.append("\"RunID\": \"").append(run.getId()).append("\",")
                       .append("\"distance\": \"").append(run.getTotalDistance()).append("\",")
-                      .append("\"time\": \"").append(run.getTotalTime()).append("\"}")
+                      .append("\"time\": \"").append(run.getTotalTime()).append("\",")
                       .append("\"date\": \"").append(run.getDate()).append("\"}");
             if (i < runs.size() - 1) {
                 jsonBuilder.append(",");
