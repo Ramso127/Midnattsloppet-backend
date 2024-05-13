@@ -193,7 +193,7 @@ public class MainController {
     }
 
     // TODO DIDDE change return statements
-    @GetMapping("/saveauthenticateduser/")
+    @GetMapping("/saveauthenticateduser")
     public @ResponseBody String saveStravaToken(
             @RequestParam(required = false) String error,
             @RequestParam("code") String authCode,
