@@ -40,16 +40,17 @@ public class RunDataCalcController {
         return runRepository.findUserFromRunById(id);
     }
 
-    @GetMapping ("/getAllUserRuns")
+    @GetMapping("/getAllUserRuns")
     public String getAllUserRuns(@RequestParam String username) {
         List<Run> runs = runRepository.getAllRunsByUser(username);
 
         // Create a StringBuilder to manually build the JSON
         StringBuilder jsonBuilder = new StringBuilder();
-        jsonBuilder.append("{");
+        jsonBuilder.append("["); // Start of JSON array
         for (int i = 0; i < runs.size(); i++) {
             Run run = runs.get(i);
-            jsonBuilder.append("\"RunID\": \"").append(run.getId()).append("\",")
+            jsonBuilder.append("{")
+                      .append("\"RunID\": \"").append(run.getId()).append("\",")
                       .append("\"distance\": \"").append(run.getTotalDistance()).append("\",")
                       .append("\"time\": \"").append(run.getTotalTime()).append("\",")
                       .append("\"date\": \"").append(run.getDate()).append("\"}");
@@ -57,7 +58,7 @@ public class RunDataCalcController {
                 jsonBuilder.append(",");
             }
         }
-        jsonBuilder.append("}");
+        jsonBuilder.append("]"); // End of JSON array
 
         return jsonBuilder.toString();
     }
