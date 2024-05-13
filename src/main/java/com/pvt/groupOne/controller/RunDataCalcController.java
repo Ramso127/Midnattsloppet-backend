@@ -41,25 +41,25 @@ public class RunDataCalcController {
     }
 
     @GetMapping("/getAllUserRuns")
-    public String getAllUserRuns(@RequestParam String username) {
+    public List<Map<String, String>> getAllUserRuns(@RequestParam String username) {
         List<Run> runs = runRepository.getAllRunsByUser(username);
+        
+        // Create a list to store each run as a Map
+        List<Map<String, String>> runList = new ArrayList<>();
 
-        // Create a StringBuilder to manually build the JSON
-        StringBuilder jsonBuilder = new StringBuilder();
-        jsonBuilder.append("{"); // Start of JSON array
-        for (int i = 0; i < runs.size(); i++) {
-            Run run = runs.get(i);
-            jsonBuilder.append("\"RunID\": \"").append(run.getId()).append("\"{")
-                      .append("\"distance\": \"").append(run.getTotalDistance()).append("\",")
-                      .append("\"time\": \"").append(run.getTotalTime()).append("\",")
-                      .append("\"date\": \"").append(run.getDate()).append("\"}");
-            if (i < runs.size() - 1) {
-                jsonBuilder.append(",");
-            }
+        for (Run run : runs) {
+            // Create a map to represent each run
+            Map<String, String> runMap = new HashMap<>();
+            runMap.put("RunID", String.valueOf(run.getId()));
+            runMap.put("distance", String.valueOf(run.getTotalDistance()));
+            runMap.put("time", String.valueOf(run.getTotalTime()));
+            runMap.put("date", run.getDate().toString()); // Assuming Date is converted to String
+            
+            // Add the map to the list
+            runList.add(runMap);
         }
-        jsonBuilder.append("}"); // End of JSON array
 
-        return jsonBuilder.toString();
+        return runList;
     }
 
     @GetMapping("/getAllRunTimeByUser/{username}")
