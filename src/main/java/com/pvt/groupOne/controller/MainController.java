@@ -243,7 +243,7 @@ public class MainController {
             stravaUser.setUser(newUser);
 
             stravaUserRepository.save(stravaUser);
-            return "Success! Thank you " + stravaUser.getFirstName() + ".";
+            return "Success! Thank you " + stravaUser.getFirstName() + ". You can now close this page and return to the app.";
 
         } catch (Exception e) {
             return "Error: " + e;
