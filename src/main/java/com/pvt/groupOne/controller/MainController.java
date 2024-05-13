@@ -12,7 +12,9 @@ import java.time.format.DateTimeFormatter;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.pvt.groupOne.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,6 +55,7 @@ public class MainController {
     @Autowired
     private RunService runService;
 
+    
     @Autowired
     private RunRepository runRepository;
 
@@ -344,14 +347,23 @@ public class MainController {
     }
 
     @GetMapping(value = "/getteammembers/{groupname}")
-    public @ResponseBody String getTeamMembers(@PathVariable String groupname) {
+    public @ResponseBody List<Map<String, Object>> getTeamMembers(@PathVariable String groupname) {
         RunnerGroup runnerGroup = groupRepository.findGroupByTeamName(groupname);
-        ObjectMapper om = new ObjectMapper();
-        try {
-            return om.writeValueAsString(runnerGroup.getUsers());
-        } catch (JsonProcessingException e) {
-            return e.toString();
+        List<User> list = runnerGroup.getUsers();
+        List<Map<String, Object>> jsonList = new ArrayList<>();
+        for(User user: list){
+            String username = user.getUsername();
+            List<Double> runDistanceList = runRepository.getAllRunDistanceByUser(username);
+            double totalDistance = 0;
+            for (double distance : runDistanceList) {
+                totalDistance += distance;
+            }
+            Map<String, Object> userMap = new HashMap<>();
+            userMap.put("username", username);
+            userMap.put("distance", totalDistance);
+            jsonList.add(userMap);
         }
+        return jsonList;
     }
 
     @GetMapping(value = "/gettop3")
