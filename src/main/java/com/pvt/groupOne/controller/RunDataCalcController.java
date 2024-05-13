@@ -46,11 +46,10 @@ public class RunDataCalcController {
 
         // Create a StringBuilder to manually build the JSON
         StringBuilder jsonBuilder = new StringBuilder();
-        jsonBuilder.append("["); // Start of JSON array
+        jsonBuilder.append("{"); // Start of JSON array
         for (int i = 0; i < runs.size(); i++) {
             Run run = runs.get(i);
-            jsonBuilder.append("{")
-                      .append("\"RunID\": \"").append(run.getId()).append("\",")
+            jsonBuilder.append("\"RunID\": \"").append(run.getId()).append("\"{")
                       .append("\"distance\": \"").append(run.getTotalDistance()).append("\",")
                       .append("\"time\": \"").append(run.getTotalTime()).append("\",")
                       .append("\"date\": \"").append(run.getDate()).append("\"}");
@@ -58,7 +57,7 @@ public class RunDataCalcController {
                 jsonBuilder.append(",");
             }
         }
-        jsonBuilder.append("]"); // End of JSON array
+        jsonBuilder.append("}"); // End of JSON array
 
         return jsonBuilder.toString();
     }
