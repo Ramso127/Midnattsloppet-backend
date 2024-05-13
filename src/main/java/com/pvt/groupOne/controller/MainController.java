@@ -193,12 +193,12 @@ public class MainController {
     }
 
     // TODO DIDDE change return statements
-    @GetMapping("/saveauthenticateduser")
+    @GetMapping("/saveauthenticateduser/{username}")
     public @ResponseBody String saveStravaToken(
-            @RequestParam(required = false) String error,
-            @RequestParam("code") String authCode,
-            @RequestParam("scope") String scope,
-            @RequestParam("username") String username) {
+        @RequestParam(required = false) String error,
+        @RequestParam("code") String authCode,
+        @RequestParam("scope") String scope,
+        @PathVariable("username") String username) {
 
         // TODO DIDDE App crashes when trying to authenticate someone who's already
         // authenticated
