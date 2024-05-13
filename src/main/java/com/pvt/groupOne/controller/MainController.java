@@ -333,19 +333,29 @@ public class MainController {
     }
 
     // TODO ÄNDRA FORMATET PÅ DENNA METOD SÅ DE FUNKAR.
+
     @GetMapping("/getruns")
     public @ResponseBody String getRuns(@RequestParam String username) {
-
         List<Run> runs = runRepository.getAllRunsByUser(username);
-        ObjectMapper om = new ObjectMapper();
-        om.registerModule(new JavaTimeModule());
 
-        try {
-            return om.writeValueAsString(runs);
-        } catch (JsonProcessingException e) {
-            return e.toString();
+        // Create a StringBuilder to manually build the JSON
+        StringBuilder jsonBuilder = new StringBuilder();
+        jsonBuilder.append("{");
+        for (int i = 0; i < runs.size(); i++) {
+            Run run = runs.get(i);
+            jsonBuilder.append("\"RunID\": \"").append(run.getId()).append("\": {")
+                      .append("\"distance\": \"").append(run.getTotalDistance()).append("\",")
+                      .append("\"time\": \"").append(run.getTotalTime()).append("\"}")
+                      .append("\"date\": \"").append(run.getDate()).append("\"}");
+            if (i < runs.size() - 1) {
+                jsonBuilder.append(",");
+            }
         }
+        jsonBuilder.append("}");
+
+        return jsonBuilder.toString();
     }
+
 
     @GetMapping(value = "/getNumberOfTeams")
     public @ResponseBody String getNumberOfTeams() {
