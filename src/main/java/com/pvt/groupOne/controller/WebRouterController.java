@@ -10,8 +10,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @CrossOrigin
 public class WebRouterController {
 
-    @GetMapping("/passwordReset")
+    @GetMapping("/resetPassword")
     public String servePasswordReset() {
-        return "forward:/passwordReset.html";
+        return "forward:/resetPassword.html";
     }
 }
