@@ -41,25 +41,35 @@ public class RunDataCalcController {
     }
 
     @GetMapping("/getAllUserRuns")
-    public List<Map<String, String>> getAllUserRuns(@RequestParam String username) {
+    public Map<String, List<Map<String, Object>>> getAllUserRuns(@RequestParam String username) {
         List<Run> runs = runRepository.getAllRunsByUser(username);
-        
-        // Create a list to store each run as a Map
-        List<Map<String, String>> runList = new ArrayList<>();
+
+        // Create a list to store the run data
+        List<Map<String, Object>> dataList = new ArrayList<>();
 
         for (Run run : runs) {
             // Create a map to represent each run
-            Map<String, String> runMap = new HashMap<>();
-            runMap.put("RunID", String.valueOf(run.getId()));
-            runMap.put("distance", String.valueOf(run.getTotalDistance()));
-            runMap.put("time", String.valueOf(run.getTotalTime()));
-            runMap.put("date", run.getDate().toString()); // Assuming Date is converted to String
+            Map<String, Object> runMap = new HashMap<>();
+            runMap.put("RunID", run.getId());
             
-            // Add the map to the list
-            runList.add(runMap);
+            // Create a map to represent the attributes
+            Map<String, Object> attributesMap = new HashMap<>();
+            attributesMap.put("date", run.getDate().toString()); // Assuming Date is converted to String
+            attributesMap.put("distance", run.getTotalDistance());
+            attributesMap.put("time", run.getTotalTime());
+            
+            // Add the attributes map to the run map
+            runMap.putAll(attributesMap);
+            
+            // Add the run map to the data list
+            dataList.add(runMap);
         }
 
-        return runList;
+        // Create the final response map
+        Map<String, List<Map<String, Object>>> responseMap = new HashMap<>();
+        responseMap.put("data", dataList);
+
+        return responseMap;
     }
 
     @GetMapping("/getAllRunTimeByUser/{username}")
