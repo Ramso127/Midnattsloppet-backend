@@ -12,6 +12,6 @@ public class WebRouterController {
 
     @GetMapping("/passwordReset")
     public String servePasswordReset() {
-        return "forward:/static/passwordReset.html";
+        return "forward:/passwordReset.html";
     }
 }
