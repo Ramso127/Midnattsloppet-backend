@@ -148,7 +148,7 @@ public class RunDataCalcController {
     }
 
     @GetMapping("/getTotalRunTime/{username}")
-    public String getTotalRunTime(@PathVariable String username) {
+    public @ResponseBody Map<String, Integer> getTotalRunTime(@PathVariable String username) {
         List<String> runTimeList = runRepository.getAllRunTimeByUser(username);
         List<Integer> totalRunTimeList = new ArrayList<>();
         for(String runTime : runTimeList) {
@@ -166,14 +166,9 @@ public class RunDataCalcController {
 
         double temp = totalRunTime / 60.0;
 
-        int temp1 = (int)temp;
-        double temp2 = (temp - temp1) * 10.0;
-        int temp3 = (int) Math.round(temp2);
-        double test = temp3 / 10.0;
-        double finalNum = temp1 + test;
-
-
-        return "Total run time: " + finalNum + " hours";
+        Map<String, Integer> response = new HashMap<>();
+        response.put("time",  (int) temp);
+        return response;
     }
 
 
