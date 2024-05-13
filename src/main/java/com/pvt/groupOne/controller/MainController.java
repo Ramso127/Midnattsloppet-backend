@@ -5,10 +5,14 @@ import com.pvt.groupOne.Service.StravaService;
 import com.pvt.groupOne.Service.UserService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.pvt.groupOne.Service.RunService;
 import com.pvt.groupOne.Service.RunnerGroupService;
+import java.time.format.DateTimeFormatter;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import com.pvt.groupOne.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +26,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
 
@@ -40,9 +45,6 @@ public class MainController {
     private StravaUserRepository stravaUserRepository;
 
     @Autowired
-    private StravaRunRepository stravaRunRepository;
-
-    @Autowired
     private UserService userService;
 
     @Autowired
@@ -50,6 +52,9 @@ public class MainController {
 
     @Autowired
     private RunService runService;
+
+    @Autowired
+    private RunRepository runRepository;
 
     @GetMapping(value = "/hello")
     public @ResponseBody String testMethod() {
@@ -84,7 +89,7 @@ public class MainController {
 
     @DeleteMapping(value = "/removeuser") // eller "/removeuser/{userId}"
     public @ResponseBody String removeUser(@RequestBody User user) {
-        if (!accountRepository.existsByUsername(user.getUserName())) {
+        if (!accountRepository.existsByUsername(user.getUsername())) {
             return "No such user exists";
         }
         accountRepository.delete(user);
@@ -130,7 +135,7 @@ public class MainController {
     }
 
     @PostMapping(value = "/addusertogroup")
-    public @ResponseBody String addUserToGroup(@RequestBody AddUserToGroupRequest addUserToGroupRequest) {
+    public ResponseEntity<String> addUserToGroup(@RequestBody AddUserToGroupRequest addUserToGroupRequest) {
         String inviteCode = addUserToGroupRequest.getInviteCode();
         String username = addUserToGroupRequest.getUsername();
         try {
@@ -138,24 +143,25 @@ public class MainController {
             User user = accountRepository.findByUsername(username);
 
             if (runnerGroup == null) {
-                return "Group with invite code " + inviteCode + " not found";
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                        .body("{\"message\": \"Group with invite code " + inviteCode + " not found\"}");
             }
 
             if (user.getRunnerGroup() != null) {
-                return "Already in a group";
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("{\"message\": \"Already in a group!\"}");
             }
 
             if (runnerGroup.isFull()) {
-                return "Group is full";
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("{\"message\": \"Group is full!\"}");
             }
             runnerGroup.addUser(user);
             groupRepository.save(runnerGroup);
             accountRepository.save(user);
             ObjectMapper om = new ObjectMapper();
-            return om.writeValueAsString(runnerGroup);
+            return ResponseEntity.ok(om.writeValueAsString(runnerGroup));
         } catch (JsonProcessingException e) {
             e.printStackTrace();
-            return "ERROR: " + e;
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.toString());
         }
     }
 
@@ -187,14 +193,31 @@ public class MainController {
     }
 
     // TODO DIDDE change return statements
-    // TODO Ändra till PostMapping? Behöver något mer ändras än så?
-    @GetMapping("/saveauthenticateduser/{username}")
-    public @ResponseBody String saveStravaToken(@PathVariable String username,
+    @PostMapping("/saveauthenticateduser")
+    public @ResponseBody String saveStravaToken(
             @RequestParam(required = false) String error,
             @RequestParam("code") String authCode,
-            @RequestParam("scope") String scope) {
+            @RequestParam("scope") String scope,
+            @RequestParam("username") String username) {
 
-        if (error != null && error.equals("access_denied")) {
+        // TODO DIDDE App crashes when trying to authenticate someone who's already
+        // authenticated
+
+        StravaUser myUser = stravaUserRepository.findByUser_Username(username);
+
+        boolean isUserConnected = myUser != null && myUser.getUser().getUsername().equals(username);
+
+        if (isUserConnected) {
+            return "ERROR: user " + username + " is already connected to this Strava account.";
+        }
+
+        if (myUser != null) {
+            return "ERROR: user " + username + " already has a connected Strava account.";
+        }
+
+        boolean isAccessDenied = error != null && error.equals("access_denied");
+
+        if (isAccessDenied) {
             System.out.println("Access denied");
             return "ERROR, Access denied";
         }
@@ -216,12 +239,8 @@ public class MainController {
             User newUser = accountRepository.findByUsername(username);
             stravaUser.setUser(newUser);
 
-            String result = "ID: " + stravaUser.getId() + "\nName: " + stravaUser.getFirstName() + "\n Scope: "
-                    + stravaUser.getScope() + "\nAccess token: " + stravaUser.getAccessToken() + "\nRefresh token: "
-                    + stravaUser.getRefreshToken() + "\nExpires at: " + stravaUser.getExpiresAt();
-
             stravaUserRepository.save(stravaUser);
-            return "Strava account with this information successfully connected: " + result;
+            return "Success! Thank you " + stravaUser.getFirstName() + ".";
 
         } catch (Exception e) {
             return "Error: " + e;
@@ -229,15 +248,14 @@ public class MainController {
 
     }
 
-    // TODO DIDDE Gör om till PostMapping?
-    @GetMapping(value = "/fetchruns/{username}")
-    public @ResponseBody String fetchRuns(@PathVariable String username) {
+    @PutMapping(value = "/fetchruns")
+    public @ResponseBody String fetchRuns(@RequestParam("username") String username) {
+        StravaUser stravaUser = stravaUserRepository.findByUser_Username(username);
 
-        if (stravaUserRepository.findByUser_Username(username) == null) {
+        if (stravaUser == null) {
             return "ERROR: User " + username + " not found.";
         }
-
-        StravaUser stravaUser = stravaUserRepository.findByUser_Username(username);
+        User user = accountRepository.findByUsername(username);
         int stravaID = stravaUser.getId();
         StravaService myService = new StravaService(stravaUserRepository);
         String accessToken = stravaUser.getAccessToken();
@@ -257,15 +275,16 @@ public class MainController {
         }
 
         long latestFetch = stravaUser.getTimeOfLatestFetchUNIX();
-        ArrayList<StravaRun> runList = myService.saveRunsFrom(stravaID, latestFetch, accessToken);
+
+        ArrayList<Run> runList = myService.saveRunsFrom(stravaID, latestFetch, accessToken, user);
         if (runList.isEmpty()) {
             Date myDate = new Date();
             myDate.setTime(latestFetch * 1000L);
             return "ERROR: No new runs available since: \n" + myDate.toString();
         }
 
-        for (StravaRun run : runList) {
-            stravaRunRepository.save(run);
+        for (Run run : runList) {
+            runService.saveRun(run);
             counter++;
         }
         stravaUser.setTimeOfLatestFetchUNIX(currentSystemTime);
@@ -285,17 +304,66 @@ public class MainController {
         if (user == null) {
             return ResponseEntity.badRequest().body("{\"error\":\"User does not exist\"}");
         }
+        // Assuming runRequest.getDate() returns a LocalDate object
+        LocalDate localDate = runRequest.getDate();
+
+        // Define the desired date format
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+
+        // Format the LocalDate object using the formatter
+        String formattedDate = localDate.format(formatter);
+
+        // Parse the formatted date string back into a LocalDate object
+        LocalDate formattedLocalDate = LocalDate.parse(formattedDate, formatter);
 
         // Create and save the new run
-        Run newRun = new Run();
-        newRun.setUser(user);
-        newRun.setDate(runRequest.getDate());
-        newRun.setTotalDistance(runRequest.getTotalDistance());
-        newRun.setTotalTime(runRequest.getTotalTime());
+        Run newRun = new Run(formattedLocalDate, runRequest.getTotalDistance(), runRequest.getTotalTime(), user);
 
         runService.saveRun(newRun);
 
         return ResponseEntity.ok(newRun);
     }
 
+    // TODO ÄNDRA FORMATET PÅ DENNA METOD SÅ DE FUNKAR.
+    @GetMapping("/getruns")
+    public @ResponseBody String getRuns(@RequestParam String username) {
+
+        List<Run> runs = runRepository.getAllRunsByUser(username);
+        ObjectMapper om = new ObjectMapper();
+        om.registerModule(new JavaTimeModule());
+
+        try {
+            return om.writeValueAsString(runs);
+        } catch (JsonProcessingException e) {
+            return e.toString();
+        }
+    }
+
+    @GetMapping(value = "/getNumberOfTeams")
+    public @ResponseBody String getNumberOfTeams() {
+        int numberOfTeams = groupRepository.countDistinctTeams();
+        String response = "{\"numberOfTeams\": \"" + numberOfTeams + "\"}";
+        return response;
+    }
+
+    @GetMapping(value = "/getteammembers/{groupname}")
+    public @ResponseBody String getTeamMembers(@PathVariable String groupname) {
+        RunnerGroup runnerGroup = groupRepository.findGroupByTeamName(groupname);
+        ObjectMapper om = new ObjectMapper();
+        try {
+            return om.writeValueAsString(runnerGroup.getUsers());
+        } catch (JsonProcessingException e) {
+            return e.toString();
+        }
+    }
+
+    @GetMapping(value = "/gettop3")
+    public @ResponseBody String getTeamMembers() {
+        ObjectMapper om = new ObjectMapper();
+        try {
+            return om.writeValueAsString(groupRepository.findTop3GroupsByTotalDistance());
+        } catch (JsonProcessingException e) {
+            return e.toString();
+        }
+    }
 }

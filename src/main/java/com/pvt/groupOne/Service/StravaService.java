@@ -4,7 +4,8 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
-
+import java.time.LocalDate;
+import java.text.DecimalFormat;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -18,8 +19,9 @@ import org.apache.http.util.EntityUtils;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.pvt.groupOne.model.StravaRun;
+import com.pvt.groupOne.model.Run;
 import com.pvt.groupOne.model.StravaUser;
+import com.pvt.groupOne.model.User;
 import com.pvt.groupOne.repository.StravaUserRepository;
 
 public class StravaService {
@@ -27,8 +29,8 @@ public class StravaService {
     private final StravaUserRepository stravaUserRepository;
 
     private final String URL = "https://www.strava.com/oauth/token";
-    private final String CLIENT_ID = "125803";
-    private final String CLIENT_SECRET = "3e9f7fcd913ece59cb5bccd8a89444ab9f452ec5";
+    private final String CLIENT_ID = "126330";
+    private final String CLIENT_SECRET = "84935d0a565ea3e1989b60112f279a4a9d114f74";
     private String grantType;
 
     public StravaService(StravaUserRepository stravaUserRepository) {
@@ -161,7 +163,7 @@ public class StravaService {
 
     // TODO DIDDE: Finish this method, change from Post to Get, possibly change
     // return type from boolean
-    public ArrayList<StravaRun> saveRunsFrom(int stravaID, long unixTimeStamp, String accessToken) {
+    public ArrayList<Run> saveRunsFrom(int stravaID, long unixTimeStamp, String accessToken, User user) {
 
         final String URL = "https://www.strava.com/api/v3/athlete/activities";
 
@@ -185,13 +187,19 @@ public class StravaService {
                 JsonNode activitiesNode = objectMapper.readTree(jsonResponse);
 
                 // Now you can access information about the runs
-                ArrayList<StravaRun> runs = new ArrayList<>();
+                ArrayList<Run> runs = new ArrayList<>();
                 for (JsonNode activityNode : activitiesNode) {
                     if (activityNode.get("type").asText().equals("Run")) {
                         double distance = activityNode.get("distance").asDouble();
-                        int elapsedTime = activityNode.get("elapsed_time").asInt();
-                        String date = activityNode.get("start_date").asText();
-                        StravaRun currentRun = new StravaRun(date, distance, elapsedTime);
+                        distance = distance / 1000;
+                        double truncated = Math.floor(distance * 100) / 100;
+                        int elapsedTimeInSeconds = activityNode.get("elapsed_time").asInt();
+
+                        String formattedTime = getFormattedTime(elapsedTimeInSeconds);
+                        String date = activityNode.get("start_date_local").asText();
+                        date = date.substring(0, date.indexOf('T'));
+                        LocalDate localDate = LocalDate.parse(date);
+                        Run currentRun = new Run(localDate, truncated, formattedTime, user);
                         runs.add(currentRun);
                     }
                 }
@@ -206,6 +214,24 @@ public class StravaService {
             e.printStackTrace();
             return null;
         }
+    }
+
+    private String getFormattedTime(int elapsedTimeInSeconds) {
+        // Calculate hours
+        int hours = elapsedTimeInSeconds / 3600;
+
+        // Calculate remaining seconds after removing hours
+        int remainingSeconds = elapsedTimeInSeconds % 3600;
+
+        // Calculate minutes
+        int minutes = remainingSeconds / 60;
+
+        // Calculate remaining seconds after removing minutes
+        int seconds = remainingSeconds % 60;
+
+        // Format the time
+        String formattedTime = String.format("%02d:%02d:%02d", hours, minutes, seconds);
+        return formattedTime;
     }
 
 }
