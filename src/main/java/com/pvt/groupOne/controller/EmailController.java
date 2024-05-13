@@ -54,7 +54,7 @@ public class EmailController {
 
             PasswordResetToken token = userService.createPasswordResetToken(user);
 
-            String url = "https://" + request.getServerName() + request.getContextPath()
+            String url = "https://" + request.getServerName() + "/" + request.getContextPath()
                     + "route/resetPassword?token=" + token.getToken();
             EmailRequest emailRequest = new EmailRequest();
             emailRequest.setSubject("Reset Password");
