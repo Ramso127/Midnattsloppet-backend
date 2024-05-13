@@ -305,7 +305,7 @@ public class MainController {
             return ResponseEntity.badRequest().body("{\"error\":\"User does not exist\"}");
         }
         // Assuming runRequest.getDate() returns a LocalDate object
-        LocalDate localDate = runRequest.getDate();
+        LocalDate localDate = LocalDate.parse(runRequest.getDate());
 
         // Define the desired date format
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
@@ -315,9 +315,17 @@ public class MainController {
 
         // Parse the formatted date string back into a LocalDate object
         LocalDate formattedLocalDate = LocalDate.parse(formattedDate, formatter);
+        
+        int minutes = runRequest.getMinutes();
+        int hours = minutes / 60;
 
+        minutes = minutes % 60;
+
+        int seconds = runRequest.getSeconds();
+
+        String formattedTime = String.format("%02d:%02d:%02d", hours, minutes, seconds);
         // Create and save the new run
-        Run newRun = new Run(formattedLocalDate, runRequest.getTotalDistance(), runRequest.getTotalTime(), user);
+        Run newRun = new Run(formattedLocalDate, runRequest.getTotaldistance(), formattedTime, user);
 
         runService.saveRun(newRun);
 
