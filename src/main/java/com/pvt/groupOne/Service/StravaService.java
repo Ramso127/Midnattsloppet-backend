@@ -29,8 +29,8 @@ public class StravaService {
     private final StravaUserRepository stravaUserRepository;
 
     private final String URL = "https://www.strava.com/oauth/token";
-    private final String CLIENT_ID = "126330";
-    private final String CLIENT_SECRET = "84935d0a565ea3e1989b60112f279a4a9d114f74";
+    private final String CLIENT_ID = "125438";
+    private final String CLIENT_SECRET = "d3784826d6a60ee43253e4f2e1cf38932cd24251";
     private String grantType;
 
     public StravaService(StravaUserRepository stravaUserRepository) {
