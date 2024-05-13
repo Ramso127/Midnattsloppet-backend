@@ -40,8 +40,8 @@ public class RunDataCalcController {
         return runRepository.findUserFromRunById(id);
     }
 
-    @GetMapping ("/getAllUserRuns/{username}")
-    public String getAllUserRuns(@PathVariable String username) {
+    @GetMapping ("/getAllUserRuns")
+    public String getAllUserRuns(@RequestParam String username) {
         List<Run> runs = runRepository.getAllRunsByUser(username);
 
         // Create a StringBuilder to manually build the JSON
