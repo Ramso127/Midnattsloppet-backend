@@ -1,4 +1,5 @@
 package com.pvt.groupOne.controller;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.pvt.groupOne.model.Run;
 import com.pvt.groupOne.model.User;
 import com.pvt.groupOne.repository.AccountRepository;
@@ -8,9 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 @RestController
 @RequestMapping("/run")
@@ -115,15 +114,16 @@ public class RunDataCalcController {
     }
 
     @GetMapping("/getTotalDistance/{username}")
-    public double getTotalDistance(@PathVariable String username) {
+    public @ResponseBody Map<String, Integer> getTotalDistance(@PathVariable String username) {
         List<Double> runDistanceList = runRepository.getAllRunDistanceByUser(username);
         double totalDistance = 0;
-        for(double distance : runDistanceList) {
+        for (double distance : runDistanceList) {
             totalDistance += distance;
         }
 
-
-        return totalDistance;
+        Map<String, Integer> response = new HashMap<>();
+        response.put("distance", (int) totalDistance);
+        return response;
     }
 
     @GetMapping("/getTotalRunTime/{username}")
