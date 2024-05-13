@@ -17,12 +17,6 @@ import java.util.*;
 public class RunDataCalcController {
 
     @Autowired
-    private RunnerGroupRepository runnerGroupRepository;
-
-    @Autowired
-    private AccountRepository accountRepository;
-
-    @Autowired
     private RunRepository runRepository;
 
 
@@ -47,8 +41,25 @@ public class RunDataCalcController {
     }
 
     @GetMapping ("/getAllUserRuns/{username}")
-    public List<Run> getAllUserRuns(@PathVariable String username) {
-        return runRepository.getAllRunsByUser(username);
+    public String getAllUserRuns(@PathVariable String username) {
+        List<Run> runs = runRepository.getAllRunsByUser(username);
+
+        // Create a StringBuilder to manually build the JSON
+        StringBuilder jsonBuilder = new StringBuilder();
+        jsonBuilder.append("{");
+        for (int i = 0; i < runs.size(); i++) {
+            Run run = runs.get(i);
+            jsonBuilder.append("\"RunID\": \"").append(run.getId()).append("\": {")
+                      .append("\"distance\": \"").append(run.getTotalDistance()).append("\",")
+                      .append("\"time\": \"").append(run.getTotalTime()).append("\"}")
+                      .append("\"date\": \"").append(run.getDate()).append("\"}");
+            if (i < runs.size() - 1) {
+                jsonBuilder.append(",");
+            }
+        }
+        jsonBuilder.append("}");
+
+        return jsonBuilder.toString();
     }
 
     @GetMapping("/getAllRunTimeByUser/{username}")
