@@ -243,7 +243,7 @@ public class MainController {
             stravaUser.setUser(newUser);
 
             stravaUserRepository.save(stravaUser);
-            return "Success! Thank you " + stravaUser.getFirstName() + ". You can now close this page and return to the app.";
+            return "Success! Thank you " + stravaUser.getFirstName() + ".";
 
         } catch (Exception e) {
             return "Error: " + e;
@@ -308,8 +308,16 @@ public class MainController {
             return ResponseEntity.badRequest().body("{\"error\":\"User does not exist\"}");
         }
         // Assuming runRequest.getDate() returns a LocalDate object
-        LocalDate localDate = LocalDate.parse(runRequest.getDate(),DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+        LocalDate localDate = LocalDate.parse(runRequest.getDate());
 
+        // Define the desired date format
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+
+        // Format the LocalDate object using the formatter
+        String formattedDate = localDate.format(formatter);
+
+        // Parse the formatted date string back into a LocalDate object
+        LocalDate formattedLocalDate = LocalDate.parse(formattedDate, formatter);
         
         int minutes = runRequest.getMinutes();
         int hours = minutes / 60;
@@ -320,7 +328,7 @@ public class MainController {
 
         String formattedTime = String.format("%02d:%02d:%02d", hours, minutes, seconds);
         // Create and save the new run
-        Run newRun = new Run(localDate, runRequest.getTotaldistance(), formattedTime, user);
+        Run newRun = new Run(formattedLocalDate, runRequest.getTotaldistance(), formattedTime, user);
 
         runService.saveRun(newRun);
 
