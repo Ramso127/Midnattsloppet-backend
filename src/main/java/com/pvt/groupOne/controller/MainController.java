@@ -307,11 +307,13 @@ public class MainController {
         if (user == null) {
             return ResponseEntity.badRequest().body("{\"error\":\"User does not exist\"}");
         }
-        // Assuming runRequest.getDate() returns a LocalDate object
-        LocalDate localDate = LocalDate.parse(runRequest.getDate());
+
 
         // Define the desired date format
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+
+        // Assuming runRequest.getDate() returns a LocalDate object
+        LocalDate localDate = LocalDate.parse(runRequest.getDate(),formatter);
 
         // Format the LocalDate object using the formatter
         String formattedDate = localDate.format(formatter);
