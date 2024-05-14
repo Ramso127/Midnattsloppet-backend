@@ -91,7 +91,7 @@ public class RunDataCalcController {
 
 
     @GetMapping ("/getAverageSpeed/{id}")
-    public String getAverageSpeed(@PathVariable Long id) {
+    public Map<String, Double> getAverageSpeed(@PathVariable Long id) {
         String runTime = runRepository.findRunTimeById(id);
         double runDistance = runRepository.findRunDistanceById(id);
 
@@ -104,8 +104,10 @@ public class RunDataCalcController {
         double averageSpeed = (runDistance * 60) / totalTimeInMinutes;
 
         double roundedSpeed = Math.round(averageSpeed * 10.0) / 10.0;
-
-        return "The average speed for the run was " + roundedSpeed + " km/h";
+        Map<String, Double> roundedSpeedMap = new HashMap<>();
+        roundedSpeedMap.put("averagespeed", roundedSpeed);
+        //rounded speed i km/h
+        return roundedSpeedMap;
     }
 
     @GetMapping ("/getAveragePace/{id}")
