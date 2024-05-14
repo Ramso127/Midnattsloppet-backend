@@ -308,7 +308,7 @@ public class MainController {
 
 
         // Define the desired date format
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
         // Assuming runRequest.getDate() returns a LocalDate object
         String date = runRequest.getDate();
