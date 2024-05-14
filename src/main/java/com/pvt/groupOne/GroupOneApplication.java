@@ -19,6 +19,7 @@ public class GroupOneApplication {
 
 		SpringApplication.run(GroupOneApplication.class, args);
 
+
 		// ApplicationContext context = SpringApplication.run(GroupOneApplication.class,
 		// args);
 		// AccountRepository userRepository = context.getBean(AccountRepository.class);
