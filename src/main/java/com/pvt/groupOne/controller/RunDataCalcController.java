@@ -1,10 +1,7 @@
 package com.pvt.groupOne.controller;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.pvt.groupOne.model.Run;
 import com.pvt.groupOne.model.User;
-import com.pvt.groupOne.repository.AccountRepository;
 import com.pvt.groupOne.repository.RunRepository;
-import com.pvt.groupOne.repository.RunnerGroupRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
