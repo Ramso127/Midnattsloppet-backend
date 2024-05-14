@@ -109,7 +109,7 @@ public class RunDataCalcController {
     }
 
     @GetMapping ("/getAveragePace/{id}")
-    public String getAveragePace(@PathVariable Long id) {
+    public Map<String, String> getAveragePace(@PathVariable Long id) {
         String runTime = runRepository.findRunTimeById(id);
         double runDistance = runRepository.findRunDistanceById(id);
 
@@ -126,9 +126,11 @@ public class RunDataCalcController {
         int minutesPace = (int) roundedPace;
         double secondsFraction = roundedPace - minutesPace;
         int secondsPace = (int) Math.round(secondsFraction * 60);
-
-
-        return "The average pace for the run was " + minutesPace+":"+secondsPace + " min/km";
+        String formattedPace = String.format("%02d:%02d", minutesPace, secondsPace);
+        Map<String,String> averagePaceMap = new HashMap<>();
+        averagePaceMap.put("averagepace", formattedPace);
+        //Average pace is min/km
+        return averagePaceMap;
     }
 
     @GetMapping("/getTotalDistance/{username}")

@@ -115,22 +115,23 @@ public class MainController {
     }
 
     @PostMapping(value = "/addgroup", produces = "application/json")
-    public @ResponseBody String addGroup(@RequestBody GroupRequest groupRequest) {
+    public ResponseEntity<String> addGroup(@RequestBody GroupRequest groupRequest) {
         String teamName = groupRequest.getTeamname();
         String userName = groupRequest.getUsername();
         try {
             User user = accountRepository.findByUsername(userName);
-
+    
             if (groupRepository.existsByTeamName(teamName)) {
-                return "{\"message\": \"Group name already exists\"}";
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("{\"message\": \"Group name already exists\"}");
             }
+            
             RunnerGroup runnerGroup = runnerGroupService.createRunnerGroup(teamName, user);
             accountRepository.save(user);
             ObjectMapper om = new ObjectMapper();
-            return om.writeValueAsString(runnerGroup);
+            return ResponseEntity.status(HttpStatus.CREATED).body(om.writeValueAsString(runnerGroup));
         } catch (Exception e) {
             e.printStackTrace();
-            return "ERROR: " + e;
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("ERROR: " + e);
         }
     }
 
