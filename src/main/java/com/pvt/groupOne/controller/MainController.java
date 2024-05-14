@@ -71,10 +71,10 @@ public class MainController {
             String email = userRequest.getEmail();
             String companyName = userRequest.getCompanyname();
             if (accountRepository.existsByUsername(username))
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("{\"message\": \"Username already exists\"}");
-            
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("{\"message\": \"Username already exists\"}");
+
             if (accountRepository.existsByEmail(email))
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("{\"message\": \"Email already exists\"}");
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("{\"message\": \"Email already exists\"}");
 
             User newUser = new User(username,password,email,companyName);
 
@@ -82,7 +82,7 @@ public class MainController {
             ObjectMapper om = new ObjectMapper();
             return ResponseEntity.status(HttpStatus.CREATED).body(om.writeValueAsString(newUser));
                 } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("{\"error\": \"" + e.toString() + "\"}");
+                    return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("{\"error\": \"" + e.toString() + "\"}");
                 }
     }
 

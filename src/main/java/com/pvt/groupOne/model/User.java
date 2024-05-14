@@ -16,6 +16,13 @@ import java.util.*;
 @Entity
 public class User {
 
+    public User(String username, String password, String email, String companyName) {
+        this.username = username;
+        this.password = password;
+        this.email = email;
+        this.companyName = companyName;
+    }
+
     @Id
     @Column(name = "user_name", unique = true)
     private String username;
