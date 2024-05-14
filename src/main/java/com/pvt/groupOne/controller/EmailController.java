@@ -1,5 +1,6 @@
 package com.pvt.groupOne.controller;
 
+import com.pvt.groupOne.Service.PasswordResetService;
 import com.pvt.groupOne.Service.UserService;
 import com.pvt.groupOne.model.EmailRequest;
 import com.pvt.groupOne.model.PasswordResetToken;
@@ -28,6 +29,9 @@ public class EmailController {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private PasswordResetService passwordResetService;
+
     @PostMapping("/sendEmail/{reciever}")
     public String sendEmail(@PathVariable String reciever,
             @RequestBody EmailRequest emailRequest) {
@@ -52,7 +56,7 @@ public class EmailController {
         } else {
             User user = accountRepository.findByEmail(email);
 
-            PasswordResetToken token = userService.createPasswordResetToken(user);
+            PasswordResetToken token = passwordResetService.createPasswordResetToken(user);
 
             String url = "https://" + request.getServerName() + "/" + request.getContextPath()
                     + "route/resetPassword?token=" + token.getToken();
