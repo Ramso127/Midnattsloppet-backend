@@ -349,7 +349,7 @@ public class MainController {
     }
 
     @GetMapping(value = "/getteammembers/{groupname}")
-    public @ResponseBody List<Map<String, Object>> getTeamMembers(@PathVariable String groupname) {
+    public @ResponseBody Map<String, List<Map<String, Object>>> getTeamMembers(@PathVariable String groupname) {
         RunnerGroup runnerGroup = groupRepository.findGroupByTeamName(groupname);
         Map<String, List<Map<String, Object>>> response = new HashMap<>();
         List<User> list = runnerGroup.getUsers();
@@ -366,7 +366,8 @@ public class MainController {
             userMap.put("distance", totalDistance);
             jsonList.add(userMap);
         }
-        return jsonList;
+        response.put("data", jsonList);
+        return response;
     }
 
     @GetMapping(value = "/gettop3")
