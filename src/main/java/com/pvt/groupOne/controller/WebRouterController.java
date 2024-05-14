@@ -18,10 +18,15 @@ public class WebRouterController {
 
     @GetMapping("/resetPassword")
     public String servePasswordReset(@RequestParam("token") String token) {
-        String result = passwordResetService.validatePasswordResetToken(token);
-        if (result.equals("202")) {
-            return "forward:/resetPassword.html";
-        }
+        int length = token.length();
+        if (length != 36) {
+            return "forward:/invalidPasswordResetToken.html";
+        } else {
+            String result = passwordResetService.validatePasswordResetToken(token);
+            if (result.equals("202")) {
+                return "forward:/resetPassword.html";
+            }
             return "forward:/passwordError.html";
+        }
     }
 }
