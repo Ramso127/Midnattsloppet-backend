@@ -23,8 +23,8 @@ public class ChallengeController {
     @Autowired
     private ChallengeRepository challengeRepository;
 
-    @GetMapping(value = "/updatechallenges")
-    public @ResponseBody String updateChallenges() {
+    @GetMapping(value = "/increment-challenges")
+    public @ResponseBody String incrementChallenges() {
 
         int nextID;
 
