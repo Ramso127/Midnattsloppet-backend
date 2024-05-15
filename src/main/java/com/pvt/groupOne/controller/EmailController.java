@@ -41,15 +41,6 @@ public class EmailController {
         return "Email Sent!";
     }
 
-    public String sendResetTokenMail(String contextPath, Locale locale, PasswordResetToken token, User user) {
-        String url = "https://group-15-1.pvt.dsv.su.se/route/passwordReset" + "?token=" + token.getToken();
-        EmailRequest emailRequest = new EmailRequest();
-        emailRequest.setSubject("Reset Password");
-        emailRequest.setText("Hello " + user.getUsername() + ", \r\n" +
-                "Please click the following link to reset your password: \r\n" + url);
-        return sendEmail(user.getEmail(), emailRequest);
-    }
-
     @GetMapping(value = "/resetPassword/{email}")
     public @ResponseBody String resetPassword(HttpServletRequest request, @PathVariable String email) {
         if (!accountRepository.existsByEmail(email)) {

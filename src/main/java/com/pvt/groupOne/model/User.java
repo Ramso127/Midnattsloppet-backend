@@ -35,7 +35,7 @@ public class User {
     private String companyName;
 
     @Column(name = "points")
-    private int points;
+    private Integer points;
 
     private boolean isVerified = false;
 
@@ -117,11 +117,11 @@ public class User {
         this.companyName = companyName;
     }
 
-    public int getPoints() {
+    public Integer getPoints() {
         return points;
     }
 
-    public void setPoints(int points) {
+    public void setPoints(Integer points) {
         this.points = points;
     }
 
