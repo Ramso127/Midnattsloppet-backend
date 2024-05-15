@@ -1,6 +1,7 @@
 package com.pvt.groupOne.controller;
 
 import com.pvt.groupOne.Service.TokenService;
+import com.pvt.groupOne.model.User;
 import com.pvt.groupOne.repository.VerificationTokenRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -36,18 +37,19 @@ public class WebRouterController {
 
     @GetMapping("/emailVerification")
     public String serveVerifyEmail(@RequestParam("token") String token) {
-        if(tokenService.isVerifiedAlready(verificationTokenRepository.findUserByToken(token))){
-            return "forward:/emailAlreadyVerified.html";
-        }
-        else {
-            String result = tokenService.validateVerificationMail(token);
-            if (result.equals("202") && tokenService.verifyUser(verificationTokenRepository.findUserByToken(token))) {
-                return "forward:/emailSuccess.html";
-            } else if (result.equals("invalid")) {
-                return "forward:/invalidEmailVerificationToken.html";
-            } else {
-                return "forward:/emailError.html";
+        User user = verificationTokenRepository.findUserByToken(token);
+        if(user != null) {
+            if (user.isVerified()) {
+                return "forward:/emailAlreadyVerified.html";
             }
         }
-    }
+        String result = tokenService.validateVerificationMail(token);
+        if (result.equals("202") && tokenService.verifyUser(verificationTokenRepository.findUserByToken(token))) {
+            return "forward:/emailSuccess.html";
+        } else if (result.equals("invalid")) {
+            return "forward:/invalidEmailVerificationToken.html";
+        } else {
+            return "forward:/emailError.html";
+            }
+        }
 }
