@@ -9,6 +9,8 @@ import com.pvt.groupOne.model.VerificationToken;
 import com.pvt.groupOne.repository.AccountRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -85,6 +87,19 @@ public class EmailController {
             return "Email has been sent";
         }
 
+    }
+
+    @GetMapping(value = "/check-verification/{username}")
+    public ResponseEntity<String> checkVerification(@PathVariable String username){
+
+        User currentUser = accountRepository.findByUsername(username);
+
+        
+        if (currentUser.isVerified()){
+            return ResponseEntity.ok("{\"message\": \"User is verified!\"}");
+        }
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("{\"message\": \"User is not verified!\"}");
     }
 
 }
