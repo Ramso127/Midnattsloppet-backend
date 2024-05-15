@@ -9,9 +9,8 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 public class GroupOneApplication {
 
 	public static void main(String[] args) {
-		System.out.println("test");
-		System.out.println("wille");
-		System.out.println("tjalalla");
+		
+		System.out.println("RUNNING PROGRAM");
 
 		SpringApplication.run(GroupOneApplication.class, args);
 
