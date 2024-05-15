@@ -22,6 +22,7 @@ public class RunnerGroup {
     private String teamName;
     private String inviteCode;
     private boolean isFull = false;
+    private int points;
 
     @Lob
     private byte[] groupPicture;
@@ -72,6 +73,14 @@ public class RunnerGroup {
 
     public void setUsers(ArrayList<User> users) {
         this.users = users;
+    }
+
+    public int getPoints() {
+        return points;
+    }
+
+    public void setPoints(int points) {
+        this.points = points;
     }
 
     public void addUser(User user) {
