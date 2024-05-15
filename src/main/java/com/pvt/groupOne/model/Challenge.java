@@ -14,14 +14,25 @@ public class Challenge {
     
     private String title;
     private String description;
+    private boolean isActive;
+    
     
     public Challenge(String title, String description) {
         this.title = title;
         this.description = description;
     }
 
+    
     public Challenge(){
+        
+    }
+    
+    public boolean isActive() {
+        return isActive;
+    }
 
+    public void setActive(boolean isActive) {
+        this.isActive = isActive;
     }
     
     public int getId() {

@@ -9,4 +9,6 @@ public interface ChallengeRepository extends CrudRepository<Challenge, Integer> 
 
     Challenge findByTitle(String title);
 
+    Challenge findByisActive(boolean bool);
+
 }
