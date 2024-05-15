@@ -1,4 +1,4 @@
-package com.pvt.groupOne.controller;
+package com.pvt.groupOne.Service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.EnableScheduling;
@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 
 @Component
 @EnableScheduling
-public class MyScheduledTask {
+public class SchedulingService {
 
     @Autowired
     private RunRepository runRepository;
