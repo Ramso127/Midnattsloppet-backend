@@ -95,7 +95,7 @@ public class ChallengeController {
         return "All challenges set as inactive.";
     }
 
-    @GetMapping(value = "/getcurrentchallenge")
+    @GetMapping(value = "/get-current-challenge")
     public @ResponseBody Map<String, List<Map<String, String>>> getCurrentChallenge() {
 
         Challenge currentChallenge = challengeRepository.findByisActive(true);
