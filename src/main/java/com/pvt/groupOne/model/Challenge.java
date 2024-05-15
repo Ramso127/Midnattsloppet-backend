@@ -15,6 +15,15 @@ public class Challenge {
     private String title;
     private String description;
     
+    public Challenge(String title, String description) {
+        this.title = title;
+        this.description = description;
+    }
+
+    public Challenge(){
+
+    }
+    
     public int getId() {
         return id;
     }

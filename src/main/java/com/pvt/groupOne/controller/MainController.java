@@ -53,10 +53,12 @@ public class MainController {
 
     @Autowired
     private RunService runService;
-
     
     @Autowired
     private RunRepository runRepository;
+
+    @Autowired
+    private ChallengeRepository challengeRepository;
 
     @GetMapping(value = "/hello")
     public @ResponseBody String testMethod() {
@@ -378,5 +380,25 @@ public class MainController {
         } catch (JsonProcessingException e) {
             return e.toString();
         }
+    }
+
+    @GetMapping(value = "/addChallenges")
+    public @ResponseBody String addChallenges(){
+
+        Challenge firstChallenge = new Challenge("Furthest distance", "Run the furthest distance. Minimum pace is 8 minutes per kilometer.");
+		Challenge secondChallenge = new Challenge("Most runs", "Run the most runs. Minimum 2 kilometers per run.");
+		Challenge thirdChallenge = new Challenge("Furthest run per member", "The longest run of every team member will be added to the total. Minimum pace is 8 minutes per kilometer.");
+		Challenge fourthChallenge = new Challenge("Highest average pace", "Have the lowest average minutes per kilometer. Minimum distance per run is 2 kilometers.");
+		Challenge fifthChallenge = new Challenge("Most long runs", "Have the highest number of runs with a minimum distance of 5 kilometers.");
+		Challenge sixthChallenge = new Challenge("Total number of faster runs", "Have the highest number of runs with a minimum pace of 6 minutes per kilometer.");
+		
+		challengeRepository.save(firstChallenge);
+		challengeRepository.save(secondChallenge);
+		challengeRepository.save(thirdChallenge);
+		challengeRepository.save(fourthChallenge);
+		challengeRepository.save(fifthChallenge);
+		challengeRepository.save(sixthChallenge);
+
+        return "Challenges successfully added.";
     }
 }
