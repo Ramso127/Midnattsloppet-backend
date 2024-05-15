@@ -1,10 +1,11 @@
 package com.pvt.groupOne.controller;
 
-import com.pvt.groupOne.Service.PasswordResetService;
+import com.pvt.groupOne.Service.TokenService;
 import com.pvt.groupOne.Service.UserService;
 import com.pvt.groupOne.model.EmailRequest;
 import com.pvt.groupOne.model.PasswordResetToken;
 import com.pvt.groupOne.model.User;
+import com.pvt.groupOne.model.VerificationToken;
 import com.pvt.groupOne.repository.AccountRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,8 +30,9 @@ public class EmailController {
     @Autowired
     private UserService userService;
 
+
     @Autowired
-    private PasswordResetService passwordResetService;
+    private TokenService tokenService;
 
     @PostMapping("/sendEmail/{reciever}")
     public String sendEmail(@PathVariable String reciever,
@@ -56,7 +58,7 @@ public class EmailController {
         } else {
             User user = accountRepository.findByEmail(email);
 
-            PasswordResetToken token = passwordResetService.createPasswordResetToken(user);
+            PasswordResetToken token = tokenService.createPasswordResetToken(user);
 
             String url = "https://" + request.getServerName() + "/" + request.getContextPath()
                     + "route/resetPassword?token=" + token.getToken();
@@ -69,7 +71,29 @@ public class EmailController {
             return "Email has been sent";
         }
 
-        // return "Password has been reset";
+    }
+
+    @GetMapping(value = "/verifyMail/{email}")
+    public @ResponseBody String verificationCode(HttpServletRequest request, @PathVariable String email) {
+        if (!accountRepository.existsByEmail(email)) {
+            return "No such user exists";
+
+        } else {
+            User user = accountRepository.findByEmail(email);
+
+            VerificationToken token = tokenService.createVerificationCode(user);
+
+            String url = "https://" + request.getServerName() + "/" + request.getContextPath()
+                    + "route/emailVerification?token=" + token.getToken();
+            EmailRequest emailRequest = new EmailRequest();
+            emailRequest.setSubject("Mail Verification");
+            emailRequest.setText("Hello " + user.getUsername() + ", \r\n" +
+                    "Please click the following link to verify your email: \r\n" + url);
+            sendEmail(user.getEmail(), emailRequest);
+
+            return "Email has been sent";
+        }
+
     }
 
 }
