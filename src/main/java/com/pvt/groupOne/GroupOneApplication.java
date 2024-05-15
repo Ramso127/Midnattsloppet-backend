@@ -20,20 +20,20 @@ public class GroupOneApplication {
 		System.out.println("wille");
 		System.out.println("tjalalla");
 
-//		SpringApplication.run(GroupOneApplication.class, args);
+		SpringApplication.run(GroupOneApplication.class, args);
 
 
-		 ApplicationContext context = SpringApplication.run(GroupOneApplication.class,
-		 args);
-		 AccountRepository userRepository = context.getBean(AccountRepository.class);
-		 User user;
-		 TokenService tokenService = context.getBean(TokenService.class);
-		 System.out.println(user = userRepository.findByUsername("noaTest6"));
-		 MainController mainController = context.getBean(MainController.class);
-		 System.out.println(user.getUserName());
-		 UserService userService = context.getBean(UserService.class);
-		 PasswordResetToken token = tokenService.createPasswordResetToken(user);
-		 System.out.println(token);
+//		 ApplicationContext context = SpringApplication.run(GroupOneApplication.class,
+//		 args);
+//		 AccountRepository userRepository = context.getBean(AccountRepository.class);
+//		 User user;
+//		 TokenService tokenService = context.getBean(TokenService.class);
+//		 System.out.println(user = userRepository.findByUsername("noaTest6"));
+//		 MainController mainController = context.getBean(MainController.class);
+//		 System.out.println(user.getUserName());
+//		 UserService userService = context.getBean(UserService.class);
+//		 PasswordResetToken token = tokenService.createPasswordResetToken(user);
+//		 System.out.println(token);
 		// AOFÅJUBFÅU
 	}
 
