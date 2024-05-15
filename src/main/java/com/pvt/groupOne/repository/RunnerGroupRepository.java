@@ -50,4 +50,10 @@ public interface RunnerGroupRepository extends CrudRepository<RunnerGroup, Integ
        @Query("SELECT COUNT(DISTINCT r.teamName) FROM RunnerGroup r")
        int countDistinctTeams();
 
+       @Query("SELECT g FROM RunnerGroup g JOIN g.users u GROUP BY g ORDER BY SUM(u.points) DESC")
+       List<RunnerGroup> findGroupsOrderByMembersTotalPoints();
+
+       @Query("SELECT g FROM RunnerGroup g ORDER BY g.points DESC")
+       List<RunnerGroup> findAllGroupsOrderByPoints();
+
 }
