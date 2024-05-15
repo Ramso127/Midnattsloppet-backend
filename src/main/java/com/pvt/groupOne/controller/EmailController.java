@@ -32,7 +32,6 @@ public class EmailController {
     @Autowired
     private UserService userService;
 
-
     @Autowired
     private TokenService tokenService;
 
@@ -90,12 +89,11 @@ public class EmailController {
     }
 
     @GetMapping(value = "/check-verification/{username}")
-    public ResponseEntity<String> checkVerification(@PathVariable String username){
+    public ResponseEntity<String> checkVerification(@PathVariable String username) {
 
         User currentUser = accountRepository.findByUsername(username);
 
-        
-        if (currentUser.isVerified()){
+        if (currentUser.isVerified()) {
             return ResponseEntity.ok("{\"message\": \"User is verified!\"}");
         }
 

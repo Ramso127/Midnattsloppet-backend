@@ -13,6 +13,7 @@ public class CustomErrorController implements ErrorController {
     public String handleError() {
         return "forward:/error.html";
     }
+
     public String getErrorPath() {
         return "/error";
     }

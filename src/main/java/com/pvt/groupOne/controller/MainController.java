@@ -53,7 +53,7 @@ public class MainController {
 
     @Autowired
     private RunService runService;
-    
+
     @Autowired
     private RunRepository runRepository;
 
@@ -75,14 +75,15 @@ public class MainController {
             if (accountRepository.existsByEmail(email))
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("{\"message\": \"Email already exists\"}");
 
-            User newUser = new User(username,password,email,companyName);
+            User newUser = new User(username, password, email, companyName);
 
             accountRepository.save(newUser);
             ObjectMapper om = new ObjectMapper();
             return ResponseEntity.status(HttpStatus.CREATED).body(om.writeValueAsString(newUser));
-                } catch (Exception e) {
-                    return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("{\"error\": \"" + e.toString() + "\"}");
-                }
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("{\"error\": \"" + e.toString() + "\"}");
+        }
     }
 
     @DeleteMapping(value = "/removeuser") // eller "/removeuser/{userId}"
@@ -119,11 +120,12 @@ public class MainController {
         String userName = groupRequest.getUsername();
         try {
             User user = accountRepository.findByUsername(userName);
-    
+
             if (groupRepository.existsByTeamName(teamName)) {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("{\"message\": \"Group name already exists\"}");
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                        .body("{\"message\": \"Group name already exists\"}");
             }
-            
+
             RunnerGroup runnerGroup = runnerGroupService.createRunnerGroup(teamName, user);
             accountRepository.save(user);
             ObjectMapper om = new ObjectMapper();
@@ -174,7 +176,6 @@ public class MainController {
         return "The group has been removed";
     }
 
-
     @GetMapping(value = "/checkusername/{username}")
     public @ResponseBody Boolean checkUsernameExistsAlready(@PathVariable String username) {
         if (accountRepository.existsByUsername(username))
@@ -194,16 +195,16 @@ public class MainController {
     // TODO DIDDE change return statements
     @GetMapping("/saveauthenticateduser/{username}")
     public @ResponseBody String saveStravaToken(
-        @RequestParam(required = false) String error,
-        @RequestParam("code") String authCode,
-        @RequestParam("scope") String scope,
-        @PathVariable("username") String username) {
+            @RequestParam(required = false) String error,
+            @RequestParam("code") String authCode,
+            @RequestParam("scope") String scope,
+            @PathVariable("username") String username) {
 
         // TODO DIDDE App crashes when trying to authenticate someone who's already
         // authenticated
 
         StravaUser myUser = stravaUserRepository.findByUser_Username(username);
-        
+
         boolean isUserConnected = myUser != null && myUser.getUser().getUsername().equals(username);
 
         if (isUserConnected) {
@@ -239,7 +240,8 @@ public class MainController {
             stravaUser.setUser(newUser);
 
             stravaUserRepository.save(stravaUser);
-            return "Success! Thank you " + stravaUser.getFirstName() + ". You can now close this page and return to the app";
+            return "Success! Thank you " + stravaUser.getFirstName()
+                    + ". You can now close this page and return to the app";
 
         } catch (Exception e) {
             return "Error: " + e;
@@ -305,20 +307,19 @@ public class MainController {
             return ResponseEntity.badRequest().body("{\"error\":\"User does not exist\"}");
         }
 
-
         // Define the desired date format
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
         // Assuming runRequest.getDate() returns a LocalDate object
         String date = runRequest.getDate();
-        LocalDate localDate = LocalDate.parse(date,formatter);
+        LocalDate localDate = LocalDate.parse(date, formatter);
 
         // Format the LocalDate object using the formatter
         String formattedDate = localDate.format(formatter);
 
         // Parse the formatted date string back into a LocalDate object
         LocalDate formattedLocalDate = LocalDate.parse(formattedDate, formatter);
-        
+
         int minutes = runRequest.getMinutes();
         int hours = minutes / 60;
 
@@ -336,9 +337,6 @@ public class MainController {
         return ResponseEntity.ok(newRun);
     }
 
-
-
-
     @GetMapping(value = "/getNumberOfTeams")
     public @ResponseBody String getNumberOfTeams() {
         int numberOfTeams = groupRepository.countDistinctTeams();
@@ -352,7 +350,7 @@ public class MainController {
         Map<String, List<Map<String, Object>>> response = new HashMap<>();
         List<User> list = runnerGroup.getUsers();
         List<Map<String, Object>> jsonList = new ArrayList<>();
-        for(User user: list){
+        for (User user : list) {
             String username = user.getUsername();
             List<Double> runDistanceList = runRepository.getAllRunDistanceByUser(username);
             double totalDistance = 0;

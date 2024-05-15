@@ -34,11 +34,12 @@ public class ActivityController {
         return ResponseEntity.ok(runs);
     }
 
-    // Get top 3 users based on distance run during the current week ----------------
+    // Get top 3 users based on distance run during the current week
+    // ----------------
     @GetMapping("/users/top-weekly-runners")
     public ResponseEntity<List<Object[]>> getTopWeeklyRunners(
-        @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startOfWeek,
-        @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endOfWeek) {
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startOfWeek,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endOfWeek) {
         List<Object[]> users = runService.getTopThreeUsersByDistanceThisWeek();
         return ResponseEntity.ok(users);
     }
