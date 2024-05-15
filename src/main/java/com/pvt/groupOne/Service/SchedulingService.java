@@ -19,7 +19,8 @@ public class SchedulingService {
     @Autowired
     private RunRepository runRepository;
 
-    @Scheduled(cron = "0 42 16 * * TUE", zone = "Europe/Stockholm") // Run every Sunday at midnight
+    // TEMPLATE Run every tuesday at 0 sec, 42 minutes, 16 hours (16:42)
+    @Scheduled(cron = "0 42 16 * * TUE", zone = "Europe/Stockholm")
     public void runTask() {
         // Your method logic goes here
         System.out.println("METHOD TEST");
