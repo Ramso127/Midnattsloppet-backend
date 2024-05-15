@@ -1,5 +1,10 @@
 package com.pvt.groupOne.controller;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -17,9 +22,9 @@ public class ChallengeController {
 
     @Autowired
     private ChallengeRepository challengeRepository;
-    
-    @GetMapping(value = "/updateChallenges")
-    public @ResponseBody String updateChallenges(){
+
+    @GetMapping(value = "/updatechallenges")
+    public @ResponseBody String updateChallenges() {
 
         int nextID;
 
@@ -29,7 +34,7 @@ public class ChallengeController {
         int currentID = currentActiveChallenge.getId();
 
         // If the last challenge was the final one, loop back to the first challenge.
-        if (currentID == 6){
+        if (currentID == 6) {
             nextID = 0;
             currentID = 0;
         }
@@ -40,36 +45,70 @@ public class ChallengeController {
         return "Current active challenge: #" + nextActiveChallenge.getId();
     }
 
-    @GetMapping(value = "/setFirstChallengeAsActive")
-    public @ResponseBody String setFirstChallengeAsActive(){
+    @GetMapping(value = "/setfirstchallengeasactive")
+    public @ResponseBody String setFirstChallengeAsActive() {
 
         Challenge firstChallenge = challengeRepository.findByid(1);
         firstChallenge.setActive(true);
         challengeRepository.save(firstChallenge);
 
         return "First challenge set as active.";
-        
+
     }
 
-    @GetMapping(value = "/addChallenges")
-    public @ResponseBody String addChallenges(){
+    @GetMapping(value = "/addchallenges")
+    public @ResponseBody String addChallenges() {
 
-        Challenge firstChallenge = new Challenge("Furthest distance", "Run the furthest distance. Minimum pace is 8 minutes per kilometer.");
-		Challenge secondChallenge = new Challenge("Most runs", "Run the most runs. Minimum 2 kilometers per run.");
-		Challenge thirdChallenge = new Challenge("Furthest run per member", "The longest run of every team member will be added to the total. Minimum pace is 8 minutes per kilometer.");
-		Challenge fourthChallenge = new Challenge("Highest average pace", "Have the lowest average minutes per kilometer. Minimum distance per run is 2 kilometers.");
-		Challenge fifthChallenge = new Challenge("Most long runs", "Have the highest number of runs with a minimum distance of 5 kilometers.");
-		Challenge sixthChallenge = new Challenge("Total number of faster runs", "Have the highest number of runs with a minimum pace of 6 minutes per kilometer.");
-		
+        Challenge firstChallenge = new Challenge("Furthest distance",
+                "Run the furthest distance. Minimum pace is 8 minutes per kilometer.");
+        Challenge secondChallenge = new Challenge("Most runs", "Run the most runs. Minimum 2 kilometers per run.");
+        Challenge thirdChallenge = new Challenge("Furthest run per member",
+                "The longest run of every team member will be added to the total. Minimum pace is 8 minutes per kilometer.");
+        Challenge fourthChallenge = new Challenge("Highest average pace",
+                "Have the lowest average minutes per kilometer. Minimum distance per run is 2 kilometers.");
+        Challenge fifthChallenge = new Challenge("Most long runs",
+                "Have the highest number of runs with a minimum distance of 5 kilometers.");
+        Challenge sixthChallenge = new Challenge("Total number of faster runs",
+                "Have the highest number of runs with a minimum pace of 6 minutes per kilometer.");
+
         firstChallenge.setActive(true);
 
         challengeRepository.save(firstChallenge);
-		challengeRepository.save(secondChallenge);
-		challengeRepository.save(thirdChallenge);
-		challengeRepository.save(fourthChallenge);
-		challengeRepository.save(fifthChallenge);
-		challengeRepository.save(sixthChallenge);
+        challengeRepository.save(secondChallenge);
+        challengeRepository.save(thirdChallenge);
+        challengeRepository.save(fourthChallenge);
+        challengeRepository.save(fifthChallenge);
+        challengeRepository.save(sixthChallenge);
 
         return "Challenges successfully added.";
     }
+
+    @GetMapping(value = "/setallasinactive")
+    public @ResponseBody String setAllAsInactive() {
+
+        for (int i = 1; i <= 6; i++) {
+            Challenge currentChallenge = challengeRepository.findByid(i);
+            currentChallenge.setActive(false);
+            challengeRepository.save(currentChallenge);
+        }
+
+        return "All challenges set as inactive.";
+    }
+
+    @GetMapping(value = "/getcurrentchallenge")
+    public @ResponseBody Map<String, List<Map<String, String>>> getCurrentChallenge() {
+
+        Challenge currentChallenge = challengeRepository.findByisActive(true);
+        List<Map<String, String>> mapList = new ArrayList<>();
+        Map<String, String> challengeMap = new HashMap<>();
+        challengeMap.put("title", currentChallenge.getTitle());
+        challengeMap.put("description", currentChallenge.getDescription());
+        mapList.add(challengeMap);
+
+        Map<String, List<Map<String, String>>> wrapperMap = new HashMap<>();
+        wrapperMap.put("data", mapList);
+
+        return wrapperMap;
+    }
+
 }
