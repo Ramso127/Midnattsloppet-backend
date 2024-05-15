@@ -28,10 +28,10 @@ public class PasswordResetService {
         PasswordResetToken passReset = passwordTokenRepository.findByToken(token);
         Calendar time = Calendar.getInstance();
 
-        if (token == null) {
-            return "The token is invalid. Please request a new one.";
+        if (passReset == null || token.length() != 36) {
+            return "invalid";
         } else if (passReset.getExpiryDate().before(time.getTime())) {
-            return "The token is expired. Please request a new one.";
+            return "expired";
         }
         return "202";
     }
