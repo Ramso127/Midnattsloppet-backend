@@ -26,6 +26,12 @@ public class User {
 
     private String companyName;
 
+    @Column(name = "points")
+    private int points;
+
+    private boolean isVerified = false;
+
+
     @ManyToOne
     @JsonIgnoreProperties("users") // Ignore the bidirectional relationship during serialization
     @JoinColumn(name = "runner_group_id")
@@ -101,6 +107,22 @@ public class User {
 
     public void setCompanyName(String companyName) {
         this.companyName = companyName;
+    }
+
+    public int getPoints() {
+        return points;
+    }
+
+    public void setPoints(int points) {
+        this.points = points;
+    }
+
+    public boolean isVerified() {
+        return isVerified;
+    }
+
+    public void setVerified(boolean isVerified) {
+        this.isVerified = isVerified;
     }
 
 }
