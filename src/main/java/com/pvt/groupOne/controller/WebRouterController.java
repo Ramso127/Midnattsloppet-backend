@@ -36,15 +36,18 @@ public class WebRouterController {
 
     @GetMapping("/emailVerification")
     public String serveVerifyEmail(@RequestParam("token") String token) {
-        String result = tokenService.validateVerificationMail(token);
-        if (result.equals("202") && tokenService.verifyUser(verificationTokenRepository.findUserByToken(token))) {
-            return "forward:/emailSuccess.html";
+        if(tokenService.isVerifiedAlready(verificationTokenRepository.findUserByToken(token))){
+            return "forward:/emailAlreadyVerified.html";
         }
-        else if(result.equals("invalid")){
-            return "forward:/invalidEmailVerificationToken.html";
-        }
-        else{
-            return "forward:/emailError.html";
+        else {
+            String result = tokenService.validateVerificationMail(token);
+            if (result.equals("202") && tokenService.verifyUser(verificationTokenRepository.findUserByToken(token))) {
+                return "forward:/emailSuccess.html";
+            } else if (result.equals("invalid")) {
+                return "forward:/invalidEmailVerificationToken.html";
+            } else {
+                return "forward:/emailError.html";
+            }
         }
     }
 }
