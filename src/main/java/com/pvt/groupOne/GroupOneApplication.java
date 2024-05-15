@@ -1,15 +1,11 @@
 package com.pvt.groupOne;
 
-import com.pvt.groupOne.Service.UserService;
-import com.pvt.groupOne.controller.MainController;
-import com.pvt.groupOne.model.PasswordResetToken;
-import com.pvt.groupOne.model.User;
-import com.pvt.groupOne.repository.AccountRepository;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.ApplicationContext;
+import org.springframework.scheduling.annotation.EnableScheduling;
 
 @SpringBootApplication
+@EnableScheduling
 public class GroupOneApplication {
 
 	public static void main(String[] args) {
@@ -18,6 +14,7 @@ public class GroupOneApplication {
 		System.out.println("tjalalla");
 
 		SpringApplication.run(GroupOneApplication.class, args);
+
 
 		// ApplicationContext context = SpringApplication.run(GroupOneApplication.class,
 		// args);

@@ -1,27 +1,17 @@
 package com.pvt.groupOne.controller;
 import com.pvt.groupOne.model.Run;
 import com.pvt.groupOne.model.User;
-import com.pvt.groupOne.repository.AccountRepository;
 import com.pvt.groupOne.repository.RunRepository;
-import com.pvt.groupOne.repository.RunnerGroupRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 @RestController
 @RequestMapping("/run")
 @CrossOrigin
 public class RunDataCalcController {
-
-    @Autowired
-    private RunnerGroupRepository runnerGroupRepository;
-
-    @Autowired
-    private AccountRepository accountRepository;
 
     @Autowired
     private RunRepository runRepository;
@@ -47,9 +37,36 @@ public class RunDataCalcController {
         return runRepository.findUserFromRunById(id);
     }
 
-    @GetMapping ("/getAllUserRuns/{username}")
-    public List<Run> getAllUserRuns(@PathVariable String username) {
-        return runRepository.getAllRunsByUser(username);
+    @GetMapping("/getAllUserRuns")
+    public Map<String, List<Map<String, Object>>> getAllUserRuns(@RequestParam String username) {
+        List<Run> runs = runRepository.getAllRunsByUser(username);
+
+        // Create a list to store the run data
+        List<Map<String, Object>> dataList = new ArrayList<>();
+
+        for (Run run : runs) {
+            // Create a map to represent each run
+            Map<String, Object> runMap = new HashMap<>();
+            runMap.put("RunID", run.getId());
+            
+            // Create a map to represent the attributes
+            Map<String, Object> attributesMap = new HashMap<>();
+            attributesMap.put("date", run.getDate().toString()); // Assuming Date is converted to String
+            attributesMap.put("distance", run.getTotalDistance());
+            attributesMap.put("time", run.getTotalTime());
+            
+            // Add the attributes map to the run map
+            runMap.putAll(attributesMap);
+            
+            // Add the run map to the data list
+            dataList.add(runMap);
+        }
+
+        // Create the final response map
+        Map<String, List<Map<String, Object>>> responseMap = new HashMap<>();
+        responseMap.put("data", dataList);
+
+        return responseMap;
     }
 
     @GetMapping("/getAllRunTimeByUser/{username}")
@@ -74,7 +91,7 @@ public class RunDataCalcController {
 
 
     @GetMapping ("/getAverageSpeed/{id}")
-    public String getAverageSpeed(@PathVariable Long id) {
+    public Map<String, Double> getAverageSpeed(@PathVariable Long id) {
         String runTime = runRepository.findRunTimeById(id);
         double runDistance = runRepository.findRunDistanceById(id);
 
@@ -87,12 +104,14 @@ public class RunDataCalcController {
         double averageSpeed = (runDistance * 60) / totalTimeInMinutes;
 
         double roundedSpeed = Math.round(averageSpeed * 10.0) / 10.0;
-
-        return "The average speed for the run was " + roundedSpeed + " km/h";
+        Map<String, Double> roundedSpeedMap = new HashMap<>();
+        roundedSpeedMap.put("averagespeed", roundedSpeed);
+        //rounded speed i km/h
+        return roundedSpeedMap;
     }
 
     @GetMapping ("/getAveragePace/{id}")
-    public String getAveragePace(@PathVariable Long id) {
+    public Map<String, String> getAveragePace(@PathVariable Long id) {
         String runTime = runRepository.findRunTimeById(id);
         double runDistance = runRepository.findRunDistanceById(id);
 
@@ -109,25 +128,28 @@ public class RunDataCalcController {
         int minutesPace = (int) roundedPace;
         double secondsFraction = roundedPace - minutesPace;
         int secondsPace = (int) Math.round(secondsFraction * 60);
-
-
-        return "The average pace for the run was " + minutesPace+":"+secondsPace + " min/km";
+        String formattedPace = String.format("%02d:%02d", minutesPace, secondsPace);
+        Map<String,String> averagePaceMap = new HashMap<>();
+        averagePaceMap.put("averagepace", formattedPace);
+        //Average pace is min/km
+        return averagePaceMap;
     }
 
     @GetMapping("/getTotalDistance/{username}")
-    public double getTotalDistance(@PathVariable String username) {
+    public @ResponseBody Map<String, Double> getTotalDistance(@PathVariable String username) {
         List<Double> runDistanceList = runRepository.getAllRunDistanceByUser(username);
         double totalDistance = 0;
-        for(double distance : runDistanceList) {
+        for (double distance : runDistanceList) {
             totalDistance += distance;
         }
 
-
-        return totalDistance;
+        Map<String, Double> response = new HashMap<>();
+        response.put("distance", totalDistance);
+        return response;
     }
 
     @GetMapping("/getTotalRunTime/{username}")
-    public String getTotalRunTime(@PathVariable String username) {
+    public @ResponseBody Map<String, Double> getTotalRunTime(@PathVariable String username) {
         List<String> runTimeList = runRepository.getAllRunTimeByUser(username);
         List<Integer> totalRunTimeList = new ArrayList<>();
         for(String runTime : runTimeList) {
@@ -148,11 +170,13 @@ public class RunDataCalcController {
         int temp1 = (int)temp;
         double temp2 = (temp - temp1) * 10.0;
         int temp3 = (int) Math.round(temp2);
-        double test = temp3 / 10.0;
-        double finalNum = temp1 + test;
+        double temp4 = temp3 / 10.0;
+        double finalNum = temp1 + temp4;
 
 
-        return "Total run time: " + finalNum + " hours";
+        Map<String, Double> response = new HashMap<>();
+        response.put("time", finalNum);
+        return response;
     }
 
 

@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
@@ -14,6 +15,13 @@ import java.util.*;
 
 @Entity
 public class User {
+
+    public User(String username, String password, String email, String companyName) {
+        this.username = username;
+        this.password = password;
+        this.email = email;
+        this.companyName = companyName;
+    }
 
     @Id
     @Column(name = "user_name", unique = true)
@@ -41,7 +49,7 @@ public class User {
     @JsonIgnoreProperties("user")
     private StravaUser stravaUser;
 
-    @OneToMany(mappedBy = "user") // One user can have many runs
+    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER) // One user can have many runs
     @JsonIgnoreProperties("user") // Ignore the user field in Run entity during serialization
     private List<Run> runs = new ArrayList<>();
 
