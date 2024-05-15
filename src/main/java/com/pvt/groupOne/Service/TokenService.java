@@ -77,9 +77,9 @@ public class TokenService {
     }
 
     public boolean isVerifiedAlready(User verificationUser) {
-        User user = accountRepository.findByUsername(verificationUser.getUsername());
-        return user.isVerified();
-    }
+    User user = accountRepository.findByUsername(verificationUser.getUsername());
+    return user != null && user.isVerified();
+}
 
 
 }
