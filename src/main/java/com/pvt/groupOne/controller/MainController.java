@@ -255,8 +255,9 @@ public class MainController {
         StravaUser stravaUser = stravaUserRepository.findByUser_Username(username);
 
         if (stravaUser == null) {
-            return "ERROR: User " + username + " not found.";
+            return "ERROR: No Strava account connected to user " + username;
         }
+
         User user = accountRepository.findByUsername(username);
         int stravaID = stravaUser.getId();
         StravaService myService = new StravaService(stravaUserRepository);
