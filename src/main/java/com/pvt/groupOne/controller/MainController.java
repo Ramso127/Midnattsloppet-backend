@@ -408,11 +408,36 @@ public class MainController {
 
         RunnerGroup runnerGroup = user.getRunnerGroup();
         runnerGroup.getUsers().remove(user);
+
+        if (runnerGroup.getUsers().isEmpty()){
+            groupRepository.delete(runnerGroup);
+        }
+
         user.setRunnerGroup(null);
         groupRepository.save(runnerGroup);
         accountRepository.save(user);
 
-        return ResponseEntity.ok("User " + username + " has been removed from team " + runnerGroup.getTeamName());
+        return ResponseEntity.ok("{\"message\": \"User " + username + " has been removed from team " + runnerGroup.getTeamName() + "}");
+    }
+
+    @DeleteMapping(value = "/remove-group/{groupname}")
+    public ResponseEntity<String> removeGroup(@PathVariable String groupname) {
+
+        RunnerGroup group = groupRepository.findGroupByTeamName(groupname);
+
+        if (group == null){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("{\"message\": \"Group not found!\"}");
+        }
+
+        List<User> users = group.getUsers();
+
+        for (User user : users){
+            user.setRunnerGroup(null);
+        }
+
+        groupRepository.delete(group);
+        return ResponseEntity.ok("{\"message\": \"Team " + groupname + " has been removed}");
+
     }
 
 }
