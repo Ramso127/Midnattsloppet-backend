@@ -1,5 +1,6 @@
 package com.pvt.groupOne.model;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -19,6 +20,7 @@ public class RunnerGroup {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer groupId;
 
+    @Column(unique = true)
     private String teamName;
     private String inviteCode;
     private boolean isFull = false;
