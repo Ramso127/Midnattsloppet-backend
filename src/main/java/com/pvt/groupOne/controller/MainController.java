@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.pvt.groupOne.repository.*;
+import jakarta.persistence.OneToOne;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -375,6 +376,21 @@ public class MainController {
         } catch (JsonProcessingException e) {
             return e.toString();
         }
+    }
+    @DeleteMapping(value = "/removeuser/{username}")
+    public @ResponseBody String removeUser(@PathVariable String username) {
+        User user = accountRepository.findByUsername(username);
+        if (user == null) {
+            return "ERROR: User " + username + " not found.";
+        }
+        if(user.getRunnerGroup()!= null) {
+            RunnerGroup runnerGroup = user.getRunnerGroup();
+            runnerGroup.getUsers().remove(user);
+            groupRepository.save(runnerGroup);
+        }
+
+        accountRepository.delete(user);
+        return "User " + username + " has been removed.";
     }
 
 }
