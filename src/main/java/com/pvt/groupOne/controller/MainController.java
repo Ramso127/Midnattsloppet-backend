@@ -377,6 +377,7 @@ public class MainController {
             return e.toString();
         }
     }
+
     @DeleteMapping(value = "/removeuser/{username}")
     public @ResponseBody String removeUser(@PathVariable String username) {
         User user = accountRepository.findByUsername(username);
@@ -391,6 +392,27 @@ public class MainController {
 
         accountRepository.delete(user);
         return "User " + username + " has been removed.";
+    }
+
+    @DeleteMapping(value = "/remove-user-from-group/{username}")
+    public ResponseEntity<String> removeUserFromTeam(@PathVariable String username) {
+        User user = accountRepository.findByUsername(username);
+
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("{\"message\": \"User not found!\"}");
+        }
+
+        if(user.getRunnerGroup() == null) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("{\"message\": \"User is not connected to a group!\"}");
+        }
+
+        RunnerGroup runnerGroup = user.getRunnerGroup();
+        runnerGroup.getUsers().remove(user);
+        user.setRunnerGroup(null);
+        groupRepository.save(runnerGroup);
+        accountRepository.save(user);
+
+        return ResponseEntity.ok("User " + username + " has been removed from team " + runnerGroup.getTeamName());
     }
 
 }
