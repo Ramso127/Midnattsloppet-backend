@@ -70,4 +70,10 @@ public class ActivityController {
         List<Object[]> groups = runnerGroupService.getTopGroupsByTotalDistance();
         return ResponseEntity.ok(groups);
     }
+
+    @GetMapping("/sorted-groups-by-challenge")
+    public ResponseEntity<List<Object[]>> getSortedGroupsByChallenge() {
+        List<Object[]> sortedGroups = runnerGroupService.getGroupsSortedByCurrentChallengeWithPoints();
+        return ResponseEntity.ok(sortedGroups);
+    }
 }

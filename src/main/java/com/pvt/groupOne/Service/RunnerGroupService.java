@@ -3,12 +3,16 @@ package com.pvt.groupOne.Service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.pvt.groupOne.model.Challenge;
 import com.pvt.groupOne.model.RunnerGroup;
 import com.pvt.groupOne.model.User;
+import com.pvt.groupOne.repository.ChallengeRepository;
 import com.pvt.groupOne.repository.RunnerGroupRepository;
 
+import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.temporal.TemporalAdjusters;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -16,10 +20,11 @@ import java.util.UUID;
 public class RunnerGroupService {
 
     private final RunnerGroupRepository runnerGroupRepository;
+    private final ChallengeRepository challengeRepository;
 
-    @Autowired
-    public RunnerGroupService(RunnerGroupRepository runnerGroupRepository) {
+    public RunnerGroupService(RunnerGroupRepository runnerGroupRepository, ChallengeRepository challengeRepository) {
         this.runnerGroupRepository = runnerGroupRepository;
+        this.challengeRepository = challengeRepository;
     }
 
     public RunnerGroup createRunnerGroup(String teamName, User user) {
@@ -42,7 +47,7 @@ public class RunnerGroupService {
         return inviteCode;
     }
 
-        // Get a sorted list of team members based on distance for a specific group
+    // Get a sorted list of team members based on distance for a specific group
     public List<Object[]> getSortedTeamMembersByDistance(Integer groupId) {
         return runnerGroupRepository.findTeamMembersByDistance(groupId);
     }
@@ -59,5 +64,48 @@ public class RunnerGroupService {
 
     public List<Object[]> getTopGroupsByTotalDistance() {
         return runnerGroupRepository.findTopGroupsByTotalDistance();
+    }
+
+    public List<Object[]> getGroupsSortedByCurrentChallengeWithPoints() {
+        Challenge currentChallenge = challengeRepository.findByisActive(true);
+        LocalDate startDate = LocalDate.now().with(DayOfWeek.MONDAY);
+        LocalDate endDate = LocalDate.now().with(DayOfWeek.SUNDAY);
+
+        List<Object[]> sortedGroups = new ArrayList<>();
+
+        switch (currentChallenge.getId()) {
+            case 1:
+                sortedGroups = runnerGroupRepository.findGroupsByFurthestDistance(startDate, endDate);
+                break;
+            case 2:
+                sortedGroups = runnerGroupRepository.findGroupsByMostRuns(startDate, endDate);
+                break;
+            case 3:
+                sortedGroups = runnerGroupRepository.findGroupsByFurthestRunPerMember(startDate, endDate);
+                break;
+            case 4:
+                sortedGroups = runnerGroupRepository.findGroupsByHighestAveragePace(startDate, endDate);
+                break;
+            case 5:
+                sortedGroups = runnerGroupRepository.findGroupsByMostLongRuns(startDate, endDate);
+                break;
+            case 6:
+                sortedGroups = runnerGroupRepository.findGroupsByTotalNumberOfFasterRuns(startDate, endDate);
+                break;
+            default:
+                throw new IllegalArgumentException("Unknown challenge type");
+        }
+
+        List<Object[]> groupsWithPoints = new ArrayList<>();
+        int totalGroups = sortedGroups.size();
+        for (int i = 0; i < totalGroups; i++) {
+            Object[] group = sortedGroups.get(i);
+            String teamName = (String) group[0];
+            double metric = ((Number) group[1]).doubleValue(); // Ensure correct casting
+            int points = Math.max(25 - i, 1);  // Calculate points
+            groupsWithPoints.add(new Object[]{teamName, metric, points});
+        }
+
+        return groupsWithPoints;
     }
 }
