@@ -96,7 +96,7 @@ public class User {
 
     public void setRunnerGroup(RunnerGroup runnerGroup) {
         this.runnerGroup = runnerGroup;
-        if (!runnerGroup.getUsers().contains(this)) {
+        if (runnerGroup != null && !runnerGroup.getUsers().contains(this)) {
             runnerGroup.getUsers().add(this);
         }
     }

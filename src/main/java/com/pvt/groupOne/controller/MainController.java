@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.pvt.groupOne.repository.*;
+import jakarta.persistence.OneToOne;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -254,8 +255,9 @@ public class MainController {
         StravaUser stravaUser = stravaUserRepository.findByUser_Username(username);
 
         if (stravaUser == null) {
-            return "ERROR: User " + username + " not found.";
+            return "ERROR: No Strava account connected to user " + username;
         }
+
         User user = accountRepository.findByUsername(username);
         int stravaID = stravaUser.getId();
         StravaService myService = new StravaService(stravaUserRepository);
@@ -375,6 +377,68 @@ public class MainController {
         } catch (JsonProcessingException e) {
             return e.toString();
         }
+    }
+
+    @DeleteMapping(value = "/removeuser/{username}")
+    public @ResponseBody String removeUser(@PathVariable String username) {
+        User user = accountRepository.findByUsername(username);
+        if (user == null) {
+            return "ERROR: User " + username + " not found.";
+        }
+        if(user.getRunnerGroup()!= null) {
+            RunnerGroup runnerGroup = user.getRunnerGroup();
+            runnerGroup.getUsers().remove(user);
+            groupRepository.save(runnerGroup);
+        }
+
+        accountRepository.delete(user);
+        return "User " + username + " has been removed.";
+    }
+
+    @DeleteMapping(value = "/remove-user-from-group/{username}")
+    public ResponseEntity<String> removeUserFromTeam(@PathVariable String username) {
+        User user = accountRepository.findByUsername(username);
+
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("{\"message\": \"User not found!\"}");
+        }
+
+        if(user.getRunnerGroup() == null) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("{\"message\": \"User is not connected to a group!\"}");
+        }
+
+        RunnerGroup runnerGroup = user.getRunnerGroup();
+        runnerGroup.getUsers().remove(user);
+
+        if (runnerGroup.getUsers().isEmpty()){
+            groupRepository.delete(runnerGroup);
+        }
+
+        user.setRunnerGroup(null);
+        groupRepository.save(runnerGroup);
+        accountRepository.save(user);
+
+        return ResponseEntity.ok("{\"message\": \"User " + username + " has been removed from team " + runnerGroup.getTeamName() + "}");
+    }
+
+    @DeleteMapping(value = "/remove-group/{groupname}")
+    public ResponseEntity<String> removeGroup(@PathVariable String groupname) {
+
+        RunnerGroup group = groupRepository.findGroupByTeamName(groupname);
+
+        if (group == null){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("{\"message\": \"Group not found!\"}");
+        }
+
+        List<User> users = group.getUsers();
+
+        for (User user : users){
+            user.setRunnerGroup(null);
+        }
+
+        groupRepository.delete(group);
+        return ResponseEntity.ok("{\"message\": \"Team " + groupname + " has been removed}");
+
     }
 
 }
