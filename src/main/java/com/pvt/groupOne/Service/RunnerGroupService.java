@@ -110,12 +110,33 @@ public class RunnerGroupService {
             // Round the metric to 2 decimal places
             BigDecimal roundedMetric = BigDecimal.valueOf(metric).setScale(2, RoundingMode.HALF_UP);
 
-            int points = Math.max(25 - i, 1);  // Calculate points
+            int points = Math.max(25 - i, 1); // Calculate points
             groupsWithPoints.add(new GroupStatsRequest(teamName, roundedMetric.doubleValue(), points));
         }
 
         Map<String, List<GroupStatsRequest>> response = new HashMap<>();
         response.put("data", groupsWithPoints);
         return response;
+    }
+
+    public void assignPointsForCurrentChallenge() {
+        // Get sorted groups with points
+        Map<String, List<GroupStatsRequest>> sortedGroupsWithPoints = getGroupsSortedByCurrentChallengeWithPoints();
+
+        // Iterate over the groups and assign points to each group
+        List<GroupStatsRequest> groupStatsList = sortedGroupsWithPoints.get("data");
+        for (GroupStatsRequest groupStats : groupStatsList) {
+            String teamName = groupStats.getTeamName();
+            int points = groupStats.getPoints();
+
+            // Find the group and assign points
+            RunnerGroup group = runnerGroupRepository.findGroupByTeamName(teamName);
+            if (group != null) {
+                group.setPoints(group.getPoints() + points);
+                runnerGroupRepository.save(group);
+                System.out.println(
+                        "Assigned " + points + " points to group " + teamName + " with " + group.getPoints() + "points");
+            }
+        }
     }
 }
