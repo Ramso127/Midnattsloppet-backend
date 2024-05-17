@@ -9,6 +9,8 @@ import com.pvt.groupOne.model.User;
 import com.pvt.groupOne.repository.ChallengeRepository;
 import com.pvt.groupOne.repository.RunnerGroupRepository;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.temporal.TemporalAdjusters;
@@ -104,8 +106,12 @@ public class RunnerGroupService {
             Object[] group = sortedGroups.get(i);
             String teamName = (String) group[0];
             double metric = ((Number) group[1]).doubleValue(); // Ensure correct casting
+
+            // Round the metric to 2 decimal places
+            BigDecimal roundedMetric = BigDecimal.valueOf(metric).setScale(2, RoundingMode.HALF_UP);
+
             int points = Math.max(25 - i, 1);  // Calculate points
-            groupsWithPoints.add(new GroupStatsRequest(teamName, metric, points));
+            groupsWithPoints.add(new GroupStatsRequest(teamName, roundedMetric.doubleValue(), points));
         }
 
         Map<String, List<GroupStatsRequest>> response = new HashMap<>();
