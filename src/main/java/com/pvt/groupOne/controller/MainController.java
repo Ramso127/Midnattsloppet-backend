@@ -406,6 +406,13 @@ public class MainController {
         if (user == null) {
             return "ERROR: User " + username + " not found.";
         }
+
+        List<Run> runs = runRepository.getAllRunsByUser(username);
+
+        for (Run run : runs){
+            runRepository.delete(run);
+        }
+
         if (user.getRunnerGroup() != null) {
             RunnerGroup runnerGroup = user.getRunnerGroup();
             runnerGroup.getUsers().remove(user);
