@@ -24,7 +24,7 @@ public class RunnerGroup {
     private String teamName;
     private String inviteCode;
     private boolean isFull = false;
-    private int points;
+    private int points = 0;
 
     @Lob
     private byte[] groupPicture;
