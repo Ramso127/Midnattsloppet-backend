@@ -245,7 +245,7 @@ public class RunDataCalcController {
     }
 
     @GetMapping(value = "/get-latest-5-team-runs/{username}")
-    public @ResponseBody List<Run> getLatestTeamRuns(@PathVariable String username) {
+    public @ResponseBody List<Run> getLatestFiveTeamRuns(@PathVariable String username) {
 
         List<Run> runs = runnerGroupRepository.findLatestRunsByTeamMemberUsername(username);
         
