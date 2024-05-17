@@ -1,7 +1,10 @@
 package com.pvt.groupOne.controller;
 import com.pvt.groupOne.model.Run;
+import com.pvt.groupOne.model.RunnerGroup;
 import com.pvt.groupOne.model.User;
 import com.pvt.groupOne.repository.RunRepository;
+import com.pvt.groupOne.repository.RunnerGroupRepository;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,6 +19,8 @@ public class RunDataCalcController {
     @Autowired
     private RunRepository runRepository;
 
+    @Autowired
+    private RunnerGroupRepository groupRepository;
 
     @GetMapping ("/getUserRunTime/{id}")
     public String getUserRunTime(@PathVariable Long id) {
@@ -179,7 +184,20 @@ public class RunDataCalcController {
         return response;
     }
 
-
+    @GetMapping(value = "/get-team-total-runs/{groupname}")
+    public @ResponseBody Map<String, Integer> getTeamTotalRuns(@PathVariable String groupname) {
+        RunnerGroup runnerGroup = groupRepository.findGroupByTeamName(groupname);
+        Map<String, Integer> response = new HashMap<>();
+        List<User> list = runnerGroup.getUsers();
+        int totalruns = 0;
+        for (User user : list) {
+            String username = user.getUsername();
+            List<Run> runList = runRepository.getAllRunsByUser(username);
+            totalruns =+ runList.size();
+        }
+        response.put("totalRuns", totalruns);
+        return response;
+    }
 
 
 }

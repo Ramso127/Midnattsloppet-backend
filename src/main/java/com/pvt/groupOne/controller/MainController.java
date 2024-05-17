@@ -8,7 +8,15 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.pvt.groupOne.Service.RunService;
 import com.pvt.groupOne.Service.RunnerGroupService;
 import java.time.format.DateTimeFormatter;
+import java.time.DayOfWeek;
+import java.time.Instant;
 import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
+import java.time.format.TextStyle;
+import java.util.Locale;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -242,7 +250,7 @@ public class MainController {
 
             stravaUserRepository.save(stravaUser);
             return "Success! Thank you " + stravaUser.getFirstName()
-                    + ". You can now close this page and return to the app";
+                    + ". You can now close this page and return to the app.";
 
         } catch (Exception e) {
             return "Error: " + e;
@@ -251,11 +259,11 @@ public class MainController {
     }
 
     @PutMapping(value = "/fetchruns")
-    public @ResponseBody String fetchRuns(@RequestParam("username") String username) {
+    public ResponseEntity<String> fetchRuns(@RequestParam("username") String username) {
         StravaUser stravaUser = stravaUserRepository.findByUser_Username(username);
 
         if (stravaUser == null) {
-            return "ERROR: No Strava account connected to user " + username;
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("ERROR: No Strava account connected to user " + username);
         }
 
         User user = accountRepository.findByUsername(username);
@@ -273,7 +281,7 @@ public class MainController {
             if (result) {
                 System.out.println("New token successfully fetched");
             } else {
-                return "Error: token has not been updated";
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error: token has not been updated");
             }
         }
 
@@ -283,7 +291,21 @@ public class MainController {
         if (runList.isEmpty()) {
             Date myDate = new Date();
             myDate.setTime(latestFetch * 1000L);
-            return "ERROR: No new runs available since: \n" + myDate.toString();
+            Instant instant = myDate.toInstant();
+
+        // Create a ZonedDateTime with the desired timezone
+        ZonedDateTime zonedDateTime = instant.atZone(ZoneId.of("Europe/Stockholm"));
+
+        LocalDate date = zonedDateTime.toLocalDate();
+        DayOfWeek dayOfWeek = zonedDateTime.getDayOfWeek();
+        LocalTime time = zonedDateTime.toLocalTime();
+        ZoneId timezone = zonedDateTime.getZone();
+        ZoneOffset offset = zonedDateTime.getOffset();
+
+        String dayString = dayOfWeek.toString();
+        dayString = dayString.toLowerCase();
+            
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("ERROR: No new runs available since " + dayString + " " + date + " at " + time + " (" + timezone + " " + offset + ")");
         }
 
         for (Run run : runList) {
@@ -296,7 +318,7 @@ public class MainController {
         if (counter > 1) {
             runWord += "s";
         }
-        return "Done. " + counter + runWord + " added.";
+        return ResponseEntity.ok("Done. " + counter + runWord + " added.");
 
     }
 
@@ -324,7 +346,6 @@ public class MainController {
 
         int minutes = runRequest.getMinutes();
         int hours = minutes / 60;
-
         minutes = minutes % 60;
 
         int seconds = runRequest.getSeconds();
@@ -385,7 +406,7 @@ public class MainController {
         if (user == null) {
             return "ERROR: User " + username + " not found.";
         }
-        if(user.getRunnerGroup()!= null) {
+        if (user.getRunnerGroup() != null) {
             RunnerGroup runnerGroup = user.getRunnerGroup();
             runnerGroup.getUsers().remove(user);
             groupRepository.save(runnerGroup);
@@ -403,14 +424,15 @@ public class MainController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("{\"message\": \"User not found!\"}");
         }
 
-        if(user.getRunnerGroup() == null) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("{\"message\": \"User is not connected to a group!\"}");
+        if (user.getRunnerGroup() == null) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body("{\"message\": \"User is not connected to a group!\"}");
         }
 
         RunnerGroup runnerGroup = user.getRunnerGroup();
         runnerGroup.getUsers().remove(user);
 
-        if (runnerGroup.getUsers().isEmpty()){
+        if (runnerGroup.getUsers().isEmpty()) {
             groupRepository.delete(runnerGroup);
         }
 
@@ -418,7 +440,8 @@ public class MainController {
         groupRepository.save(runnerGroup);
         accountRepository.save(user);
 
-        return ResponseEntity.ok("{\"message\": \"User " + username + " has been removed from team " + runnerGroup.getTeamName() + "}");
+        return ResponseEntity.ok(
+                "{\"message\": \"User " + username + " has been removed from team " + runnerGroup.getTeamName() + "}");
     }
 
     @DeleteMapping(value = "/remove-group/{groupname}")
@@ -426,13 +449,13 @@ public class MainController {
 
         RunnerGroup group = groupRepository.findGroupByTeamName(groupname);
 
-        if (group == null){
+        if (group == null) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("{\"message\": \"Group not found!\"}");
         }
 
         List<User> users = group.getUsers();
 
-        for (User user : users){
+        for (User user : users) {
             user.setRunnerGroup(null);
         }
 
