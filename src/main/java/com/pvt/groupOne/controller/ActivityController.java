@@ -1,5 +1,6 @@
 package com.pvt.groupOne.controller;
 
+import com.pvt.groupOne.model.GroupStatsRequest;
 import com.pvt.groupOne.model.Run;
 import com.pvt.groupOne.Service.RunService;
 import com.pvt.groupOne.Service.RunnerGroupService;
@@ -16,6 +17,7 @@ import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.temporal.TemporalAdjusters;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/activity")
@@ -72,8 +74,8 @@ public class ActivityController {
     }
 
     @GetMapping("/sorted-groups-by-challenge")
-    public ResponseEntity<List<Object[]>> getSortedGroupsByChallenge() {
-        List<Object[]> sortedGroups = runnerGroupService.getGroupsSortedByCurrentChallengeWithPoints();
+    public ResponseEntity<Map<String, List<GroupStatsRequest>>> getSortedGroupsByChallenge() {
+        Map<String, List<GroupStatsRequest>> sortedGroups = runnerGroupService.getGroupsSortedByCurrentChallengeWithPoints();
         return ResponseEntity.ok(sortedGroups);
     }
 }

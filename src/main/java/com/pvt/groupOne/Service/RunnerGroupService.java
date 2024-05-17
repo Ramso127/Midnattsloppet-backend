@@ -1,8 +1,8 @@
 package com.pvt.groupOne.Service;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.pvt.groupOne.model.GroupStatsRequest;
 import com.pvt.groupOne.model.Challenge;
 import com.pvt.groupOne.model.RunnerGroup;
 import com.pvt.groupOne.model.User;
@@ -13,7 +13,9 @@ import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.temporal.TemporalAdjusters;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @Service
@@ -66,7 +68,7 @@ public class RunnerGroupService {
         return runnerGroupRepository.findTopGroupsByTotalDistance();
     }
 
-    public List<Object[]> getGroupsSortedByCurrentChallengeWithPoints() {
+    public Map<String, List<GroupStatsRequest>> getGroupsSortedByCurrentChallengeWithPoints() {
         Challenge currentChallenge = challengeRepository.findByisActive(true);
         LocalDate startDate = LocalDate.now().with(DayOfWeek.MONDAY);
         LocalDate endDate = LocalDate.now().with(DayOfWeek.SUNDAY);
@@ -96,16 +98,18 @@ public class RunnerGroupService {
                 throw new IllegalArgumentException("Unknown challenge type");
         }
 
-        List<Object[]> groupsWithPoints = new ArrayList<>();
+        List<GroupStatsRequest> groupsWithPoints = new ArrayList<>();
         int totalGroups = sortedGroups.size();
         for (int i = 0; i < totalGroups; i++) {
             Object[] group = sortedGroups.get(i);
             String teamName = (String) group[0];
             double metric = ((Number) group[1]).doubleValue(); // Ensure correct casting
             int points = Math.max(25 - i, 1);  // Calculate points
-            groupsWithPoints.add(new Object[]{teamName, metric, points});
+            groupsWithPoints.add(new GroupStatsRequest(teamName, metric, points));
         }
 
-        return groupsWithPoints;
+        Map<String, List<GroupStatsRequest>> response = new HashMap<>();
+        response.put("data", groupsWithPoints);
+        return response;
     }
 }
