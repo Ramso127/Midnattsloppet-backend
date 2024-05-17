@@ -24,8 +24,8 @@ public class ChallengeController {
     private ChallengeRepository challengeRepository;
 
     private final String kilometers = "kilometers";
-    private final String numberOfRuns = "number of runs";
-    private final String minutesPerKilometer = "minutes per kilometer";
+    private final String numberOfRuns = "runs";
+    private final String minutesPerKilometer = "min / km";
 
     @GetMapping(value = "/increment-challenges")
     public @ResponseBody String incrementChallenges() {
