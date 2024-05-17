@@ -20,7 +20,7 @@ public class SchedulingService {
     private RunRepository runRepository;
 
     // TEMPLATE Run every tuesday at 0 sec, 42 minutes, 16 hours (16:42)
-    @Scheduled(cron = "0 42 16 * * TUE", zone = "Europe/Stockholm")
+    @Scheduled(cron = "0 00 00 * * MON", zone = "Europe/Stockholm")
     public void runTask() {
         // Logic
         System.out.println("Task executed on " + LocalDateTime.now());
