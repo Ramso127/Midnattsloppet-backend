@@ -199,5 +199,45 @@ public class RunDataCalcController {
         return response;
     }
 
+    @GetMapping(value = "/get-team-total-hours/{groupname}")
+    public @ResponseBody Map<String, Double> getTeamTotalHours(@PathVariable String groupname) {
+        RunnerGroup runnerGroup = groupRepository.findGroupByTeamName(groupname);
+        Map<String, Double> response = new HashMap<>();
+        List<User> list = runnerGroup.getUsers();
+        double totalRunTime = 0;
+        for (User user : list) {
+            String username = user.getUsername();
+            List<String> runTimeList = runRepository.getAllRunTimeByUser(username);
+            List<Integer> totalRunTimeList = new ArrayList<>();
+            totalRunTime = getTotalRunTime(totalRunTime, runTimeList, totalRunTimeList);
+    
+             }
+        
+        response.put("RunTime", totalRunTime);
+        return response;
+    }
 
+    private double getTotalRunTime(double totalRunTime, List<String> runTimeList, List<Integer> totalRunTimeList) {
+        for(String runTime : runTimeList) {
+            String[] tempArray = runTime.split(":");
+            int hours = Integer.parseInt(tempArray[0]);
+            int minutes = Integer.parseInt(tempArray[1]);
+            int totalTimeInMinutes = hours * 60 + minutes;
+            totalRunTimeList.add(totalTimeInMinutes);
+        }
+   
+        for(int time : totalRunTimeList) {
+            totalRunTime += time;
+        }
+   
+        double temp = totalRunTime / 60.0;
+   
+        int temp1 = (int)temp;
+        double temp2 = (temp - temp1) * 10.0;
+        int temp3 = (int) Math.round(temp2);
+        double temp4 = temp3 / 10.0;
+        double finalNum = temp1 + temp4;
+        totalRunTime =+ finalNum;
+        return totalRunTime;
+    }
 }
