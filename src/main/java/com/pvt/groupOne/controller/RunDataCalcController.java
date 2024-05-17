@@ -22,6 +22,9 @@ public class RunDataCalcController {
     @Autowired
     private RunnerGroupRepository groupRepository;
 
+    @Autowired
+    RunnerGroupRepository runnerGroupRepository;
+
     @GetMapping ("/getUserRunTime/{id}")
     public String getUserRunTime(@PathVariable Long id) {
         return runRepository.findRunTimeById(id);
@@ -239,5 +242,13 @@ public class RunDataCalcController {
         double finalNum = temp1 + temp4;
         totalRunTime =+ finalNum;
         return totalRunTime;
+    }
+
+    @GetMapping(value = "/get-latest-team-runs/{username}")
+    public @ResponseBody List<Run> getLatestTeamRuns(@PathVariable String username) {
+
+        List<Run> runs = runnerGroupRepository.findLatestRunsByTeamMemberUsername(username);
+        
+        return runs;
     }
 }
