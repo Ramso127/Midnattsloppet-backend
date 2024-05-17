@@ -95,16 +95,6 @@ public class MainController {
         }
     }
 
-    @DeleteMapping(value = "/removeuser") // eller "/removeuser/{userId}"
-    public @ResponseBody String removeUser(@RequestBody User user) {
-        String username = user.getUsername();
-        if (!accountRepository.existsByUsername(username)) {
-            return "No such user exists";
-        }
-        accountRepository.delete(user);
-        return "The user has been removed";
-    }
-
     // Gör om till PostMapping
     @GetMapping(value = "/login/{username}/{password}")
     public ResponseEntity<String> login(@PathVariable String username, @PathVariable String password) {
