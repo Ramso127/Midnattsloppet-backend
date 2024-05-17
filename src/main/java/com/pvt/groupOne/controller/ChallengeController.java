@@ -107,6 +107,7 @@ public class ChallengeController {
         Map<String, String> challengeMap = new HashMap<>();
         challengeMap.put("title", currentChallenge.getTitle());
         challengeMap.put("description", currentChallenge.getDescription());
+        challengeMap.put("measuredStat", currentChallenge.getMeasuredStat());
         mapList.add(challengeMap);
 
         Map<String, List<Map<String, String>>> wrapperMap = new HashMap<>();
