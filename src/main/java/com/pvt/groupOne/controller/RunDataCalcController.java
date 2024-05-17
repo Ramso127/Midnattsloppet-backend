@@ -244,7 +244,7 @@ public class RunDataCalcController {
         return totalRunTime;
     }
 
-    @GetMapping(value = "/get-latest-team-runs/{username}")
+    @GetMapping(value = "/get-latest-5-team-runs/{username}")
     public @ResponseBody List<Run> getLatestTeamRuns(@PathVariable String username) {
 
         List<Run> runs = runnerGroupRepository.findLatestRunsByTeamMemberUsername(username);
