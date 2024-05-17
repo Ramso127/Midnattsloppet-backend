@@ -1,9 +1,12 @@
 package com.pvt.groupOne.controller;
 import com.pvt.groupOne.model.Run;
 import com.pvt.groupOne.model.RunnerGroup;
+import com.pvt.groupOne.model.TeamRun;
 import com.pvt.groupOne.model.User;
+import com.pvt.groupOne.model.UserImage;
 import com.pvt.groupOne.repository.RunRepository;
 import com.pvt.groupOne.repository.RunnerGroupRepository;
+import com.pvt.groupOne.repository.UserImageRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -24,6 +27,9 @@ public class RunDataCalcController {
 
     @Autowired
     RunnerGroupRepository runnerGroupRepository;
+
+    @Autowired
+    UserImageRepository userImageRepository;
 
     @GetMapping ("/getUserRunTime/{id}")
     public String getUserRunTime(@PathVariable Long id) {
@@ -245,10 +251,31 @@ public class RunDataCalcController {
     }
 
     @GetMapping(value = "/get-latest-5-team-runs/{username}")
-    public @ResponseBody List<Run> getLatestFiveTeamRuns(@PathVariable String username) {
+    public @ResponseBody Map<String, List<TeamRun>> getLatestFiveTeamRuns(@PathVariable String username) {
 
+        List<TeamRun> teamRuns = new ArrayList<>();
         List<Run> runs = runnerGroupRepository.findLatestRunsByTeamMemberUsername(username);
+        String base64Image = null;
+        Map<String, List<TeamRun>> myMap = new HashMap<>();
+
+        for (Run run : runs){
+            User user = run.getUser();
+            String currentUsername = user.getUsername();
+            LocalDate date = run.getDate();
+            double distance = run.getTotalDistance();
+            String time = run.getTotalTime();
+
+            UserImage userImage = userImageRepository.findByUserName(currentUsername);
+            if (userImage != null && userImage.getBase64Image() != null){
+
+                base64Image = userImage.getBase64Image();
+            }
+
+            TeamRun teamRun = new TeamRun(currentUsername, date, distance, time, base64Image);
+            teamRuns.add(teamRun);
+        }
+        myMap.put("data", teamRuns);
         
-        return runs;
+        return myMap;
     }
 }
