@@ -15,11 +15,13 @@ public class Challenge {
     private String title;
     private String description;
     private boolean isActive;
+    private String measuredStat;
     
     
-    public Challenge(String title, String description) {
+    public Challenge(String title, String description, String measuredStat) {
         this.title = title;
         this.description = description;
+        this.measuredStat = measuredStat;
     }
 
     

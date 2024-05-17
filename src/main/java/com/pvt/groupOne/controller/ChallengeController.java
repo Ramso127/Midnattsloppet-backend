@@ -23,6 +23,10 @@ public class ChallengeController {
     @Autowired
     private ChallengeRepository challengeRepository;
 
+    private final String kilometers = "kilometers";
+    private final String numberOfRuns = "number of runs";
+    private final String minutesPerKilometer = "minutes per kilometer";
+
     @GetMapping(value = "/increment-challenges")
     public @ResponseBody String incrementChallenges() {
 
@@ -60,16 +64,16 @@ public class ChallengeController {
     public @ResponseBody String addChallenges() {
 
         Challenge firstChallenge = new Challenge("Furthest distance",
-                "Run the furthest distance. Minimum pace is 8 minutes per kilometer.");
-        Challenge secondChallenge = new Challenge("Most runs", "Run the most runs. Minimum 2 kilometers per run.");
+                "Run the furthest distance. Minimum pace is 8 minutes per kilometer." , kilometers);
+        Challenge secondChallenge = new Challenge("Most runs", "Run the most runs. Minimum 2 kilometers per run.", numberOfRuns);
         Challenge thirdChallenge = new Challenge("Furthest run per member",
-                "The longest run of every team member will be added to the total. Minimum pace is 8 minutes per kilometer.");
+                "The longest run of every team member will be added to the total. Minimum pace is 8 minutes per kilometer.", kilometers);
         Challenge fourthChallenge = new Challenge("Highest average pace",
-                "Have the lowest average minutes per kilometer. Minimum distance per run is 2 kilometers.");
+                "Have the lowest average minutes per kilometer. Minimum distance per run is 2 kilometers.", minutesPerKilometer);
         Challenge fifthChallenge = new Challenge("Most long runs",
-                "Have the highest number of runs with a minimum distance of 5 kilometers.");
+                "Have the highest number of runs with a minimum distance of 5 kilometers.", numberOfRuns);
         Challenge sixthChallenge = new Challenge("Total number of faster runs",
-                "Have the highest number of runs with a minimum pace of 6 minutes per kilometer.");
+                "Have the highest number of runs with a minimum pace of 6 minutes per kilometer.", numberOfRuns);
 
         firstChallenge.setActive(true);
 
