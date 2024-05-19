@@ -1,5 +1,8 @@
 package com.pvt.groupOne.Service;
 
+import com.pvt.groupOne.repository.AccountRepository;
+import jakarta.transaction.Transactional;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.pvt.groupOne.model.GroupStatsRequest;
@@ -25,6 +28,9 @@ public class RunnerGroupService {
 
     private final RunnerGroupRepository runnerGroupRepository;
     private final ChallengeRepository challengeRepository;
+
+    @Autowired
+    private AccountRepository userRepository;
 
     public RunnerGroupService(RunnerGroupRepository runnerGroupRepository, ChallengeRepository challengeRepository) {
         this.runnerGroupRepository = runnerGroupRepository;
@@ -138,5 +144,16 @@ public class RunnerGroupService {
                         "Assigned " + points + " points to group " + teamName + " with " + group.getPoints() + "points");
             }
         }
+    }
+
+    @Transactional
+    public void deleteRunnerGroup(int groupId) {
+        List<User> users = userRepository.findByRunnerGroup_GroupId(groupId);
+        for (User user : users) {
+            user.setRunnerGroup(null);
+            userRepository.save(user);
+        }
+
+        runnerGroupRepository.deleteById(groupId);
     }
 }

@@ -2,13 +2,15 @@ package com.pvt.groupOne.controller;
 
 import com.pvt.groupOne.Service.TokenService;
 import com.pvt.groupOne.model.User;
+import com.pvt.groupOne.repository.AccountRepository;
+import com.pvt.groupOne.repository.PasswordTokenRepository;
 import com.pvt.groupOne.repository.VerificationTokenRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Map;
 
 @Controller
 @RequestMapping(path = "/route")
@@ -20,6 +22,12 @@ public class WebRouterController {
 
     @Autowired
     VerificationTokenRepository verificationTokenRepository;
+
+    @Autowired
+    PasswordTokenRepository passwordTokenRepository;
+
+    @Autowired
+    AccountRepository accountRepository;
 
     @GetMapping("/resetPassword")
     public String servePasswordReset(@RequestParam("token") String token) {
@@ -33,6 +41,29 @@ public class WebRouterController {
             else{
                 return "forward:/passwordError.html";
             }
+    }
+
+    @PostMapping("/save-password")
+    @ResponseBody
+    public ResponseEntity<?> saveNewPassword(@RequestBody Map<String, String> payload) {
+        String newPassword = payload.get("newPassword");
+        String token = payload.get("token");
+
+        String result = tokenService.validatePasswordResetToken(token);
+        User user = passwordTokenRepository.findUserByToken(token);
+
+        if(result == "202") {
+            if (user == null) {
+                return ResponseEntity.status(404).body("User not found");
+            } else {
+                user.setPassword(newPassword);
+                accountRepository.save(user);
+                return ResponseEntity.ok().build();
+            }
+        }
+        else{
+            return ResponseEntity.status(404).body("Invalid Token");
+        }
     }
 
     @GetMapping("/emailVerification")
