@@ -1,4 +1,5 @@
 package com.pvt.groupOne.controller;
+
 import com.pvt.groupOne.model.Run;
 import com.pvt.groupOne.model.RunnerGroup;
 import com.pvt.groupOne.model.TeamRun;
@@ -31,22 +32,22 @@ public class RunDataCalcController {
     @Autowired
     UserImageRepository userImageRepository;
 
-    @GetMapping ("/getUserRunTime/{id}")
+    @GetMapping("/getUserRunTime/{id}")
     public String getUserRunTime(@PathVariable Long id) {
         return runRepository.findRunTimeById(id);
     }
 
-    @GetMapping ("/getUserRunDistance/{id}")
+    @GetMapping("/getUserRunDistance/{id}")
     public double getUserRunDistance(@PathVariable Long id) {
         return runRepository.findRunDistanceById(id);
     }
 
-    @GetMapping ("/getUserRunDate/{id}")
+    @GetMapping("/getUserRunDate/{id}")
     public LocalDate getUserRunDate(@PathVariable Long id) {
         return runRepository.findRunDateById(id);
     }
 
-    @GetMapping ("/getUserFromRun/{id}")
+    @GetMapping("/getUserFromRun/{id}")
     public User getUserFromRun(@PathVariable Long id) {
         return runRepository.findUserFromRunById(id);
     }
@@ -62,16 +63,16 @@ public class RunDataCalcController {
             // Create a map to represent each run
             Map<String, Object> runMap = new HashMap<>();
             runMap.put("RunID", run.getId());
-            
+
             // Create a map to represent the attributes
             Map<String, Object> attributesMap = new HashMap<>();
             attributesMap.put("date", run.getDate().toString()); // Assuming Date is converted to String
             attributesMap.put("distance", run.getTotalDistance());
             attributesMap.put("time", run.getTotalTime());
-            
+
             // Add the attributes map to the run map
             runMap.putAll(attributesMap);
-            
+
             // Add the run map to the data list
             dataList.add(runMap);
         }
@@ -103,8 +104,7 @@ public class RunDataCalcController {
         return runRepository.getAllRunIdsByUser(username);
     }
 
-
-    @GetMapping ("/getAverageSpeed/{id}")
+    @GetMapping("/getAverageSpeed/{id}")
     public Map<String, Double> getAverageSpeed(@PathVariable Long id) {
         String runTime = runRepository.findRunTimeById(id);
         double runDistance = runRepository.findRunDistanceById(id);
@@ -120,11 +120,11 @@ public class RunDataCalcController {
         double roundedSpeed = Math.round(averageSpeed * 10.0) / 10.0;
         Map<String, Double> roundedSpeedMap = new HashMap<>();
         roundedSpeedMap.put("averagespeed", roundedSpeed);
-        //rounded speed i km/h
+        // rounded speed i km/h
         return roundedSpeedMap;
     }
 
-    @GetMapping ("/getAveragePace/{id}")
+    @GetMapping("/getAveragePace/{id}")
     public Map<String, String> getAveragePace(@PathVariable Long id) {
         String runTime = runRepository.findRunTimeById(id);
         double runDistance = runRepository.findRunDistanceById(id);
@@ -143,9 +143,9 @@ public class RunDataCalcController {
         double secondsFraction = roundedPace - minutesPace;
         int secondsPace = (int) Math.round(secondsFraction * 60);
         String formattedPace = String.format("%02d:%02d", minutesPace, secondsPace);
-        Map<String,String> averagePaceMap = new HashMap<>();
+        Map<String, String> averagePaceMap = new HashMap<>();
         averagePaceMap.put("averagepace", formattedPace);
-        //Average pace is min/km
+        // Average pace is min/km
         return averagePaceMap;
     }
 
@@ -166,7 +166,7 @@ public class RunDataCalcController {
     public @ResponseBody Map<String, Double> getTotalRunTime(@PathVariable String username) {
         List<String> runTimeList = runRepository.getAllRunTimeByUser(username);
         List<Integer> totalRunTimeList = new ArrayList<>();
-        for(String runTime : runTimeList) {
+        for (String runTime : runTimeList) {
             String[] tempArray = runTime.split(":");
             int hours = Integer.parseInt(tempArray[0]);
             int minutes = Integer.parseInt(tempArray[1]);
@@ -175,18 +175,17 @@ public class RunDataCalcController {
         }
 
         int totalRunTime = 0;
-        for(int time : totalRunTimeList) {
+        for (int time : totalRunTimeList) {
             totalRunTime += time;
         }
 
         double temp = totalRunTime / 60.0;
 
-        int temp1 = (int)temp;
+        int temp1 = (int) temp;
         double temp2 = (temp - temp1) * 10.0;
         int temp3 = (int) Math.round(temp2);
         double temp4 = temp3 / 10.0;
         double finalNum = temp1 + temp4;
-
 
         Map<String, Double> response = new HashMap<>();
         response.put("time", finalNum);
@@ -202,71 +201,71 @@ public class RunDataCalcController {
         for (User user : list) {
             String username = user.getUsername();
             List<Run> runList = runRepository.getAllRunsByUser(username);
-            totalruns =+ runList.size();
+            totalruns += runList.size();
         }
         response.put("totalRuns", totalruns);
         return response;
     }
 
     @GetMapping(value = "/get-team-total-hours/{groupname}")
-    public @ResponseBody Map<String, Double> getTeamTotalHours(@PathVariable String groupname) {
+    public @ResponseBody Map<String, Integer> getTeamTotalHours(@PathVariable String groupname) {
         RunnerGroup runnerGroup = groupRepository.findGroupByTeamName(groupname);
-        Map<String, Double> response = new HashMap<>();
+        Map<String, Integer> response = new HashMap<>();
         List<User> list = runnerGroup.getUsers();
         double totalRunTime = 0;
         for (User user : list) {
             String username = user.getUsername();
             List<String> runTimeList = runRepository.getAllRunTimeByUser(username);
             List<Integer> totalRunTimeList = new ArrayList<>();
-            totalRunTime = getTotalRunTime(totalRunTime, runTimeList, totalRunTimeList);
-    
-             }
-        
-        response.put("RunTime", totalRunTime);
+            totalRunTime += getTotalRunTime(totalRunTime, runTimeList, totalRunTimeList);
+
+        }
+        int totalTime = (int) totalRunTime;
+        response.put("RunTime", totalTime);
         return response;
     }
 
     private double getTotalRunTime(double totalRunTime, List<String> runTimeList, List<Integer> totalRunTimeList) {
-        for(String runTime : runTimeList) {
+        for (String runTime : runTimeList) {
             String[] tempArray = runTime.split(":");
             int hours = Integer.parseInt(tempArray[0]);
             int minutes = Integer.parseInt(tempArray[1]);
             int totalTimeInMinutes = hours * 60 + minutes;
             totalRunTimeList.add(totalTimeInMinutes);
         }
-   
-        for(int time : totalRunTimeList) {
+
+        for (int time : totalRunTimeList) {
             totalRunTime += time;
         }
-   
+
         double temp = totalRunTime / 60.0;
-   
-        int temp1 = (int)temp;
+
+        int temp1 = (int) temp;
         double temp2 = (temp - temp1) * 10.0;
         int temp3 = (int) Math.round(temp2);
         double temp4 = temp3 / 10.0;
         double finalNum = temp1 + temp4;
-        totalRunTime =+ finalNum;
+        totalRunTime = +finalNum;
         return totalRunTime;
     }
 
-
     @GetMapping(value = "/get-team-total-distance/{groupname}")
-    public @ResponseBody Map<String, Double> getTeamTotalDistance(@PathVariable String groupname) {
+    public @ResponseBody Map<String, Integer> getTeamTotalDistance(@PathVariable String groupname) {
         RunnerGroup runnerGroup = groupRepository.findGroupByTeamName(groupname);
-        Map<String, Double> response = new HashMap<>();
+        Map<String, Integer> response = new HashMap<>();
         List<User> list = runnerGroup.getUsers();
         double totalDistance = 0;
         for (User user : list) {
             String username = user.getUsername();
             List<Double> runTimeList = runRepository.getAllRunDistanceByUser(username);
-            for(double distance: runTimeList){
-                totalDistance =+distance;                
+            for (double distance : runTimeList) {
+                totalDistance += distance;
+                System.out.println(distance + "   " + username);
             }
 
-             }
-        
-        response.put("totaldistance", totalDistance);
+        }
+
+        response.put("totaldistance", (int) totalDistance);
         return response;
     }
 
@@ -278,7 +277,7 @@ public class RunDataCalcController {
         String base64Image = null;
         Map<String, List<TeamRun>> myMap = new HashMap<>();
 
-        for (Run run : runs){
+        for (Run run : runs) {
             User user = run.getUser();
             String currentUsername = user.getUsername();
             LocalDate date = run.getDate();
@@ -286,7 +285,7 @@ public class RunDataCalcController {
             String time = run.getTotalTime();
 
             UserImage userImage = userImageRepository.findByUserName(currentUsername);
-            if (userImage != null && userImage.getBase64Image() != null){
+            if (userImage != null && userImage.getBase64Image() != null) {
 
                 base64Image = userImage.getBase64Image();
             }
@@ -295,7 +294,7 @@ public class RunDataCalcController {
             teamRuns.add(teamRun);
         }
         myMap.put("data", teamRuns);
-        
+
         return myMap;
     }
 }

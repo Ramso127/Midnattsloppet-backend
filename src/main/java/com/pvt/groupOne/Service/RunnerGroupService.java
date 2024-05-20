@@ -9,8 +9,10 @@ import com.pvt.groupOne.model.GroupStatsRequest;
 import com.pvt.groupOne.model.Challenge;
 import com.pvt.groupOne.model.RunnerGroup;
 import com.pvt.groupOne.model.User;
+import com.pvt.groupOne.model.WinnerLastChallenge;
 import com.pvt.groupOne.repository.ChallengeRepository;
 import com.pvt.groupOne.repository.RunnerGroupRepository;
+import com.pvt.groupOne.repository.WinnerLastChallengeRepository;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -31,6 +33,9 @@ public class RunnerGroupService {
 
     @Autowired
     private AccountRepository userRepository;
+
+    @Autowired
+    private WinnerLastChallengeRepository winnerLastChallengeRepository;
 
     public RunnerGroupService(RunnerGroupRepository runnerGroupRepository, ChallengeRepository challengeRepository) {
         this.runnerGroupRepository = runnerGroupRepository;
@@ -131,6 +136,13 @@ public class RunnerGroupService {
 
         // Iterate over the groups and assign points to each group
         List<GroupStatsRequest> groupStatsList = sortedGroupsWithPoints.get("data");
+        String winnerTeamName = groupStatsList.get(0).getTeamName();
+        WinnerLastChallenge winnerLastChallenge = new WinnerLastChallenge(winnerTeamName);
+        Iterable<WinnerLastChallenge> list = winnerLastChallengeRepository.findAll();
+        if (list.iterator().hasNext()) {
+            winnerLastChallengeRepository.deleteAll();
+        }
+        winnerLastChallengeRepository.save(winnerLastChallenge);
         for (GroupStatsRequest groupStats : groupStatsList) {
             String teamName = groupStats.getTeamName();
             int points = groupStats.getPoints();
@@ -141,7 +153,8 @@ public class RunnerGroupService {
                 group.setPoints(group.getPoints() + points);
                 runnerGroupRepository.save(group);
                 System.out.println(
-                        "Assigned " + points + " points to group " + teamName + " with " + group.getPoints() + "points");
+                        "Assigned " + points + " points to group " + teamName + " with " + group.getPoints()
+                                + "points");
             }
         }
     }

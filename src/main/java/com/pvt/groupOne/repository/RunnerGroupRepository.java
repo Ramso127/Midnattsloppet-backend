@@ -6,7 +6,6 @@ import com.pvt.groupOne.model.RunnerGroup;
 import java.time.LocalDate;
 import java.util.List;
 
-import org.springframework.boot.autoconfigure.data.web.SpringDataWebProperties.Pageable;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;

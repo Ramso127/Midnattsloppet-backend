@@ -15,8 +15,6 @@ import java.time.LocalTime;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
-import java.time.format.TextStyle;
-import java.util.Locale;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -24,7 +22,6 @@ import java.util.List;
 import java.util.Map;
 
 import com.pvt.groupOne.repository.*;
-import jakarta.persistence.OneToOne;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -199,7 +196,7 @@ public class MainController {
             @PathVariable("username") String username) {
 
         // TODO DIDDE App crashes when trying to authenticate someone who's already
-        // authenticated
+        // authenticated.
 
         StravaUser myUser = stravaUserRepository.findByUser_Username(username);
 

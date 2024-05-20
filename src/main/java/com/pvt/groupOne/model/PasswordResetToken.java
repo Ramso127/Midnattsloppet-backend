@@ -1,9 +1,7 @@
 package com.pvt.groupOne.model;
 
-import com.pvt.groupOne.repository.PasswordTokenRepository;
 import jakarta.persistence.*;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+
 import java.util.Date;
 
 @Entity
