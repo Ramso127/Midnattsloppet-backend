@@ -209,9 +209,9 @@ public class RunDataCalcController {
     }
 
     @GetMapping(value = "/get-team-total-hours/{groupname}")
-    public @ResponseBody Map<String, Double> getTeamTotalHours(@PathVariable String groupname) {
+    public @ResponseBody Map<String, Integer> getTeamTotalHours(@PathVariable String groupname) {
         RunnerGroup runnerGroup = groupRepository.findGroupByTeamName(groupname);
-        Map<String, Double> response = new HashMap<>();
+        Map<String, Integer> response = new HashMap<>();
         List<User> list = runnerGroup.getUsers();
         double totalRunTime = 0;
         for (User user : list) {
@@ -221,8 +221,8 @@ public class RunDataCalcController {
             totalRunTime += getTotalRunTime(totalRunTime, runTimeList, totalRunTimeList);
     
              }
-        
-        response.put("RunTime", totalRunTime);
+        int totalTime = (int) totalRunTime;
+        response.put("RunTime", totalTime);
         return response;
     }
 
@@ -252,9 +252,9 @@ public class RunDataCalcController {
 
 
     @GetMapping(value = "/get-team-total-distance/{groupname}")
-    public @ResponseBody Map<String, Double> getTeamTotalDistance(@PathVariable String groupname) {
+    public @ResponseBody Map<String, Integer> getTeamTotalDistance(@PathVariable String groupname) {
         RunnerGroup runnerGroup = groupRepository.findGroupByTeamName(groupname);
-        Map<String, Double> response = new HashMap<>();
+        Map<String, Integer> response = new HashMap<>();
         List<User> list = runnerGroup.getUsers();
         double totalDistance = 0;
         for (User user : list) {
@@ -266,7 +266,7 @@ public class RunDataCalcController {
 
              }
         
-        response.put("totaldistance", totalDistance);
+        response.put("totaldistance", (int)totalDistance);
         return response;
     }
 
