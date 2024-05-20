@@ -8,6 +8,9 @@ import jakarta.persistence.Id;
 @Entity
 public class WinnerLastChallenge {
     
+    public WinnerLastChallenge() {
+    }
+    
     public WinnerLastChallenge(String groupName) {
         this.groupName = groupName;
     }
