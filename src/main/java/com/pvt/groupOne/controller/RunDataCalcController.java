@@ -261,7 +261,7 @@ public class RunDataCalcController {
             String username = user.getUsername();
             List<Double> runTimeList = runRepository.getAllRunDistanceByUser(username);
             for(double distance: runTimeList){
-                totalDistance =+distance;                
+                totalDistance += distance;                
             }
 
              }
