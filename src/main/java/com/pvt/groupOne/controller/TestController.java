@@ -1,7 +1,5 @@
 package com.pvt.groupOne.controller;
 
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -35,8 +33,8 @@ public class TestController {
     @GetMapping(value = "/force-verify/{username}")
     public ResponseEntity<String> forceVerify(@PathVariable String username) {
 
-        if (accountRepository.findByUsername(username) == null){
-            
+        if (accountRepository.findByUsername(username) == null) {
+
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("{\"message\": \"User not found!\"}");
         }
 
@@ -54,8 +52,8 @@ public class TestController {
         int totalCounter = 0;
         int pointCounter = 0;
 
-        for (RunnerGroup group : groups){
-            if (group.getPoints() > 0){
+        for (RunnerGroup group : groups) {
+            if (group.getPoints() > 0) {
                 pointCounter++;
             }
             group.setPoints(0);
@@ -72,5 +70,5 @@ public class TestController {
         runnerGroupService.assignPointsForCurrentChallenge();
         return "Points added.";
     }
-    
+
 }

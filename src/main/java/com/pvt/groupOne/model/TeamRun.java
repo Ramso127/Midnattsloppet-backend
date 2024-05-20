@@ -2,16 +2,14 @@ package com.pvt.groupOne.model;
 
 import java.time.LocalDate;
 
-import jakarta.persistence.Entity;
-
 public class TeamRun {
-    
+
     private String username;
     private LocalDate date;
     private double distance;
     private String time;
     private String base64Image;
-    
+
     public TeamRun(String username, LocalDate date, double distance, String time, String base64Image) {
         this.username = username;
         this.date = date;

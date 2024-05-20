@@ -1,19 +1,7 @@
 package com.pvt.groupOne;
 
-import com.pvt.groupOne.Service.TokenService;
-import com.pvt.groupOne.Service.UserService;
-import com.pvt.groupOne.controller.EmailController;
-import com.pvt.groupOne.controller.MainController;
-import com.pvt.groupOne.controller.WebRouterController;
-import com.pvt.groupOne.model.EmailRequest;
-import com.pvt.groupOne.model.PasswordResetToken;
-import com.pvt.groupOne.model.User;
-import com.pvt.groupOne.repository.AccountRepository;
-import com.pvt.groupOne.repository.VerificationTokenRepository;
-import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.ApplicationContext;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
 @SpringBootApplication
@@ -21,32 +9,32 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 public class GroupOneApplication {
 
 	public static void main(String[] args) {
-		
+
 		System.out.println("RUNNING PROGRAM");
 
 		SpringApplication.run(GroupOneApplication.class, args);
 
-
-//		 ApplicationContext context = SpringApplication.run(GroupOneApplication.class,
-//		 args);
-//		 AccountRepository userRepository = context.getBean(AccountRepository.class);
-//		 User user;
-//		 TokenService tokenService = context.getBean(TokenService.class);
-//		 System.out.println(user = userRepository.findByUsername("noaTest6"));
-//		 System.out.println(user.isVerified());
-//		VerificationTokenRepository verificationTokenRepository = context.getBean(VerificationTokenRepository.class);
-//		 MainController mainController = context.getBean(MainController.class);
-//		 System.out.println(user.getUserName());
-//		 UserService userService = context.getBean(UserService.class);
-//		 PasswordResetToken token = tokenService.createPasswordResetToken(user);
-//		 System.out.println(token);
-//		EmailController emailController = context.getBean(EmailController.class);
-//		 WebRouterController webRouterController = context.getBean(WebRouterController.class);
-//		 System.out.println(webRouterController.serveVerifyEmail("d06e0314-94e8-493b-98b2-66229c24cd1e"));
-//		 System.out.println(tokenService.validateVerificationMail("d06e0314-94e8-493b-98b2-66229c24cd1e"));
-//		 System.out.println(tokenService.isVerifiedAlready(verificationTokenRepository.findUserByToken("d06e0314-94e8-493b-98b2-66229c24cd1e")));
-//		 System.out.println(tokenService.createVerificationCode(user));
-
+		// ApplicationContext context = SpringApplication.run(GroupOneApplication.class,
+		// args);
+		// AccountRepository userRepository = context.getBean(AccountRepository.class);
+		// User user;
+		// TokenService tokenService = context.getBean(TokenService.class);
+		// System.out.println(user = userRepository.findByUsername("noaTest6"));
+		// System.out.println(user.isVerified());
+		// VerificationTokenRepository verificationTokenRepository =
+		// context.getBean(VerificationTokenRepository.class);
+		// MainController mainController = context.getBean(MainController.class);
+		// System.out.println(user.getUserName());
+		// UserService userService = context.getBean(UserService.class);
+		// PasswordResetToken token = tokenService.createPasswordResetToken(user);
+		// System.out.println(token);
+		// EmailController emailController = context.getBean(EmailController.class);
+		// WebRouterController webRouterController =
+		// context.getBean(WebRouterController.class);
+		// System.out.println(webRouterController.serveVerifyEmail("d06e0314-94e8-493b-98b2-66229c24cd1e"));
+		// System.out.println(tokenService.validateVerificationMail("d06e0314-94e8-493b-98b2-66229c24cd1e"));
+		// System.out.println(tokenService.isVerifiedAlready(verificationTokenRepository.findUserByToken("d06e0314-94e8-493b-98b2-66229c24cd1e")));
+		// System.out.println(tokenService.createVerificationCode(user));
 
 		// AOFÅJUBFÅU
 	}

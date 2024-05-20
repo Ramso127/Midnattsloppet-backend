@@ -1,7 +1,6 @@
 package com.pvt.groupOne.controller;
 
 import com.pvt.groupOne.Service.TokenService;
-import com.pvt.groupOne.Service.UserService;
 import com.pvt.groupOne.model.EmailRequest;
 import com.pvt.groupOne.model.PasswordResetToken;
 import com.pvt.groupOne.model.User;
@@ -16,8 +15,6 @@ import org.springframework.web.bind.annotation.*;
 
 import com.pvt.groupOne.Service.EmailService;
 
-import java.util.Locale;
-
 @Controller
 @RequestMapping(path = "/email")
 @CrossOrigin
@@ -28,9 +25,6 @@ public class EmailController {
 
     @Autowired
     private AccountRepository accountRepository;
-
-    @Autowired
-    private UserService userService;
 
     @Autowired
     private TokenService tokenService;
