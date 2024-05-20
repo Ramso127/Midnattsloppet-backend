@@ -1,6 +1,16 @@
 package com.pvt.groupOne.model;
 
 public class AddUserToGroupRequest {
+
+    public AddUserToGroupRequest(String username, String inviteCode) {
+        this.username = username;
+        this.inviteCode = inviteCode;
+    }
+
+    public AddUserToGroupRequest(){
+        
+    }
+
     String username;
     String inviteCode;
 

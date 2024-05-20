@@ -403,14 +403,19 @@ public class MainController {
         for (Run run : runs) {
             runRepository.delete(run);
         }
-
+        
+        accountRepository.delete(user);
+        
         if (user.getRunnerGroup() != null) {
             RunnerGroup runnerGroup = user.getRunnerGroup();
             runnerGroup.getUsers().remove(user);
-            groupRepository.save(runnerGroup);
+            if (runnerGroup.getUsers().isEmpty()){
+                groupRepository.delete(runnerGroup);
+            } else {
+                groupRepository.save(runnerGroup);
+            }
         }
 
-        accountRepository.delete(user);
         return "User " + username + " has been removed.";
     }
 
