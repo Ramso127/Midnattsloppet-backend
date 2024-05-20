@@ -94,7 +94,7 @@ public class MainController {
                     .body("{\"error\": \"" + e.toString() + "\"}");
         }
     }
-    
+
     @GetMapping(value = "/login/{username}/{password}")
     public ResponseEntity<String> login(@PathVariable String username, @PathVariable String password) {
         // Perform user authentication
@@ -252,7 +252,8 @@ public class MainController {
         StravaUser stravaUser = stravaUserRepository.findByUser_Username(username);
 
         if (stravaUser == null) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("ERROR: No Strava account connected to user " + username);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body("ERROR: No Strava account connected to user " + username);
         }
 
         User user = accountRepository.findByUsername(username);
@@ -282,19 +283,20 @@ public class MainController {
             myDate.setTime(latestFetch * 1000L);
             Instant instant = myDate.toInstant();
 
-        // Create a ZonedDateTime with the desired timezone
-        ZonedDateTime zonedDateTime = instant.atZone(ZoneId.of("Europe/Stockholm"));
+            // Create a ZonedDateTime with the desired timezone
+            ZonedDateTime zonedDateTime = instant.atZone(ZoneId.of("Europe/Stockholm"));
 
-        LocalDate date = zonedDateTime.toLocalDate();
-        DayOfWeek dayOfWeek = zonedDateTime.getDayOfWeek();
-        LocalTime time = zonedDateTime.toLocalTime();
-        ZoneId timezone = zonedDateTime.getZone();
-        ZoneOffset offset = zonedDateTime.getOffset();
+            LocalDate date = zonedDateTime.toLocalDate();
+            DayOfWeek dayOfWeek = zonedDateTime.getDayOfWeek();
+            LocalTime time = zonedDateTime.toLocalTime();
+            ZoneId timezone = zonedDateTime.getZone();
+            ZoneOffset offset = zonedDateTime.getOffset();
 
-        String dayString = dayOfWeek.toString();
-        dayString = dayString.toLowerCase();
-            
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("ERROR: No new runs available since " + dayString + " " + date + " at " + time + " (" + timezone + " " + offset + ")");
+            String dayString = dayOfWeek.toString();
+            dayString = dayString.toLowerCase();
+
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("ERROR: No new runs available since " + dayString
+                    + " " + date + " at " + time + " (" + timezone + " " + offset + ")");
         }
 
         for (Run run : runList) {
@@ -398,7 +400,7 @@ public class MainController {
 
         List<Run> runs = runRepository.getAllRunsByUser(username);
 
-        for (Run run : runs){
+        for (Run run : runs) {
             runRepository.delete(run);
         }
 
@@ -457,6 +459,20 @@ public class MainController {
 
         groupRepository.delete(group);
         return ResponseEntity.ok("{\"message\": \"Team " + groupname + " has been removed}");
+
+    }
+
+    @GetMapping(value = "/check-strava-user/{username}")
+    public ResponseEntity<String> checkStravaUser(@PathVariable String username) {
+        StravaUser stravaUser = stravaUserRepository.findByUser_Username(username);
+
+        if (stravaUser == null) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body("{\"message\": \"Strava user is not connected\"}");
+
+        }
+
+        return ResponseEntity.ok("{\"message\": \"Strava user is connected\"}");
 
     }
 
