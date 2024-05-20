@@ -9,8 +9,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.pvt.groupOne.Service.RunnerGroupService;
+import com.pvt.groupOne.model.GroupStatsRequest;
 import com.pvt.groupOne.model.RunnerGroup;
+import com.pvt.groupOne.model.WinnerLastChallenge;
 import com.pvt.groupOne.repository.RunnerGroupRepository;
+import com.pvt.groupOne.repository.WinnerLastChallengeRepository;
 
 @RestController
 @RequestMapping("/leaderboard")
@@ -18,6 +22,8 @@ public class LeaderboardController {
 
     @Autowired
     private RunnerGroupRepository runnerGroupRepository;
+    @Autowired
+    private WinnerLastChallengeRepository winnerLastChallengeRepository;
 
     @GetMapping("/weekly-by-points")
     public List<RunnerGroup> getSortedGroupsByMembersPoints() {
@@ -25,10 +31,17 @@ public class LeaderboardController {
     }
 
     @GetMapping("/winner-last-challenge")
-    public Map<String, RunnerGroup> winnerLastChallenge() {
-        List<RunnerGroup> runnerGroups = runnerGroupRepository.findGroupsOrderByMembersTotalPoints();
-        Map<String, RunnerGroup> winnerMap = new HashMap<>();
-        winnerMap.put("weeklywinner", runnerGroups.get(0));
+    public Map<String, String> winnerLastChallenge() {
+        Iterable<WinnerLastChallenge> list = winnerLastChallengeRepository.findAll();
+
+        Map<String, String> winnerMap = new HashMap<>();
+        if (!list.iterator().hasNext()) {
+            winnerMap.put("weeklywinner", "no winner");
+            return winnerMap;
+        }
+        WinnerLastChallenge winner = list.iterator().next();
+        String winnerName = winner.getGroupName();
+        winnerMap.put("weeklywinner", winnerName);
         return winnerMap;
     }
 
