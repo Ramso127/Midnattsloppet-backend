@@ -218,7 +218,7 @@ public class RunDataCalcController {
             String username = user.getUsername();
             List<String> runTimeList = runRepository.getAllRunTimeByUser(username);
             List<Integer> totalRunTimeList = new ArrayList<>();
-            totalRunTime = getTotalRunTime(totalRunTime, runTimeList, totalRunTimeList);
+            totalRunTime += getTotalRunTime(totalRunTime, runTimeList, totalRunTimeList);
     
              }
         
