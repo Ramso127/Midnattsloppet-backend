@@ -9,8 +9,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.pvt.groupOne.Service.RunnerGroupService;
-import com.pvt.groupOne.model.GroupStatsRequest;
+
 import com.pvt.groupOne.model.RunnerGroup;
 import com.pvt.groupOne.model.WinnerLastChallenge;
 import com.pvt.groupOne.repository.RunnerGroupRepository;
@@ -46,7 +45,10 @@ public class LeaderboardController {
     }
 
     @GetMapping("/all-time-by-points")
-    public List<RunnerGroup> getGroupsSortedByPoints() {
-        return runnerGroupRepository.findAllGroupsOrderByPoints();
+    public Map<String, List<RunnerGroup>> getGroupsSortedByPoints() {
+        List<RunnerGroup> runnerGroups = runnerGroupRepository.findAllGroupsOrderByPoints();
+        Map<String, List<RunnerGroup>> groupMap = new HashMap<>();
+        groupMap.put("data", runnerGroups);
+        return groupMap;
     }
 }
