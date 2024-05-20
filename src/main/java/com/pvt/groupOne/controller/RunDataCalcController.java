@@ -250,6 +250,26 @@ public class RunDataCalcController {
         return totalRunTime;
     }
 
+
+    @GetMapping(value = "/get-team-total-distance/{groupname}")
+    public @ResponseBody Map<String, Double> getTeamTotalDistance(@PathVariable String groupname) {
+        RunnerGroup runnerGroup = groupRepository.findGroupByTeamName(groupname);
+        Map<String, Double> response = new HashMap<>();
+        List<User> list = runnerGroup.getUsers();
+        double totalDistance = 0;
+        for (User user : list) {
+            String username = user.getUsername();
+            List<Double> runTimeList = runRepository.getAllRunDistanceByUser(username);
+            for(double distance: runTimeList){
+                totalDistance =+distance;                
+            }
+
+             }
+        
+        response.put("totaldistance", totalDistance);
+        return response;
+    }
+
     @GetMapping(value = "/get-latest-5-team-runs/{username}")
     public @ResponseBody Map<String, List<TeamRun>> getLatestFiveTeamRuns(@PathVariable String username) {
 
