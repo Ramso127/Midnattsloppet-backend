@@ -136,7 +136,7 @@ public class RunnerGroupService {
 
         // Iterate over the groups and assign points to each group
         List<GroupStatsRequest> groupStatsList = sortedGroupsWithPoints.get("data");
-        String winnerTeamName = groupStatsList.get(1).getTeamName();
+        String winnerTeamName = groupStatsList.get(0).getTeamName();
         WinnerLastChallenge winnerLastChallenge = new WinnerLastChallenge(winnerTeamName);
         Iterable<WinnerLastChallenge> list = winnerLastChallengeRepository.findAll();
         if (list.iterator().hasNext()) {
@@ -153,7 +153,8 @@ public class RunnerGroupService {
                 group.setPoints(group.getPoints() + points);
                 runnerGroupRepository.save(group);
                 System.out.println(
-                        "Assigned " + points + " points to group " + teamName + " with " + group.getPoints() + "points");
+                        "Assigned " + points + " points to group " + teamName + " with " + group.getPoints()
+                                + "points");
             }
         }
     }

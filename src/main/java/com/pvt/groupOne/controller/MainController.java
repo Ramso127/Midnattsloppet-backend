@@ -196,7 +196,7 @@ public class MainController {
             @PathVariable("username") String username) {
 
         // TODO DIDDE App crashes when trying to authenticate someone who's already
-        // authenticated
+        // authenticated.
 
         StravaUser myUser = stravaUserRepository.findByUser_Username(username);
 
