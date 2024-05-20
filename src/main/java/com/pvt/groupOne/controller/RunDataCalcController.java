@@ -202,7 +202,7 @@ public class RunDataCalcController {
         for (User user : list) {
             String username = user.getUsername();
             List<Run> runList = runRepository.getAllRunsByUser(username);
-            totalruns =+ runList.size();
+            totalruns += runList.size();
         }
         response.put("totalRuns", totalruns);
         return response;
