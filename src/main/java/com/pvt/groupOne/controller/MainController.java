@@ -458,6 +458,7 @@ public class MainController {
         if (runnerGroup.getUsers().isEmpty()) {
             groupRepository.delete(runnerGroup);
         } else {
+            runnerGroup.setFull(false);
             groupRepository.save(runnerGroup);
         }
 

@@ -24,9 +24,10 @@ public class RunnerGroup {
     private String teamName;
     private String inviteCode;
     private boolean isFull = false;
+    
     private int points = 0;
     private String companyName;
-
+    
     
     @Lob
     private byte[] groupPicture;
@@ -105,5 +106,9 @@ public class RunnerGroup {
     
     public void setCompanyName(String companyName) {
         this.companyName = companyName;
+    }
+    
+    public void setFull(boolean isFull) {
+        this.isFull = isFull;
     }
 }
