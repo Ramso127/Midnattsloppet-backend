@@ -26,6 +26,8 @@ import com.pvt.groupOne.model.User;
 import com.pvt.groupOne.repository.AccountRepository;
 import com.pvt.groupOne.repository.RunRepository;
 import com.pvt.groupOne.repository.RunnerGroupRepository;
+import org.springframework.web.bind.annotation.RequestParam;
+
 
 @Controller
 @RequestMapping(path = "/testing")
@@ -287,6 +289,7 @@ public class TestController {
             accountRepository.save(user);
             return "Success!";
     }
+    
 
     public boolean removeUser(String username) {
         User user = accountRepository.findByUsername(username);
@@ -313,6 +316,16 @@ public class TestController {
         }
 
         return true;
+    }
+
+    @GetMapping(value = "/simulate-new-week")
+    public @ResponseBody String simulateNewWeek(){
+        ChallengeController challengeController = new ChallengeController();
+
+        runnerGroupService.assignPointsForCurrentChallenge();
+        challengeController.incrementChallenges();
+
+        return "Done.";
     }
 
 
