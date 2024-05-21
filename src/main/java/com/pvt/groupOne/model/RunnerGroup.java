@@ -25,66 +25,68 @@ public class RunnerGroup {
     private String inviteCode;
     private boolean isFull = false;
     private int points = 0;
+    private String companyName;
 
+    
     @Lob
     private byte[] groupPicture;
-
+    
     public boolean isFull() {
         return isFull;
     }
-
+    
     @OneToMany(mappedBy = "runnerGroup")
     @JsonIgnoreProperties("runnerGroup") // Ignore the bidirectional relationship during serialization
     private List<User> users = new ArrayList<>();
-
+    
     public Integer getGroupId() {
         return groupId;
     }
-
+    
     public void setGroupId(Integer groupId) {
         this.groupId = groupId;
     }
-
+    
     public String getTeamName() {
         return teamName;
     }
-
+    
     public void setTeamName(String teamName) {
         this.teamName = teamName;
     }
-
+    
     public String getInviteCode() {
         return inviteCode;
     }
-
+    
     public void setInviteCode(String inviteCode) {
         this.inviteCode = inviteCode;
     }
-
+    
     public byte[] getGroupPicture() {
         return groupPicture;
     }
-
+    
     public void setGroupPicture(byte[] groupPicture) {
         this.groupPicture = groupPicture;
     }
-
+    
     public List<User> getUsers() {
         return users;
     }
-
+    
     public void setUsers(ArrayList<User> users) {
         this.users = users;
     }
-
+    
     public int getPoints() {
         return points;
     }
-
+    
     public void setPoints(int points) {
         this.points = points;
     }
-
+    
     public void addUser(User user) {
         if (!isFull) {
             users.add(user);
@@ -96,5 +98,12 @@ public class RunnerGroup {
             throw new IllegalStateException("Cannot add more users. Group is already full.");
         }
     }
-
+    
+    public String getCompanyName() {
+        return companyName;
+    }
+    
+    public void setCompanyName(String companyName) {
+        this.companyName = companyName;
+    }
 }

@@ -42,11 +42,12 @@ public class RunnerGroupService {
         this.challengeRepository = challengeRepository;
     }
 
-    public RunnerGroup createRunnerGroup(String teamName, User user) {
+    public RunnerGroup createRunnerGroup(String teamName, User user, String companyName) {
         RunnerGroup runnerGroup = new RunnerGroup();
         runnerGroup.setTeamName(teamName);
         runnerGroup.addUser(user);
         runnerGroup.setInviteCode(generateInviteCode());
+        runnerGroup.setCompanyName(companyName);
         runnerGroupRepository.save(runnerGroup);
         return runnerGroup;
     }

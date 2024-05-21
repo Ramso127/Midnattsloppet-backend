@@ -183,9 +183,9 @@ public class TestController {
 
         // CREATE AND SAVE TEAMS
 
-        addGroup(new GroupRequest("Fast Team", "firstUser"));
-        addGroup(new GroupRequest("Medium Team", "fifthUser"));
-        addGroup(new GroupRequest("Slow Team", "ninthUser"));
+        addGroup(new GroupRequest("Fast Team", firstUser.getUsername()));
+        addGroup(new GroupRequest("Medium Team", fifthUser.getUsername()));
+        addGroup(new GroupRequest("Slow Team", ninthUser.getUsername()));
 
         RunnerGroup fastGroup = runnerGroupRepository.findGroupByTeamName("Fast Team");
         RunnerGroup mediumGroup = runnerGroupRepository.findGroupByTeamName("Medium Team");
@@ -245,14 +245,16 @@ public class TestController {
     public String addGroup(GroupRequest groupRequest) {
         String teamName = groupRequest.getTeamname();
         String userName = groupRequest.getUsername();
+
         try {
             User user = accountRepository.findByUsername(userName);
+            String companyName = user.getCompanyName();
 
             if (runnerGroupRepository.existsByTeamName(teamName)) {
                 return "Group name already exists";
             }
 
-            runnerGroupService.createRunnerGroup(teamName, user);
+            runnerGroupService.createRunnerGroup(teamName, user, companyName);
             
             accountRepository.save(user);
             return "Success";

@@ -113,15 +113,17 @@ public class MainController {
     public ResponseEntity<String> addGroup(@RequestBody GroupRequest groupRequest) {
         String teamName = groupRequest.getTeamname();
         String userName = groupRequest.getUsername();
+
         try {
             User user = accountRepository.findByUsername(userName);
+            String companyName = user.getCompanyName();
 
             if (groupRepository.existsByTeamName(teamName)) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                         .body("{\"message\": \"Group name already exists\"}");
             }
 
-            RunnerGroup runnerGroup = runnerGroupService.createRunnerGroup(teamName, user);
+            RunnerGroup runnerGroup = runnerGroupService.createRunnerGroup(teamName, user, companyName);
             accountRepository.save(user);
             ObjectMapper om = new ObjectMapper();
             return ResponseEntity.status(HttpStatus.CREATED).body(om.writeValueAsString(runnerGroup));
@@ -133,24 +135,39 @@ public class MainController {
 
     @PostMapping(value = "/addusertogroup")
     public ResponseEntity<String> addUserToGroup(@RequestBody AddUserToGroupRequest addUserToGroupRequest) {
+
         String inviteCode = addUserToGroupRequest.getInviteCode();
         String username = addUserToGroupRequest.getUsername();
+        
         try {
             RunnerGroup runnerGroup = groupRepository.findGroupByInviteCode(inviteCode);
             User user = accountRepository.findByUsername(username);
 
+            if (user == null){
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body("{\"message\": \"User not found\"}");
+            }
+            
             if (runnerGroup == null) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                        .body("{\"message\": \"Group with invite code " + inviteCode + " not found\"}");
+                .body("{\"message\": \"Group with invite code " + inviteCode + " not found\"}");
             }
-
+            
             if (user.getRunnerGroup() != null) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("{\"message\": \"Already in a group!\"}");
+            }
+            
+            String groupCompanyNormalized = runnerGroup.getCompanyName().replaceAll("\\s+", "");
+            String userCompanyNormalized = user.getCompanyName().replaceAll("\\s+", "");
+            
+            if (!groupCompanyNormalized.equalsIgnoreCase(userCompanyNormalized)){
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("{\"message\": \"Group belongs to a different company!\"}");
             }
 
             if (runnerGroup.isFull()) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("{\"message\": \"Group is full!\"}");
             }
+
             runnerGroup.addUser(user);
             groupRepository.save(runnerGroup);
             accountRepository.save(user);
@@ -431,14 +448,16 @@ public class MainController {
 
         RunnerGroup runnerGroup = user.getRunnerGroup();
         runnerGroup.getUsers().remove(user);
+        
+        user.setRunnerGroup(null);
+        accountRepository.save(user);
 
         if (runnerGroup.getUsers().isEmpty()) {
             groupRepository.delete(runnerGroup);
+        } else {
+            groupRepository.save(runnerGroup);
         }
 
-        user.setRunnerGroup(null);
-        groupRepository.save(runnerGroup);
-        accountRepository.save(user);
 
         return ResponseEntity.ok(
                 "{\"message\": \"User " + username + " has been removed from team " + runnerGroup.getTeamName() + "}");
