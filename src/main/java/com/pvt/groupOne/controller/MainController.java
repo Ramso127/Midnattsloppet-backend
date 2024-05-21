@@ -500,7 +500,7 @@ public class MainController {
         return ResponseEntity.ok("{\"message\": \"Strava user is connected\"}");
 
     }
-
+    // TODO NOA Gör om till PUT (uppdatering)
     @PostMapping(value = "/re-encrypt-password/{username}/{newPassword}")
     public ResponseEntity<String> reEncryptPassword(@PathVariable String username, @PathVariable String newPassword) {
         User user = accountRepository.findByUsername(username);
@@ -513,6 +513,23 @@ public class MainController {
         accountRepository.save(user);
 
         return ResponseEntity.ok("{\"message\": \"Password has been re-encrypted\"}");
+    }
+
+    @PutMapping(value = "/update-company")
+    public ResponseEntity<String> updateCompany(@RequestBody CompanyRequest companyRequest) {
+        String username = companyRequest.getUsername();
+        String newCompany = companyRequest.getCompanyName();
+        
+        User user = accountRepository.findByUsername(username);
+
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("{\"message\": \"User not found!\"}");
+        }
+
+        user.setCompanyName(newCompany);
+        accountRepository.save(user);
+
+        return ResponseEntity.ok("{\"message\": \"Company has been changed\"}");
     }
 
 }
