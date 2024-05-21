@@ -522,8 +522,20 @@ public class MainController {
         
         User user = accountRepository.findByUsername(username);
 
+        
         if (user == null) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("{\"message\": \"User not found!\"}");
+        }
+        
+        // Delete user from group
+        if (user.getRunnerGroup() != null) {
+            RunnerGroup runnerGroup = user.getRunnerGroup();
+            runnerGroup.getUsers().remove(user);
+            if (runnerGroup.getUsers().isEmpty()){
+                groupRepository.delete(runnerGroup);
+            } else {
+                groupRepository.save(runnerGroup);
+            }
         }
 
         user.setCompanyName(newCompany);
