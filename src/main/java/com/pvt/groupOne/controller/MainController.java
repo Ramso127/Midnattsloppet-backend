@@ -8,6 +8,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.pvt.groupOne.Service.RunService;
 import com.pvt.groupOne.Service.RunnerGroupService;
 import java.time.format.DateTimeFormatter;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.DayOfWeek;
 import java.time.Instant;
 import java.time.LocalDate;
@@ -387,9 +389,14 @@ public class MainController {
             for (double distance : runDistanceList) {
                 totalDistance += distance;
             }
+
+            BigDecimal bd = new BigDecimal(Double.toString(totalDistance));
+            bd = bd.setScale(2, RoundingMode.HALF_UP);
+            double roundedValue = bd.doubleValue();
+
             Map<String, Object> userMap = new HashMap<>();
             userMap.put("username", username);
-            userMap.put("distance", totalDistance);
+            userMap.put("distance", roundedValue);
             jsonList.add(userMap);
         }
         response.put("data", jsonList);
@@ -486,12 +493,12 @@ public class MainController {
         for (User user : users) {
             user.setRunnerGroup(null);
         }
-        
+
         GroupImage groupImage = groupImageRepository.findByGroupName(group.getTeamName());
 
-        if (groupImage != null){
+        if (groupImage != null) {
             groupImageRepository.delete(groupImage);
-            
+
         }
 
         groupRepository.delete(group);
