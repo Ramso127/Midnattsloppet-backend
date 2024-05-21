@@ -24,6 +24,7 @@ import com.pvt.groupOne.model.Run;
 import com.pvt.groupOne.model.RunnerGroup;
 import com.pvt.groupOne.model.User;
 import com.pvt.groupOne.repository.AccountRepository;
+import com.pvt.groupOne.repository.ChallengeRepository;
 import com.pvt.groupOne.repository.RunRepository;
 import com.pvt.groupOne.repository.RunnerGroupRepository;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -316,16 +317,6 @@ public class TestController {
         }
 
         return true;
-    }
-
-    @GetMapping(value = "/simulate-new-week")
-    public @ResponseBody String simulateNewWeek(){
-        ChallengeController challengeController = new ChallengeController();
-
-        runnerGroupService.assignPointsForCurrentChallenge();
-        challengeController.incrementChallenges();
-
-        return "Done.";
     }
 
 
