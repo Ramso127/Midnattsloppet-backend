@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.pvt.groupOne.Service.RunnerGroupService;
 import com.pvt.groupOne.model.AddUserToGroupRequest;
+import com.pvt.groupOne.model.Challenge;
 import com.pvt.groupOne.model.GroupRequest;
 import com.pvt.groupOne.model.Run;
 import com.pvt.groupOne.model.RunnerGroup;
@@ -46,6 +47,9 @@ public class TestController {
 
     @Autowired
     private RunRepository runRepository;
+
+    @Autowired
+    private ChallengeRepository challengeRepository;
 
     @GetMapping(value = "/force-verify/{username}")
     public ResponseEntity<String> forceVerify(@PathVariable String username) {
@@ -317,6 +321,35 @@ public class TestController {
         }
 
         return true;
+    }
+
+    @GetMapping(value = "/simulate-new-week")
+    public @ResponseBody String simulateNewWeek(){
+        runnerGroupService.assignPointsForCurrentChallenge();
+        incrementChallenges();
+
+        return "Done.";
+    }
+
+    public String incrementChallenges() {
+
+        int nextID;
+
+        Challenge currentActiveChallenge = challengeRepository.findByisActive(true);
+        currentActiveChallenge.setActive(false);
+        challengeRepository.save(currentActiveChallenge);
+        int currentID = currentActiveChallenge.getId();
+
+        // If the last challenge was the final one, loop back to the first challenge.
+        if (currentID == 6) {
+            nextID = 0;
+            currentID = 0;
+        }
+        nextID = currentID + 1;
+        Challenge nextActiveChallenge = challengeRepository.findByid(nextID);
+        nextActiveChallenge.setActive(true);
+        challengeRepository.save(nextActiveChallenge);
+        return "Current active challenge: #" + nextActiveChallenge.getId();
     }
 
 
