@@ -25,8 +25,10 @@ public class ImageController {
     public @ResponseBody String addUserImage(@RequestBody UserImageRequest UserImageRequest) {
         String username = UserImageRequest.getUsername();
         String base64 = UserImageRequest.getBase64();
+        
         if (userImageRepository.findByUserName(username) != null) {
-            return "ERROR: Image already exists for user.";
+            updateUserImage(username, base64);
+            return "Image has been updated";
         }
 
         UserImage myImage = new UserImage(username, base64);
