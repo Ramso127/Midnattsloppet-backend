@@ -481,4 +481,18 @@ public class MainController {
 
     }
 
+    @PostMapping(value = "/re-encrypt-password/{username}/{newPassword}")
+    public ResponseEntity<String> reEncryptPassword(@PathVariable String username, @PathVariable String newPassword) {
+        User user = accountRepository.findByUsername(username);
+
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("{\"message\": \"User not found!\"}");
+        }
+
+        user.setPassword(passwordEncryption.passwordEncoder().encode(newPassword));
+        accountRepository.save(user);
+
+        return ResponseEntity.ok("{\"message\": \"Password has been re-encrypted\"}");
+    }
+
 }
