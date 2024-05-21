@@ -28,7 +28,7 @@ public class ImageController {
         
         if (userImageRepository.findByUserName(username) != null) {
             updateUserImage(username, base64);
-            return "Image has been updated";
+            return "Image has been updated.";
         }
 
         UserImage myImage = new UserImage(username, base64);
@@ -39,10 +39,11 @@ public class ImageController {
     @PostMapping(value = "/addGroupImage")
     public @ResponseBody String addGroupImage(@RequestBody GroupImageRequest groupImageRequest) {
         String groupName = groupImageRequest.getGroupName();
-        if (groupImageRepository.findByGroupName(groupName) != null) {
-            return "ERROR: Image already exists for group.";
-        }
         String base64 = groupImageRequest.getBase64();
+        if (groupImageRepository.findByGroupName(groupName) != null) {
+            updateGroupImage(groupName, base64);
+            return "Image has been updated.";
+        }
         GroupImage myImage = new GroupImage(groupName, base64);
         groupImageRepository.save(myImage);
         return "Image for group " + groupName + " successfully saved.";
@@ -70,8 +71,7 @@ public class ImageController {
         return "Image for " + groupName + " successfully removed.";
     }
 
-    @PostMapping(value = "/updateUserImage")
-    public @ResponseBody String updateUserImage(@RequestParam String userName, @RequestParam String base64) {
+    public String updateUserImage(String userName, String base64) {
         UserImage myImage = userImageRepository.findByUserName(userName);
         if (myImage == null) {
             return "ERROR: Image does not exist for user.";
@@ -82,8 +82,7 @@ public class ImageController {
         return "Image for " + userName + " successfully updated.";
     }
 
-    @PostMapping(value = "/updateGroupImage")
-    public @ResponseBody String updateGroupImage(@RequestParam String groupName, @RequestParam String base64) {
+    public String updateGroupImage(String groupName, String base64) {
         GroupImage myImage = groupImageRepository.findByGroupName(groupName);
         if (myImage == null) {
             return "ERROR: Image does not exist for group.";
