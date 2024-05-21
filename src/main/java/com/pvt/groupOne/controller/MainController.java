@@ -52,6 +52,9 @@ public class MainController {
     private StravaUserRepository stravaUserRepository;
 
     @Autowired
+    private UserImageRepository userImageRepository;
+
+    @Autowired
     private UserService userService;
 
     @Autowired
@@ -62,6 +65,9 @@ public class MainController {
 
     @Autowired
     private RunRepository runRepository;
+
+    @Autowired
+    GroupImageRepository groupImageRepository;
 
     @Autowired
     private PasswordEncryption passwordEncryption;
@@ -84,7 +90,8 @@ public class MainController {
             if (accountRepository.existsByEmail(email))
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("{\"message\": \"Email already exists\"}");
 
-            User newUser = new User(username, passwordEncryption.passwordEncoder().encode(password), email, companyName);
+            User newUser = new User(username, passwordEncryption.passwordEncoder().encode(password), email,
+                    companyName);
 
             accountRepository.save(newUser);
             ObjectMapper om = new ObjectMapper();
@@ -141,30 +148,31 @@ public class MainController {
 
         String inviteCode = addUserToGroupRequest.getInviteCode();
         String username = addUserToGroupRequest.getUsername();
-        
+
         try {
             RunnerGroup runnerGroup = groupRepository.findGroupByInviteCode(inviteCode);
             User user = accountRepository.findByUsername(username);
 
-            if (user == null){
+            if (user == null) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                .body("{\"message\": \"User not found\"}");
+                        .body("{\"message\": \"User not found\"}");
             }
-            
+
             if (runnerGroup == null) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                .body("{\"message\": \"Group with invite code " + inviteCode + " not found\"}");
+                        .body("{\"message\": \"Group with invite code " + inviteCode + " not found\"}");
             }
-            
+
             if (user.getRunnerGroup() != null) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("{\"message\": \"Already in a group!\"}");
             }
-            
+
             String groupCompanyNormalized = runnerGroup.getCompanyName().replaceAll("\\s+", "");
             String userCompanyNormalized = user.getCompanyName().replaceAll("\\s+", "");
-            
-            if (!groupCompanyNormalized.equalsIgnoreCase(userCompanyNormalized)){
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("{\"message\": \"Group belongs to a different company!\"}");
+
+            if (!groupCompanyNormalized.equalsIgnoreCase(userCompanyNormalized)) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                        .body("{\"message\": \"Group belongs to a different company!\"}");
             }
 
             if (runnerGroup.isFull()) {
@@ -180,15 +188,6 @@ public class MainController {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.toString());
         }
-    }
-
-    @DeleteMapping(value = "/removeGroup")
-    public @ResponseBody String removeGroup(@RequestBody RunnerGroup group) {
-        if (!groupRepository.existsByTeamName(group.getTeamName())) {
-            return "No such group exists";
-        }
-        groupRepository.delete(group);
-        return "The group has been removed";
     }
 
     @GetMapping(value = "/checkusername/{username}")
@@ -420,14 +419,21 @@ public class MainController {
         for (Run run : runs) {
             runRepository.delete(run);
         }
-        
+
+        UserImage image = userImageRepository.findByUserName(username);
+
+        if (image != null) {
+
+            userImageRepository.delete(image);
+        }
+
         accountRepository.delete(user);
-        
+
         if (user.getRunnerGroup() != null) {
             RunnerGroup runnerGroup = user.getRunnerGroup();
             runnerGroup.getUsers().remove(user);
-            if (runnerGroup.getUsers().isEmpty()){
-                groupRepository.delete(runnerGroup);
+            if (runnerGroup.getUsers().isEmpty()) {
+                removeGroup(runnerGroup.getTeamName());
             } else {
                 groupRepository.save(runnerGroup);
             }
@@ -451,17 +457,16 @@ public class MainController {
 
         RunnerGroup runnerGroup = user.getRunnerGroup();
         runnerGroup.getUsers().remove(user);
-        
+
         user.setRunnerGroup(null);
         accountRepository.save(user);
 
         if (runnerGroup.getUsers().isEmpty()) {
-            groupRepository.delete(runnerGroup);
+            removeGroup(runnerGroup.getTeamName());
         } else {
             runnerGroup.setFull(false);
             groupRepository.save(runnerGroup);
         }
-
 
         return ResponseEntity.ok(
                 "{\"message\": \"User " + username + " has been removed from team " + runnerGroup.getTeamName() + "}");
@@ -480,6 +485,13 @@ public class MainController {
 
         for (User user : users) {
             user.setRunnerGroup(null);
+        }
+        
+        GroupImage groupImage = groupImageRepository.findByGroupName(group.getTeamName());
+
+        if (groupImage != null){
+            groupImageRepository.delete(groupImage);
+            
         }
 
         groupRepository.delete(group);
@@ -500,6 +512,7 @@ public class MainController {
         return ResponseEntity.ok("{\"message\": \"Strava user is connected\"}");
 
     }
+
     // TODO NOA Gör om till PUT (uppdatering)
     @PostMapping(value = "/re-encrypt-password/{username}/{newPassword}")
     public ResponseEntity<String> reEncryptPassword(@PathVariable String username, @PathVariable String newPassword) {
@@ -519,10 +532,9 @@ public class MainController {
     public ResponseEntity<String> updateCompany(@RequestBody CompanyRequest companyRequest) {
         String username = companyRequest.getUsername();
         String newCompany = companyRequest.getCompanyName();
-        
+
         User user = accountRepository.findByUsername(username);
 
-        
         if (user == null) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("{\"message\": \"User not found!\"}");
         }
