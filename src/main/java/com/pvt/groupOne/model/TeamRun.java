@@ -8,14 +8,12 @@ public class TeamRun {
     private LocalDate date;
     private double distance;
     private String time;
-    private String base64Image;
 
-    public TeamRun(String username, LocalDate date, double distance, String time, String base64Image) {
+    public TeamRun(String username, LocalDate date, double distance, String time) {
         this.username = username;
         this.date = date;
         this.distance = distance;
         this.time = time;
-        this.base64Image = base64Image;
     }
 
     public String getUsername() {
@@ -48,14 +46,6 @@ public class TeamRun {
 
     public void setTime(String time) {
         this.time = time;
-    }
-
-    public String getBase64Image() {
-        return base64Image;
-    }
-
-    public void setBase64Image(String base64Image) {
-        this.base64Image = base64Image;
     }
 
 }
