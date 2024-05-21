@@ -1,6 +1,7 @@
 package com.pvt.groupOne.controller;
 
 import com.pvt.groupOne.Service.TokenService;
+import com.pvt.groupOne.model.PasswordEncryption;
 import com.pvt.groupOne.model.User;
 import com.pvt.groupOne.repository.AccountRepository;
 import com.pvt.groupOne.repository.PasswordTokenRepository;
@@ -29,6 +30,9 @@ public class WebRouterController {
     @Autowired
     AccountRepository accountRepository;
 
+    @Autowired
+    PasswordEncryption passwordEncryption;
+
     @GetMapping("/resetPassword")
     public String servePasswordReset(@RequestParam("token") String token) {
             String result = tokenService.validatePasswordResetToken(token);
@@ -56,7 +60,7 @@ public class WebRouterController {
             if (user == null) {
                 return ResponseEntity.status(404).body("User not found");
             } else {
-                user.setPassword(newPassword);
+                user.setPassword(passwordEncryption.passwordEncoder().encode(newPassword));
                 accountRepository.save(user);
                 return ResponseEntity.ok().build();
             }

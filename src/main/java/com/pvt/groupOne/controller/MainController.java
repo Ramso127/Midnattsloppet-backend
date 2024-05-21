@@ -63,6 +63,9 @@ public class MainController {
     @Autowired
     private RunRepository runRepository;
 
+    @Autowired
+    private PasswordEncryption passwordEncryption;
+
     @GetMapping(value = "/hello")
     public @ResponseBody String testMethod() {
         return "Hello this is Didrik's test";
@@ -81,7 +84,7 @@ public class MainController {
             if (accountRepository.existsByEmail(email))
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("{\"message\": \"Email already exists\"}");
 
-            User newUser = new User(username, password, email, companyName);
+            User newUser = new User(username, passwordEncryption.passwordEncoder().encode(password), email, companyName);
 
             accountRepository.save(newUser);
             ObjectMapper om = new ObjectMapper();
@@ -495,6 +498,20 @@ public class MainController {
 
         return ResponseEntity.ok("{\"message\": \"Strava user is connected\"}");
 
+    }
+
+    @PostMapping(value = "/re-encrypt-password/{username}/{newPassword}")
+    public ResponseEntity<String> reEncryptPassword(@PathVariable String username, @PathVariable String newPassword) {
+        User user = accountRepository.findByUsername(username);
+
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("{\"message\": \"User not found!\"}");
+        }
+
+        user.setPassword(passwordEncryption.passwordEncoder().encode(newPassword));
+        accountRepository.save(user);
+
+        return ResponseEntity.ok("{\"message\": \"Password has been re-encrypted\"}");
     }
 
 }
