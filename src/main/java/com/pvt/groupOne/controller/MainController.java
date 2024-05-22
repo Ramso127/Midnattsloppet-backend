@@ -208,16 +208,13 @@ public class MainController {
             return false;
     }
 
-    // TODO DIDDE change return statements
+    // This needs to be GET-mapping for Strava's redirect URI
     @GetMapping("/saveauthenticateduser/{username}")
     public @ResponseBody String saveStravaToken(
             @RequestParam(required = false) String error,
             @RequestParam("code") String authCode,
             @RequestParam("scope") String scope,
             @PathVariable("username") String username) {
-
-        // TODO DIDDE App crashes when trying to authenticate someone who's already
-        // authenticated.
 
         StravaUser myUser = stravaUserRepository.findByUser_Username(username);
 
@@ -301,7 +298,7 @@ public class MainController {
             myDate.setTime(latestFetch * 1000L);
             Instant instant = myDate.toInstant();
 
-            // Create a ZonedDateTime with the desired timezone
+            // Change timezone to Sweden
             ZonedDateTime zonedDateTime = instant.atZone(ZoneId.of("Europe/Stockholm"));
 
             LocalDate date = zonedDateTime.toLocalDate();

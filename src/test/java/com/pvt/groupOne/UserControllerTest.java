@@ -2,6 +2,8 @@ package com.pvt.groupOne;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -11,10 +13,12 @@ import com.pvt.groupOne.Service.UserService;
 import com.pvt.groupOne.model.GroupRequest;
 import com.pvt.groupOne.model.PasswordEncryption;
 import com.pvt.groupOne.model.RunnerGroup;
+import com.pvt.groupOne.model.StravaUser;
 import com.pvt.groupOne.model.User;
 import com.pvt.groupOne.model.UserRequest;
 import com.pvt.groupOne.repository.AccountRepository;
 import com.pvt.groupOne.repository.RunnerGroupRepository;
+import com.pvt.groupOne.repository.StravaUserRepository;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -29,7 +33,6 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
@@ -53,6 +56,9 @@ public class UserControllerTest {
 
     @MockBean
     private PasswordEncryption passwordEncryption;
+
+    @MockBean
+    private StravaUserRepository stravaUserRepository;
 
     @MockBean
     private UserService userService;
@@ -185,5 +191,17 @@ public class UserControllerTest {
                 .content(groupRequestJson))
                 .andExpect(status().isBadRequest())
                 .andExpect(content().json("{\"message\": \"Group name already exists\"}"));
+    }
+
+    @Test
+    public void testFetchStravaRunsWithoutAccount() throws Exception {
+        String username = "testuser";
+
+        when(stravaUserRepository.findByUser_Username(username)).thenReturn(null);
+
+        mockMvc.perform(put("/controller/fetchruns")
+                .param("username", username))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().string("ERROR: No Strava account connected to user " + username));
     }
 }
