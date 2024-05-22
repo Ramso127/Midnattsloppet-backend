@@ -8,6 +8,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.pvt.groupOne.Service.RunService;
 import com.pvt.groupOne.Service.RunnerGroupService;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.DayOfWeek;
@@ -338,25 +339,31 @@ public class MainController {
         }
 
         // Define the desired date format
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-
-        // Assuming runRequest.getDate() returns a LocalDate object
-        String date = runRequest.getDate();
-        LocalDate localDate = LocalDate.parse(date, formatter);
-
-        // Format the LocalDate object using the formatter
-        String formattedDate = localDate.format(formatter);
-
         // Parse the formatted date string back into a LocalDate object
-        LocalDate formattedLocalDate = LocalDate.parse(formattedDate, formatter);
+        LocalDate formattedLocalDate;
+        String formattedTime;
+        try {
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
-        int minutes = runRequest.getMinutes();
-        int hours = minutes / 60;
-        minutes = minutes % 60;
+            // Assuming runRequest.getDate() returns a LocalDate object
+            String date = runRequest.getDate();
+            LocalDate localDate = LocalDate.parse(date, formatter);
 
-        int seconds = runRequest.getSeconds();
+            // Format the LocalDate object using the formatter
+            String formattedDate = localDate.format(formatter);
 
-        String formattedTime = String.format("%02d:%02d:%02d", hours, minutes, seconds);
+            formattedLocalDate = LocalDate.parse(formattedDate, formatter);
+
+            int minutes = runRequest.getMinutes();
+            int hours = minutes / 60;
+            minutes = minutes % 60;
+
+            int seconds = runRequest.getSeconds();
+
+            formattedTime = String.format("%02d:%02d:%02d", hours, minutes, seconds);
+        } catch (DateTimeParseException e) {
+            return ResponseEntity.badRequest().body("{\"error\":\"Invalid date format\"}");      
+        }
         // Create and save the new run
         double totaldistance = runRequest.getTotaldistance();
         Run newRun = new Run(formattedLocalDate, totaldistance, formattedTime, user);

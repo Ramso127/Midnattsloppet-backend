@@ -14,11 +14,11 @@ import java.util.List;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.pvt.groupOne.Service.RunnerGroupService;
 import com.pvt.groupOne.Service.UserService;
+import com.pvt.groupOne.model.AddUserToGroupRequest;
 import com.pvt.groupOne.model.GroupRequest;
 import com.pvt.groupOne.model.PasswordEncryption;
 import com.pvt.groupOne.model.Run;
 import com.pvt.groupOne.model.RunnerGroup;
-import com.pvt.groupOne.model.StravaUser;
 import com.pvt.groupOne.model.User;
 import com.pvt.groupOne.model.UserRequest;
 import com.pvt.groupOne.repository.AccountRepository;
@@ -30,10 +30,8 @@ import com.pvt.groupOne.repository.UserImageRepository;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
+
 import org.mockito.MockitoAnnotations;
-import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -42,7 +40,6 @@ import org.springframework.http.MediaType;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.test.web.servlet.MockMvc;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
@@ -253,5 +250,140 @@ public class UserControllerTest {
 
         mockMvc.perform(delete("/controller/removeuser/" + username))
                 .andExpect(content().string("ERROR: User " + username + " not found."));
+    }
+    @Test
+    public void testAddUserToGroupSuccess() throws Exception {
+        String inviteCode = "invite123";
+        String username = "john_doe";
+        String companyName = "CompanyName";
+        String password = "password";
+        AddUserToGroupRequest addUserToGroupRequest = new AddUserToGroupRequest(username,inviteCode);
+        String addUserToGroupRequestJson = objectMapper.writeValueAsString(addUserToGroupRequest);
+
+        User user = new User(username, password, "john.doe@example.com", companyName);
+        RunnerGroup runnerGroup = new RunnerGroup();
+        runnerGroup.setCompanyName(companyName);
+        runnerGroup.setTeamName("TeamA");
+        runnerGroup.setInviteCode(inviteCode);
+
+        when(accountRepository.findByUsername(username)).thenReturn(user);
+        when(groupRepository.findGroupByInviteCode(inviteCode)).thenReturn(runnerGroup);
+        when(groupRepository.save(any(RunnerGroup.class))).thenReturn(runnerGroup);
+
+        mockMvc.perform(post("/controller/addusertogroup")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(addUserToGroupRequestJson))
+                .andExpect(status().isOk())
+                .andExpect(content().json(objectMapper.writeValueAsString(runnerGroup)));
+
+    }
+
+    @Test
+    public void testAddUserToGroupUserNotFound() throws Exception {
+        String inviteCode = "invite123";
+        String username = "john_doe";
+        AddUserToGroupRequest addUserToGroupRequest = new AddUserToGroupRequest(username,inviteCode);
+        String addUserToGroupRequestJson = objectMapper.writeValueAsString(addUserToGroupRequest);
+
+        when(accountRepository.findByUsername(username)).thenReturn(null);
+
+        mockMvc.perform(post("/controller/addusertogroup")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(addUserToGroupRequestJson))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().json("{\"message\": \"User not found\"}"));
+    }
+
+    @Test
+    public void testAddUserToGroupGroupNotFound() throws Exception {
+        String inviteCode = "invite123";
+        String username = "john_doe";
+        AddUserToGroupRequest addUserToGroupRequest = new AddUserToGroupRequest(username,inviteCode);
+        String addUserToGroupRequestJson = objectMapper.writeValueAsString(addUserToGroupRequest);
+        User user = new User(username, "password", "john.doe@example.com", "CompanyName");
+
+        when(accountRepository.findByUsername(username)).thenReturn(user);
+        when(groupRepository.findGroupByInviteCode(inviteCode)).thenReturn(null);
+
+        mockMvc.perform(post("/controller/addusertogroup")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(addUserToGroupRequestJson))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().json("{\"message\": \"Group with invite code invite123 not found\"}"));
+    }
+
+    @Test
+    public void testAddUserToGroupUserAlreadyInGroup() throws Exception {
+        String inviteCode = "invite123";
+        String username = "john_doe";
+        String companyName = "CompanyName";
+        AddUserToGroupRequest addUserToGroupRequest = new AddUserToGroupRequest(username,inviteCode);
+        String addUserToGroupRequestJson = objectMapper.writeValueAsString(addUserToGroupRequest);
+        User user = new User(username, "password", "john.doe@example.com", companyName);
+        RunnerGroup existingGroup = new RunnerGroup();
+        existingGroup.setCompanyName(companyName);
+        existingGroup.setTeamName("ExistingTeam");
+        existingGroup.addUser(user);
+        user.setRunnerGroup(existingGroup);
+
+        RunnerGroup runnerGroup = new RunnerGroup();
+        runnerGroup.setCompanyName(companyName);
+        runnerGroup.setTeamName("TeamA");
+        runnerGroup.addUser(user);
+
+        when(accountRepository.findByUsername(username)).thenReturn(user);
+        when(groupRepository.findGroupByInviteCode(inviteCode)).thenReturn(runnerGroup);
+
+        mockMvc.perform(post("/controller/addusertogroup")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(addUserToGroupRequestJson))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().json("{\"message\": \"Already in a group!\"}"));
+    }
+
+    @Test
+    public void testAddUserToGroupDifferentCompany() throws Exception {
+        String inviteCode = "invite123";
+        String username = "john_doe";
+        String userCompanyName = "CompanyName";
+        String groupCompanyName = "DifferentCompany";
+        AddUserToGroupRequest addUserToGroupRequest = new AddUserToGroupRequest(username,inviteCode);
+        String addUserToGroupRequestJson = objectMapper.writeValueAsString(addUserToGroupRequest);
+        User user = new User(username, "password", "john.doe@example.com", userCompanyName);
+        RunnerGroup runnerGroup = new RunnerGroup();
+        runnerGroup.setCompanyName(groupCompanyName);
+        runnerGroup.setTeamName("TeamA");
+        when(accountRepository.findByUsername(username)).thenReturn(user);
+        when(groupRepository.findGroupByInviteCode(inviteCode)).thenReturn(runnerGroup);
+
+        mockMvc.perform(post("/controller/addusertogroup")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(addUserToGroupRequestJson))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().json("{\"message\": \"Group belongs to a different company!\"}"));
+
+    }
+
+    @Test
+    public void testAddUserToGroupGroupIsFull() throws Exception {
+        String inviteCode = "invite123";
+        String username = "john_doe";
+        String companyName = "CompanyName";
+        AddUserToGroupRequest addUserToGroupRequest = new AddUserToGroupRequest(username, inviteCode);
+        String addUserToGroupRequestJson = objectMapper.writeValueAsString(addUserToGroupRequest);
+        User user = new User(username, "password", "john.doe@example.com", companyName);
+        RunnerGroup runnerGroup = new RunnerGroup();
+        runnerGroup.setCompanyName(companyName);
+        runnerGroup.setTeamName("TeamA");
+        runnerGroup.setFull(true);
+
+        when(accountRepository.findByUsername(username)).thenReturn(user);
+        when(groupRepository.findGroupByInviteCode(inviteCode)).thenReturn(runnerGroup);
+
+        mockMvc.perform(post("/controller/addusertogroup")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(addUserToGroupRequestJson))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().json("{\"message\": \"Group is full!\"}"));
     }
 }
