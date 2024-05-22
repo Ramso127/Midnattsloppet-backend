@@ -82,6 +82,88 @@ public class RunnerGroupService {
         return runnerGroupRepository.findTopGroupsByTotalDistance();
     }
 
+    public List<Object[]> getChallengeDataForGroups(Challenge challenge, LocalDate start, LocalDate end) {
+        switch (challenge.getId()) {
+            case 1:
+                return runnerGroupRepository.findGroupsByFurthestDistance(start, end);
+            case 2:
+                return runnerGroupRepository.findGroupsByMostRuns(start, end);
+            case 3:
+                return runnerGroupRepository.findGroupsByFurthestRunPerMember(start, end);
+            case 4:
+                return runnerGroupRepository.findGroupsByHighestAveragePace(start, end);
+            case 5:
+                return runnerGroupRepository.findGroupsByMostLongRuns(start, end);
+            case 6:
+                return runnerGroupRepository.findGroupsByTotalNumberOfFasterRuns(start, end);
+            default:
+                throw new IllegalArgumentException("Unknown challenge type");
+        }
+    }
+
+    private double getUserChallengeContribution(User user, Challenge challenge, LocalDate start, LocalDate end) {
+        switch (challenge.getId()) {
+            case 1:
+                return runnerGroupRepository.findUserDistanceForWeek(user.getUsername(), start, end);
+            case 2:
+                return runnerGroupRepository.countUserRuns(user.getUsername(), start, end);
+            case 3:
+                return runnerGroupRepository.findUserLongestRun(user.getUsername(), start, end);
+            case 4:
+                return runnerGroupRepository.calculateUserAveragePace(user.getUsername(), start, end);
+            case 5:
+                return runnerGroupRepository.countUserLongRuns(user.getUsername(), start, end);
+            case 6:
+                return runnerGroupRepository.countUserFasterRuns(user.getUsername(), start, end);
+            default:
+                throw new IllegalArgumentException("Unknown challenge type");
+        }
+    }
+
+    public double getGroupChallengeContribution(Integer groupId, Challenge challenge, LocalDate start,
+            LocalDate end) {
+        switch (challenge.getId()) {
+            case 1:
+                return runnerGroupRepository.findGroupDistanceForChallenge(groupId, start, end);
+            case 2:
+                return runnerGroupRepository.findGroupRunsForChallenge(groupId, start, end);
+            case 3:
+                return runnerGroupRepository.findGroupFurthestRunPerMemberForChallenge(groupId, start, end);
+            case 4:
+                return runnerGroupRepository.findGroupAveragePaceForChallenge(groupId, start, end);
+            case 5:
+                return runnerGroupRepository.findGroupLongRunsForChallenge(groupId, start, end);
+            case 6:
+                return runnerGroupRepository.findGroupFasterRunsForChallenge(groupId, start, end);
+            default:
+                throw new IllegalArgumentException("Unknown challenge type");
+        }
+    }
+
+    public Map<String, Object> getWeeklyChallengeContribution(String username) {
+        User user = userRepository.findByUsername(username);
+        if (user == null) {
+            throw new IllegalArgumentException("User not found");
+        }
+
+        LocalDate startDate = LocalDate.now().with(DayOfWeek.MONDAY);
+        LocalDate endDate = LocalDate.now().with(DayOfWeek.SUNDAY);
+        Challenge currentChallenge = challengeRepository.findByisActive(true);
+
+        double userContribution = getUserChallengeContribution(user, currentChallenge, startDate, endDate);
+        double groupTotal = getGroupChallengeContribution(user.getRunnerGroup().getGroupId(), currentChallenge,
+                startDate, endDate);
+
+        double roundedUserContribution = BigDecimal.valueOf(userContribution).setScale(2, RoundingMode.HALF_UP)
+                .doubleValue();
+        double roundedGroupTotal = BigDecimal.valueOf(groupTotal).setScale(2, RoundingMode.HALF_UP).doubleValue();
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("userContribution", roundedUserContribution);
+        response.put("groupTotal", roundedGroupTotal);
+        return response;
+    }
+
     public Map<String, List<GroupStatsRequest>> getGroupsSortedByCurrentChallengeWithPoints() {
         Challenge currentChallenge = challengeRepository.findByisActive(true);
         LocalDate startDate = LocalDate.now().with(DayOfWeek.MONDAY);
@@ -89,28 +171,7 @@ public class RunnerGroupService {
 
         List<Object[]> sortedGroups = new ArrayList<>();
 
-        switch (currentChallenge.getId()) {
-            case 1:
-                sortedGroups = runnerGroupRepository.findGroupsByFurthestDistance(startDate, endDate);
-                break;
-            case 2:
-                sortedGroups = runnerGroupRepository.findGroupsByMostRuns(startDate, endDate);
-                break;
-            case 3:
-                sortedGroups = runnerGroupRepository.findGroupsByFurthestRunPerMember(startDate, endDate);
-                break;
-            case 4:
-                sortedGroups = runnerGroupRepository.findGroupsByHighestAveragePace(startDate, endDate);
-                break;
-            case 5:
-                sortedGroups = runnerGroupRepository.findGroupsByMostLongRuns(startDate, endDate);
-                break;
-            case 6:
-                sortedGroups = runnerGroupRepository.findGroupsByTotalNumberOfFasterRuns(startDate, endDate);
-                break;
-            default:
-                throw new IllegalArgumentException("Unknown challenge type");
-        }
+        sortedGroups = getChallengeDataForGroups(currentChallenge, startDate, endDate);
 
         List<GroupStatsRequest> groupsWithPoints = new ArrayList<>();
         int totalGroups = sortedGroups.size();
@@ -119,7 +180,7 @@ public class RunnerGroupService {
             String teamName = (String) group[0];
             double metric = ((Number) group[1]).doubleValue(); // Ensure correct casting
 
-            // Round the metric to 2 decimal places
+            // Round metric to 2 decimal places
             BigDecimal roundedMetric = BigDecimal.valueOf(metric).setScale(2, RoundingMode.HALF_UP);
 
             int points = Math.max(25 - i, 1); // Calculate points

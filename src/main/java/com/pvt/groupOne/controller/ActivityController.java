@@ -75,7 +75,14 @@ public class ActivityController {
 
     @GetMapping("/sorted-groups-by-challenge")
     public ResponseEntity<Map<String, List<GroupStatsRequest>>> getSortedGroupsByChallenge() {
-        Map<String, List<GroupStatsRequest>> sortedGroups = runnerGroupService.getGroupsSortedByCurrentChallengeWithPoints();
+        Map<String, List<GroupStatsRequest>> sortedGroups = runnerGroupService
+                .getGroupsSortedByCurrentChallengeWithPoints();
         return ResponseEntity.ok(sortedGroups);
+    }
+
+    @GetMapping("/challenge-contribution/{username}")
+    public ResponseEntity<Map<String, Object>> getChallengeContribution(@PathVariable String username) {
+        Map<String, Object> challengeData = runnerGroupService.getWeeklyChallengeContribution(username);
+        return ResponseEntity.ok(challengeData);
     }
 }
