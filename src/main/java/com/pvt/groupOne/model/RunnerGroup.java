@@ -16,6 +16,9 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 @Entity
 public class RunnerGroup {
 
+    public RunnerGroup() {
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer groupId;
