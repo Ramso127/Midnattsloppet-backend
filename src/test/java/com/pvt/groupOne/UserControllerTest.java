@@ -7,18 +7,26 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.pvt.groupOne.Service.RunnerGroupService;
 import com.pvt.groupOne.Service.UserService;
 import com.pvt.groupOne.model.GroupRequest;
 import com.pvt.groupOne.model.PasswordEncryption;
+import com.pvt.groupOne.model.Run;
 import com.pvt.groupOne.model.RunnerGroup;
 import com.pvt.groupOne.model.StravaUser;
 import com.pvt.groupOne.model.User;
 import com.pvt.groupOne.model.UserRequest;
 import com.pvt.groupOne.repository.AccountRepository;
+import com.pvt.groupOne.repository.GroupImageRepository;
+import com.pvt.groupOne.repository.RunRepository;
 import com.pvt.groupOne.repository.RunnerGroupRepository;
 import com.pvt.groupOne.repository.StravaUserRepository;
+import com.pvt.groupOne.repository.UserImageRepository;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -50,6 +58,15 @@ public class UserControllerTest {
 
     @MockBean
     private RunnerGroupRepository groupRepository;
+
+    @MockBean
+    private RunRepository runRepository;
+
+    @MockBean
+    private UserImageRepository userImageRepository;
+
+    @MockBean
+    private GroupImageRepository groupImageRepository;
 
     @MockBean
     private RunnerGroupService runnerGroupService;
@@ -150,7 +167,7 @@ public class UserControllerTest {
                 .andExpect(status().isInternalServerError());
     }
 
-        @Test
+    @Test
     public void testAddGroupSuccess() throws Exception {
         String teamName = "TeamA";
         String username = "john_doe";
@@ -203,5 +220,38 @@ public class UserControllerTest {
                 .param("username", username))
                 .andExpect(status().isBadRequest())
                 .andExpect(content().string("ERROR: No Strava account connected to user " + username));
+    }
+
+    @Test
+    public void deleteUserThatExists() throws Exception {
+        String username = "testuser";
+
+        User user = new User(username, "password", "john.doe@example.com", "CompanyName");
+        List<Run> runs = new ArrayList<>();
+        Run run = new Run(LocalDate.now(), 20, "00:50:00", user);
+        runs.add(run);
+
+        when(accountRepository.findByUsername(username)).thenReturn(user);
+        when(runRepository.getAllRunsByUser(username)).thenReturn(runs);
+        when(userImageRepository.findByUserName(username)).thenReturn(null);
+
+        mockMvc.perform(delete("/controller/removeuser/" + username))
+                .andExpect(status().isOk())
+                .andExpect(content().string("User " + username + " has been removed."));
+    }
+
+    @Test
+    public void deleteUserThatDoesntExist() throws Exception {
+        String username = "testuser";
+
+        User user = new User(username, "password", "john.doe@example.com", "CompanyName");
+        List<Run> runs = new ArrayList<>();
+        Run run = new Run(LocalDate.now(), 20, "00:50:00", user);
+        runs.add(run);
+
+        when(accountRepository.findByUsername(username)).thenReturn(null);
+
+        mockMvc.perform(delete("/controller/removeuser/" + username))
+                .andExpect(content().string("ERROR: User " + username + " not found."));
     }
 }
