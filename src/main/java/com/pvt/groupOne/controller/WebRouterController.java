@@ -40,7 +40,7 @@ public class WebRouterController {
             if (result.equals("202")) {
                 return "forward:/resetPassword.html";
             }
-            else if(passwordTokenRepository.getIfDepleted(token)){
+            else if(result.equals("101")){
                 return "forward:/depletedPasswordResetToken.html";
             }
             else if(result.equals("invalid")){
