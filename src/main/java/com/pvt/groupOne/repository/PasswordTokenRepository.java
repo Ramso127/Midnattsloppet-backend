@@ -12,6 +12,10 @@ public interface PasswordTokenRepository extends CrudRepository<PasswordResetTok
 
     PasswordResetToken findByToken(String token);
 
+
+    @Query("SELECT v FROM PasswordResetToken v WHERE v.user = :user AND v.depleted = false ORDER BY v.expiryDate DESC limit 1")
+    PasswordResetToken findFirstByUserOrderByExpiryDateDesc(@Param("user") User user);
+
     @Query("SELECT v.user FROM PasswordResetToken v WHERE v.token = :token")
     User findUserByToken(@Param("token") String token);
 }

@@ -8,6 +8,7 @@ import com.pvt.groupOne.repository.PasswordTokenRepository;
 import com.pvt.groupOne.repository.VerificationTokenRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.Calendar;
 import java.util.UUID;
@@ -61,7 +62,11 @@ public class TokenService {
 
         if (passReset == null || token.length() != 36) {
             return "invalid";
-        } else if (passReset.getExpiryDate().before(time.getTime())) {
+        }
+        else if (passReset.isDepleted()) {
+            return "101";
+        }
+        else if (passReset.getExpiryDate().before(time.getTime())) {
             return "expired";
         }
         return "202";
@@ -83,6 +88,24 @@ public class TokenService {
             return user.isVerified();
         }
         return false;
+    }
+
+    public String depletePasswordResetToken(String token){
+        PasswordResetToken passReset = passwordTokenRepository.findByToken(token);
+        passReset.setDepleted(true);
+        PasswordResetToken passwordResetToken = passwordTokenRepository.save(passReset);
+        return passwordResetToken != null? "202" : "404";
+    }
+
+    public String depleteRecentResetToken(String username) {
+        User user = accountRepository.findByUsername(username);
+        if(user == null) {
+            return "404";
+        }
+        PasswordResetToken passReset = passwordTokenRepository.findFirstByUserOrderByExpiryDateDesc(user);
+        passReset.setDepleted(true);
+        PasswordResetToken passwordResetToken = passwordTokenRepository.save(passReset);
+        return passwordResetToken != null? "202" : "404";
     }
 
 }
