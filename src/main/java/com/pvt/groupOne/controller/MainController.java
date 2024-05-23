@@ -287,7 +287,7 @@ public class MainController {
             if (result) {
                 System.out.println("New token successfully fetched");
             } else {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error: token has not been updated");
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error: token has not been updated");
             }
         }
 
@@ -311,7 +311,7 @@ public class MainController {
             String dayString = dayOfWeek.toString();
             dayString = dayString.toLowerCase();
 
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("ERROR: No new runs available since " + dayString
+            return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body("ERROR: No new runs available since " + dayString
                     + " " + date + " at " + time + " (" + timezone + " " + offset + ")");
         }
 
