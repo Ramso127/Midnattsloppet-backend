@@ -68,6 +68,7 @@ public class WebRouterController {
                 PasswordResetToken passwordResetToken = passwordTokenRepository.findByToken(token);
                 tokenService.depletePasswordResetToken(token);
                 passwordResetToken.setDepleted(true);
+                passwordTokenRepository.save(passwordResetToken);
                 accountRepository.save(user);
                 return ResponseEntity.status(202).body("Password has been reset");
             }
