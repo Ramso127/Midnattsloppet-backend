@@ -15,12 +15,12 @@ public class GroupOneApplication {
 
 		System.out.println("RUNNING PROGRAM");
 
-//		SpringApplication.run(GroupOneApplication.class, args);
+		SpringApplication.run(GroupOneApplication.class, args);
 
-		 ApplicationContext context = SpringApplication.run(GroupOneApplication.class, args);
-		 TokenService tokenService = context.getBean(TokenService.class);
-		 AccountRepository accountRepository = context.getBean(AccountRepository.class);
-		 System.out.println(tokenService.validatePasswordResetToken("c1fe12da-a72a-4a47-b820-e98863c376af"));
+//		 ApplicationContext context = SpringApplication.run(GroupOneApplication.class, args);
+//		 TokenService tokenService = context.getBean(TokenService.class);
+//		 AccountRepository accountRepository = context.getBean(AccountRepository.class);
+//		 System.out.println(tokenService.validatePasswordResetToken("c1fe12da-a72a-4a47-b820-e98863c376af"));
 //		 AccountRepository userRepository = context.getBean(AccountRepository.class);
 //		 User user;
 //		 TokenService tokenService = context.getBean(TokenService.class);
