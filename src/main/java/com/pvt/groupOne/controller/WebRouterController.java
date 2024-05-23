@@ -69,7 +69,7 @@ public class WebRouterController {
                 tokenService.depletePasswordResetToken(token);
                 passwordResetToken.setDepleted(true);
                 accountRepository.save(user);
-                return ResponseEntity.ok().build();
+                return ResponseEntity.status(202).body("Password has been reset");
             }
         }
         else if(result.equals("101")){
