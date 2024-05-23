@@ -17,16 +17,16 @@ public class GroupOneApplication {
 
 		System.out.println("RUNNING PROGRAM");
 
-		SpringApplication.run(GroupOneApplication.class, args);
+//		SpringApplication.run(GroupOneApplication.class, args);
 
-//		 ApplicationContext context = SpringApplication.run(GroupOneApplication.class, args);
-//		 TokenService tokenService = context.getBean(TokenService.class);
-//		 AccountRepository accountRepository = context.getBean(AccountRepository.class);
-//		 System.out.println(tokenService.validatePasswordResetToken("c233a922-e136-4c22-b2af-d832c1af3ddb"));
-//		 AccountRepository userRepository = context.getBean(AccountRepository.class);
-//		 User user;
-//		 PasswordTokenRepository passwordTokenRepository = context.getBean(PasswordTokenRepository.class);
-//		 System.out.println(passwordTokenRepository.getIfDepleted("c233a922-e136-4c22-b2af-d832c1af3ddb"));
+		 ApplicationContext context = SpringApplication.run(GroupOneApplication.class, args);
+		 TokenService tokenService = context.getBean(TokenService.class);
+		 AccountRepository accountRepository = context.getBean(AccountRepository.class);
+		 System.out.println(tokenService.validatePasswordResetToken("47c34ffd-9cfb-4475-8765-010c2301b828"));
+		 AccountRepository userRepository = context.getBean(AccountRepository.class);
+		 User user;
+		 PasswordTokenRepository passwordTokenRepository = context.getBean(PasswordTokenRepository.class);
+		 System.out.println(passwordTokenRepository.getIfDepleted("47c34ffd-9cfb-4475-8765-010c2301b828"));
 //		 TokenService tokenService = context.getBean(TokenService.class);
 //		 System.out.println(user = userRepository.findByUsername("noaTest6"));
 //		 System.out.println(user.isVerified());

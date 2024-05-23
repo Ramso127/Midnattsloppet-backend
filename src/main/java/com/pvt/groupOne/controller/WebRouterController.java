@@ -60,7 +60,7 @@ public class WebRouterController {
         String result = tokenService.validatePasswordResetToken(token);
         User user = passwordTokenRepository.findUserByToken(token);
 
-        if(result == "202" ) {
+        if(result.equals("202") ) {
             if (user == null) {
                 return ResponseEntity.status(404).body("User not found");
             } else {
