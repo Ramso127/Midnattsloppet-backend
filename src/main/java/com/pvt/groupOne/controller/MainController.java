@@ -8,6 +8,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.pvt.groupOne.Service.RunService;
 import com.pvt.groupOne.Service.RunnerGroupService;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
+import java.time.temporal.WeekFields;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.DayOfWeek;
@@ -21,6 +23,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import com.pvt.groupOne.repository.*;
@@ -57,6 +60,9 @@ public class MainController {
     private UserImageRepository userImageRepository;
 
     @Autowired
+    private BugReportRepository bugReportRepository;
+
+    @Autowired
     private UserService userService;
 
     @Autowired
@@ -73,6 +79,9 @@ public class MainController {
 
     @Autowired
     private PasswordEncryption passwordEncryption;
+
+    @Autowired
+    private PasswordTokenRepository passwordTokenRepository;
 
     @GetMapping(value = "/hello")
     public @ResponseBody String testMethod() {
@@ -208,16 +217,13 @@ public class MainController {
             return false;
     }
 
-    // TODO DIDDE change return statements
+    // This needs to be GET-mapping for Strava's redirect URI
     @GetMapping("/saveauthenticateduser/{username}")
     public @ResponseBody String saveStravaToken(
             @RequestParam(required = false) String error,
             @RequestParam("code") String authCode,
             @RequestParam("scope") String scope,
             @PathVariable("username") String username) {
-
-        // TODO DIDDE App crashes when trying to authenticate someone who's already
-        // authenticated.
 
         StravaUser myUser = stravaUserRepository.findByUser_Username(username);
 
@@ -289,7 +295,8 @@ public class MainController {
             if (result) {
                 System.out.println("New token successfully fetched");
             } else {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error: token has not been updated");
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                        .body("Error: token has not been updated");
             }
         }
 
@@ -301,7 +308,7 @@ public class MainController {
             myDate.setTime(latestFetch * 1000L);
             Instant instant = myDate.toInstant();
 
-            // Create a ZonedDateTime with the desired timezone
+            // Change timezone to Sweden
             ZonedDateTime zonedDateTime = instant.atZone(ZoneId.of("Europe/Stockholm"));
 
             LocalDate date = zonedDateTime.toLocalDate();
@@ -313,8 +320,9 @@ public class MainController {
             String dayString = dayOfWeek.toString();
             dayString = dayString.toLowerCase();
 
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("ERROR: No new runs available since " + dayString
-                    + " " + date + " at " + time + " (" + timezone + " " + offset + ")");
+            return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE)
+                    .body("ERROR: No new runs available since " + dayString
+                            + " " + date + " at " + time + " (" + timezone + " " + offset + ")");
         }
 
         for (Run run : runList) {
@@ -341,25 +349,31 @@ public class MainController {
         }
 
         // Define the desired date format
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-
-        // Assuming runRequest.getDate() returns a LocalDate object
-        String date = runRequest.getDate();
-        LocalDate localDate = LocalDate.parse(date, formatter);
-
-        // Format the LocalDate object using the formatter
-        String formattedDate = localDate.format(formatter);
-
         // Parse the formatted date string back into a LocalDate object
-        LocalDate formattedLocalDate = LocalDate.parse(formattedDate, formatter);
+        LocalDate formattedLocalDate;
+        String formattedTime;
+        try {
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
-        int minutes = runRequest.getMinutes();
-        int hours = minutes / 60;
-        minutes = minutes % 60;
+            // Assuming runRequest.getDate() returns a LocalDate object
+            String date = runRequest.getDate();
+            LocalDate localDate = LocalDate.parse(date, formatter);
 
-        int seconds = runRequest.getSeconds();
+            // Format the LocalDate object using the formatter
+            String formattedDate = localDate.format(formatter);
 
-        String formattedTime = String.format("%02d:%02d:%02d", hours, minutes, seconds);
+            formattedLocalDate = LocalDate.parse(formattedDate, formatter);
+
+            int minutes = runRequest.getMinutes();
+            int hours = minutes / 60;
+            minutes = minutes % 60;
+
+            int seconds = runRequest.getSeconds();
+
+            formattedTime = String.format("%02d:%02d:%02d", hours, minutes, seconds);
+        } catch (DateTimeParseException e) {
+            return ResponseEntity.badRequest().body("{\"error\":\"Invalid date format\"}");
+        }
         // Create and save the new run
         double totaldistance = runRequest.getTotaldistance();
         Run newRun = new Run(formattedLocalDate, totaldistance, formattedTime, user);
@@ -399,12 +413,19 @@ public class MainController {
             userMap.put("distance", roundedValue);
             jsonList.add(userMap);
         }
+
+        jsonList.sort((map1, map2) -> {
+            double distance1 = (double) map1.get("distance");
+            double distance2 = (double) map2.get("distance");
+            return Double.compare(distance2, distance1);
+        });
+
         response.put("data", jsonList);
         return response;
     }
 
     @GetMapping(value = "/gettop3")
-    public @ResponseBody String getTeamMembers() {
+    public @ResponseBody String getTop3() {
         ObjectMapper om = new ObjectMapper();
         try {
             List<Object[]> top3GroupsByTotalDistance = groupRepository.findTop3GroupsByTotalDistance();
@@ -555,6 +576,139 @@ public class MainController {
         accountRepository.save(user);
 
         return ResponseEntity.ok("{\"message\": \"Company has been changed\"}");
+    }
+
+    @PostMapping(value = "/save-bug-report")
+    public ResponseEntity<String> saveBugReport(@RequestParam String report, @RequestParam String username) {
+
+        if (report.length() > 100) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("{\"message\": \"Message is too long!\"}");
+        }
+
+        BugReport myReport = new BugReport(report, username);
+
+        bugReportRepository.save(myReport);
+
+        return ResponseEntity.status(HttpStatus.OK).body("{\"message\": \"Bug report successfully saved!\"}");
+    }
+
+    @GetMapping(value = "/get-current-round")
+    public ResponseEntity<String> getRoundByCurrentWeek() {
+
+        int result;
+
+        ZoneId stockholmZone = ZoneId.of("Europe/Stockholm");
+        LocalDate date = ZonedDateTime.now(stockholmZone).toLocalDate();
+
+        WeekFields weekFields = WeekFields.of(Locale.getDefault());
+
+        int weekNumber = date.get(weekFields.weekOfWeekBasedYear());
+
+        switch (weekNumber) {
+
+            case 15:
+                result = 1;
+                break;
+            case 16:
+                result = 2;
+                break;
+
+            case 17:
+                result = 3;
+                break;
+
+            case 18:
+                result = 4;
+                break;
+
+            case 19:
+                result = 5;
+                break;
+
+            case 20:
+                result = 6;
+                break;
+
+            case 21:
+                result = 7;
+                break;
+
+            case 22:
+                result = 8;
+                break;
+
+            case 23:
+                result = 9;
+                break;
+
+            case 24:
+                result = 10;
+                break;
+
+            case 25:
+                result = 11;
+                break;
+
+            case 26:
+                result = 12;
+                break;
+
+            case 27:
+                result = 13;
+                break;
+
+            case 28:
+                result = 14;
+                break;
+
+            case 29:
+                result = 15;
+                break;
+
+            case 30:
+                result = 16;
+                break;
+
+            case 31:
+                result = 17;
+                break;
+
+            case 32:
+                result = 18;
+                break;
+
+            default:
+                result = -1;
+
+        }
+
+        if (result < 0) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body("{\"message\":\"There is no competition right now.\"}");
+        } else {
+            return ResponseEntity.status(HttpStatus.OK).body(String.valueOf(result));
+        }
+    }
+
+    @PostMapping(value = "/deplete-reset-token/{token}")
+    public ResponseEntity<String> depleteResetToken(@PathVariable String token) {
+        PasswordResetToken passReset = passwordTokenRepository.findByToken(token);
+        passReset.setDepleted(true);
+        PasswordResetToken passwordResetToken = passwordTokenRepository.save(passReset);
+        return passwordResetToken != null ? ResponseEntity.status(HttpStatus.ACCEPTED).body("202") : ResponseEntity.status(HttpStatus.NOT_FOUND).body("404");
+    }
+
+    @PostMapping(value = "/deplete-recent-reset-token/{username}")
+    public ResponseEntity<String> depleteRecentResetToken(@PathVariable String username) {
+        User user = accountRepository.findByUsername(username);
+        if(user == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("404");
+        }
+        PasswordResetToken passReset = passwordTokenRepository.findFirstByUserOrderByExpiryDateDesc(user);
+        passReset.setDepleted(true);
+        PasswordResetToken passwordResetToken = passwordTokenRepository.save(passReset);
+
+        return passwordResetToken != null ? ResponseEntity.status(HttpStatus.ACCEPTED).body("202") : ResponseEntity.status(HttpStatus.NOT_FOUND).body("404");
     }
 
 }

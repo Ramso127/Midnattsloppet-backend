@@ -16,6 +16,9 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 @Entity
 public class RunnerGroup {
 
+    public RunnerGroup() {
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer groupId;
@@ -76,7 +79,7 @@ public class RunnerGroup {
         return users;
     }
     
-    public void setUsers(ArrayList<User> users) {
+    public void setUsers(List<User> users) {
         this.users = users;
     }
     

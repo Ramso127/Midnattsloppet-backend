@@ -21,6 +21,8 @@ public class PasswordResetToken {
 
     private Date expiryDate;
 
+    private boolean depleted;
+
     public PasswordResetToken() {
 
     }
@@ -30,6 +32,7 @@ public class PasswordResetToken {
         this.user = user;
         long expiryTime = System.currentTimeMillis() + EXPIRATION;
         this.expiryDate = new Date(expiryTime);
+        this.depleted = false;
     }
 
     public Date getExpiryDate() {
@@ -72,5 +75,13 @@ public class PasswordResetToken {
                 ", user=" + user +
                 ", expiryDate=" + expiryDate +
                 '}';
+    }
+
+    public boolean isDepleted() {
+        return depleted;
+    }
+
+    public void setDepleted(boolean depleted) {
+        this.depleted = depleted;
     }
 }

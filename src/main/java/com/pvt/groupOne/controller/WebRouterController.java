@@ -2,6 +2,7 @@ package com.pvt.groupOne.controller;
 
 import com.pvt.groupOne.Service.TokenService;
 import com.pvt.groupOne.model.PasswordEncryption;
+import com.pvt.groupOne.model.PasswordResetToken;
 import com.pvt.groupOne.model.User;
 import com.pvt.groupOne.repository.AccountRepository;
 import com.pvt.groupOne.repository.PasswordTokenRepository;
@@ -39,6 +40,9 @@ public class WebRouterController {
             if (result.equals("202")) {
                 return "forward:/resetPassword.html";
             }
+            else if(result.equals("101")){
+                return "forward:/depletedPasswordResetToken.html";
+            }
             else if(result.equals("invalid")){
                 return "forward:/invalidPasswordResetToken.html";
             }
@@ -56,14 +60,21 @@ public class WebRouterController {
         String result = tokenService.validatePasswordResetToken(token);
         User user = passwordTokenRepository.findUserByToken(token);
 
-        if(result == "202") {
+        if(result.equals("202") ) {
             if (user == null) {
                 return ResponseEntity.status(404).body("User not found");
             } else {
                 user.setPassword(passwordEncryption.passwordEncoder().encode(newPassword));
+                PasswordResetToken passwordResetToken = passwordTokenRepository.findByToken(token);
+                tokenService.depletePasswordResetToken(token);
+                passwordResetToken.setDepleted(true);
+                passwordTokenRepository.save(passwordResetToken);
                 accountRepository.save(user);
-                return ResponseEntity.ok().build();
+                return ResponseEntity.status(202).body("Password has been reset");
             }
+        }
+        else if(result.equals("101")){
+            return ResponseEntity.status(405).body("Password has already been reset");
         }
         else{
             return ResponseEntity.status(404).body("Invalid Token");

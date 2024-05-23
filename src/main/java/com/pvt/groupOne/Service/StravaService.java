@@ -160,8 +160,6 @@ public class StravaService {
 
     }
 
-    // TODO DIDDE: Finish this method, change from Post to Get, possibly change
-    // return type from boolean
     public ArrayList<Run> saveRunsFrom(int stravaID, long unixTimeStamp, String accessToken, User user) {
 
         final String URL = "https://www.strava.com/api/v3/athlete/activities";

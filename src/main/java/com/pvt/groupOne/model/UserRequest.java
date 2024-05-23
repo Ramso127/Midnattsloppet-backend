@@ -6,6 +6,18 @@ public class UserRequest {
     private String email;
     private String companyname;
 
+    
+
+    public UserRequest() {
+    }
+
+    public UserRequest(String username, String password, String email, String companyname) {
+        this.username = username;
+        this.password = password;
+        this.email = email;
+        this.companyname = companyname;
+    }
+    
     public String getCompanyname() {
         return companyname;
     }

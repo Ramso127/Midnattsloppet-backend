@@ -25,13 +25,15 @@ public class ImageController {
     public @ResponseBody String addUserImage(@RequestBody UserImageRequest UserImageRequest) {
         String username = UserImageRequest.getUsername();
         String base64 = UserImageRequest.getBase64();
+
+        int length = base64.length();
         
         if (userImageRepository.findByUserName(username) != null) {
-            updateUserImage(username, base64);
+            updateUserImage(username, base64, length);
             return "Image has been updated.";
         }
 
-        UserImage myImage = new UserImage(username, base64);
+        UserImage myImage = new UserImage(username, base64, length);
         userImageRepository.save(myImage);
         return "Image for " + username + " successfully saved.";
     }
@@ -40,11 +42,14 @@ public class ImageController {
     public @ResponseBody String addGroupImage(@RequestBody GroupImageRequest groupImageRequest) {
         String groupName = groupImageRequest.getGroupName();
         String base64 = groupImageRequest.getBase64();
+
+        int length = base64.length();
+
         if (groupImageRepository.findByGroupName(groupName) != null) {
-            updateGroupImage(groupName, base64);
+            updateGroupImage(groupName, base64, length);
             return "Image has been updated.";
         }
-        GroupImage myImage = new GroupImage(groupName, base64);
+        GroupImage myImage = new GroupImage(groupName, base64, length);
         groupImageRepository.save(myImage);
         return "Image for group " + groupName + " successfully saved.";
     }
@@ -71,24 +76,26 @@ public class ImageController {
         return "Image for " + groupName + " successfully removed.";
     }
 
-    public String updateUserImage(String userName, String base64) {
+    public String updateUserImage(String userName, String base64, int length) {
         UserImage myImage = userImageRepository.findByUserName(userName);
         if (myImage == null) {
             return "ERROR: Image does not exist for user.";
         }
 
         myImage.setBase64Image(base64);
+        myImage.setLength(length);
         userImageRepository.save(myImage);
         return "Image for " + userName + " successfully updated.";
     }
 
-    public String updateGroupImage(String groupName, String base64) {
+    public String updateGroupImage(String groupName, String base64, int length) {
         GroupImage myImage = groupImageRepository.findByGroupName(groupName);
         if (myImage == null) {
             return "ERROR: Image does not exist for group.";
         }
 
         myImage.setBase64Image(base64);
+        myImage.setLength(length);
         groupImageRepository.save(myImage);
         return "Image for " + groupName + " successfully updated.";
     }
