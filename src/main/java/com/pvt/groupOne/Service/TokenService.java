@@ -63,7 +63,7 @@ public class TokenService {
         if (passReset == null || token.length() != 36) {
             return "invalid";
         }
-        else if (!passwordTokenRepository.getIfDepleted(token)) {
+        else if (passwordTokenRepository.getIfDepleted(passReset.getToken())) {
             return "101";
         }
         else if (passReset.getExpiryDate().before(time.getTime())) {

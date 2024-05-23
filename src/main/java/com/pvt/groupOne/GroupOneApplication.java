@@ -1,7 +1,9 @@
 package com.pvt.groupOne;
 
 import com.pvt.groupOne.Service.TokenService;
+import com.pvt.groupOne.model.User;
 import com.pvt.groupOne.repository.AccountRepository;
+import com.pvt.groupOne.repository.PasswordTokenRepository;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ApplicationContext;
@@ -20,9 +22,11 @@ public class GroupOneApplication {
 //		 ApplicationContext context = SpringApplication.run(GroupOneApplication.class, args);
 //		 TokenService tokenService = context.getBean(TokenService.class);
 //		 AccountRepository accountRepository = context.getBean(AccountRepository.class);
-//		 System.out.println(tokenService.validatePasswordResetToken("c1fe12da-a72a-4a47-b820-e98863c376af"));
+//		 System.out.println(tokenService.validatePasswordResetToken("c233a922-e136-4c22-b2af-d832c1af3ddb"));
 //		 AccountRepository userRepository = context.getBean(AccountRepository.class);
 //		 User user;
+//		 PasswordTokenRepository passwordTokenRepository = context.getBean(PasswordTokenRepository.class);
+//		 System.out.println(passwordTokenRepository.getIfDepleted("c233a922-e136-4c22-b2af-d832c1af3ddb"));
 //		 TokenService tokenService = context.getBean(TokenService.class);
 //		 System.out.println(user = userRepository.findByUsername("noaTest6"));
 //		 System.out.println(user.isVerified());
