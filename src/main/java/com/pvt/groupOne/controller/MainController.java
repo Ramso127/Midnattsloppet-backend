@@ -292,7 +292,8 @@ public class MainController {
             if (result) {
                 System.out.println("New token successfully fetched");
             } else {
-                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error: token has not been updated");
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                        .body("Error: token has not been updated");
             }
         }
 
@@ -316,8 +317,9 @@ public class MainController {
             String dayString = dayOfWeek.toString();
             dayString = dayString.toLowerCase();
 
-            return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body("ERROR: No new runs available since " + dayString
-                    + " " + date + " at " + time + " (" + timezone + " " + offset + ")");
+            return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE)
+                    .body("ERROR: No new runs available since " + dayString
+                            + " " + date + " at " + time + " (" + timezone + " " + offset + ")");
         }
 
         for (Run run : runList) {
@@ -367,7 +369,7 @@ public class MainController {
 
             formattedTime = String.format("%02d:%02d:%02d", hours, minutes, seconds);
         } catch (DateTimeParseException e) {
-            return ResponseEntity.badRequest().body("{\"error\":\"Invalid date format\"}");      
+            return ResponseEntity.badRequest().body("{\"error\":\"Invalid date format\"}");
         }
         // Create and save the new run
         double totaldistance = runRequest.getTotaldistance();
@@ -414,7 +416,6 @@ public class MainController {
             double distance2 = (double) map2.get("distance");
             return Double.compare(distance2, distance1);
         });
-
 
         response.put("data", jsonList);
         return response;
@@ -576,21 +577,20 @@ public class MainController {
 
     @PostMapping(value = "/save-bug-report")
     public ResponseEntity<String> saveBugReport(@RequestParam String report) {
-        
-        if (report.length() > 100){
+
+        if (report.length() > 100) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("{\"message\": \"Message is too long!\"}");
         }
 
         BugReport myReport = new BugReport(report);
 
         bugReportRepository.save(myReport);
-        
+
         return ResponseEntity.status(HttpStatus.OK).body("{\"message\": \"Bug report successfully saved!\"}");
     }
-    
 
     @GetMapping(value = "/get-current-round")
-    public ResponseEntity<String> getRoundByCurrentWeek(){
+    public ResponseEntity<String> getRoundByCurrentWeek() {
 
         int result;
 
@@ -605,65 +605,83 @@ public class MainController {
 
             case 15:
                 result = 1;
-
+                break;
             case 16:
                 result = 2;
+                break;
 
             case 17:
                 result = 3;
+                break;
 
             case 18:
                 result = 4;
+                break;
 
             case 19:
                 result = 5;
+                break;
 
             case 20:
                 result = 6;
+                break;
 
             case 21:
                 result = 7;
+                break;
 
             case 22:
                 result = 8;
+                break;
 
             case 23:
                 result = 9;
+                break;
 
             case 24:
                 result = 10;
+                break;
 
             case 25:
                 result = 11;
+                break;
 
             case 26:
                 result = 12;
+                break;
 
             case 27:
                 result = 13;
+                break;
 
             case 28:
                 result = 14;
+                break;
 
             case 29:
                 result = 15;
+                break;
 
             case 30:
                 result = 16;
+                break;
 
             case 31:
                 result = 17;
+                break;
 
             case 32:
                 result = 18;
+                break;
 
             default:
                 result = -1;
 
         }
 
-        if (result < 0){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("{\"message\": \"There is no competition right now.\"}");
+        if (result < 0) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body("{\"message\":\"There is no competition right now.\"}");
         } else {
             return ResponseEntity.status(HttpStatus.OK).body(String.valueOf(result));
         }
