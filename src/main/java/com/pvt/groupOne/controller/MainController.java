@@ -408,7 +408,7 @@ public class MainController {
     }
 
     @GetMapping(value = "/gettop3")
-    public @ResponseBody String getTeamMembers() {
+    public @ResponseBody String getTop3() {
         ObjectMapper om = new ObjectMapper();
         try {
             List<Object[]> top3GroupsByTotalDistance = groupRepository.findTop3GroupsByTotalDistance();
