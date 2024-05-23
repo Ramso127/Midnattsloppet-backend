@@ -403,6 +403,14 @@ public class MainController {
             userMap.put("distance", roundedValue);
             jsonList.add(userMap);
         }
+
+        jsonList.sort((map1, map2) -> {
+            double distance1 = (double) map1.get("distance");
+            double distance2 = (double) map2.get("distance");
+            return Double.compare(distance2, distance1);
+        });
+
+
         response.put("data", jsonList);
         return response;
     }
