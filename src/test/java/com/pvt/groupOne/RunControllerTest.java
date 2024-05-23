@@ -15,6 +15,7 @@ import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.hamcrest.Matchers;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -54,6 +55,7 @@ public class RunControllerTest {
 
     @InjectMocks
     private MainController mainController;
+    
 
     @BeforeEach
     public void setUp() {
@@ -142,4 +144,42 @@ public class RunControllerTest {
         runnerGroup.addUser(user);
         return runnerGroup;
     }
+    
+
+    @Test
+    public void testGetTeamMembersWithValidGroupNameInOrder() throws Exception {
+        // Given
+        String validGroupName = "TeamA";
+        RunnerGroup runnerGroup = new RunnerGroup();
+        User user = new User("john_doe", "password", "john.doe@example.com", "CompanyName");
+        User user2 = new User("jane_doe", "password1", "jane.doe@example.com", "CompanyName");
+        User user3 = new User("sven_doe", "password1", "jane.doe@example.com", "CompanyName");
+        runnerGroup.addUser(user3);
+        runnerGroup.addUser(user);
+        runnerGroup.addUser(user2);
+        when(groupRepository.findGroupByTeamName(validGroupName)).thenReturn(runnerGroup);
+    
+        // Mock the runRepository response
+        when(runRepository.getAllRunDistanceByUser("john_doe")).thenReturn(List.of(10.0, 15.5));
+        when(runRepository.getAllRunDistanceByUser("jane_doe")).thenReturn(List.of(20.0));
+        when(runRepository.getAllRunDistanceByUser("sven_doe")).thenReturn(List.of(15.0));
+        
+        // When
+        ResultActions result = mockMvc.perform(get("/controller/getteammembers/" + validGroupName)
+                .contentType(MediaType.APPLICATION_JSON));
+    
+        // Then
+        result.andExpect(status().isOk())
+                .andExpect(jsonPath("$.data", Matchers.hasSize(3))) // Ensure there are only two users
+                .andExpect(jsonPath("$.data[2].username").value("sven_doe"))
+                .andExpect(jsonPath("$.data[2].distance").value(15.0))
+                .andExpect(jsonPath("$.data[1].username").value("jane_doe"))
+                .andExpect(jsonPath("$.data[1].distance").value(20.0))
+                .andExpect(jsonPath("$.data[0].username").value("john_doe"))
+                .andExpect(jsonPath("$.data[0].distance").value(25.5))
+                .andExpect(jsonPath("$.data[1].distance").isNumber()) // Ensure distance value is a number
+                .andExpect(jsonPath("$.data[0].distance").isNumber());
+    }
+    
+
 }

@@ -16,9 +16,12 @@ public class GroupImage {
     @Column(length = 150000)
     private String base64Image;
 
-    public GroupImage(String groupName, String base64Image) {
+    private int length;
+
+    public GroupImage(String groupName, String base64Image, int length) {
         this.groupName = groupName;
         this.base64Image = base64Image;
+        this.length = length;
     }
 
     public GroupImage() {
@@ -38,6 +41,14 @@ public class GroupImage {
 
     public void setBase64Image(String base64Image) {
         this.base64Image = base64Image;
+    }
+
+    public int getLength() {
+        return length;
+    }
+
+    public void setLength(int length) {
+        this.length = length;
     }
 
 }

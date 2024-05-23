@@ -17,9 +17,12 @@ public class UserImage {
     @Column(length = 150000)
     private String base64Image;
 
-    public UserImage(String userName, String base64Image) {
+    private int length;
+
+    public UserImage(String userName, String base64Image, int length) {
         this.userName = userName;
         this.base64Image = base64Image;
+        this.length = length;
     }
 
     public UserImage() {
@@ -52,5 +55,13 @@ public class UserImage {
 
     public void setUser(User user) {
         this.user = user;
+    }
+
+    public int getLength() {
+        return length;
+    }
+
+    public void setLength(int length) {
+        this.length = length;
     }
 }
