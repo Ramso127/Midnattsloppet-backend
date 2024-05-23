@@ -60,6 +60,9 @@ public class MainController {
     private UserImageRepository userImageRepository;
 
     @Autowired
+    private BugReportRepository bugReportRepository;
+
+    @Autowired
     private UserService userService;
 
     @Autowired
@@ -570,6 +573,21 @@ public class MainController {
 
         return ResponseEntity.ok("{\"message\": \"Company has been changed\"}");
     }
+
+    @PostMapping(value = "/save-bug-report")
+    public ResponseEntity<String> saveBugReport(@RequestParam String report) {
+        
+        if (report.length() > 100){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("{\"message\": \"Message is too long!\"}");
+        }
+
+        BugReport myReport = new BugReport(report);
+
+        bugReportRepository.save(myReport);
+        
+        return ResponseEntity.status(HttpStatus.OK).body("{\"message\": \"Bug report successfully saved!\"}");
+    }
+    
 
     @GetMapping(value = "/get-current-round")
     public ResponseEntity<String> getRoundByCurrentWeek(){
