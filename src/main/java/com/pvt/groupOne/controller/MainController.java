@@ -9,6 +9,7 @@ import com.pvt.groupOne.Service.RunService;
 import com.pvt.groupOne.Service.RunnerGroupService;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
+import java.time.temporal.WeekFields;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.DayOfWeek;
@@ -22,6 +23,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import com.pvt.groupOne.repository.*;
@@ -567,6 +569,86 @@ public class MainController {
         accountRepository.save(user);
 
         return ResponseEntity.ok("{\"message\": \"Company has been changed\"}");
+    }
+
+    @GetMapping(value = "/get-current-round")
+    public ResponseEntity<String> getRoundByCurrentWeek(){
+
+        int result;
+
+        ZoneId stockholmZone = ZoneId.of("Europe/Stockholm");
+        LocalDate date = ZonedDateTime.now(stockholmZone).toLocalDate();
+
+        WeekFields weekFields = WeekFields.of(Locale.getDefault());
+
+        int weekNumber = date.get(weekFields.weekOfWeekBasedYear());
+
+        switch (weekNumber) {
+
+            case 15:
+                result = 1;
+
+            case 16:
+                result = 2;
+
+            case 17:
+                result = 3;
+
+            case 18:
+                result = 4;
+
+            case 19:
+                result = 5;
+
+            case 20:
+                result = 6;
+
+            case 21:
+                result = 7;
+
+            case 22:
+                result = 8;
+
+            case 23:
+                result = 9;
+
+            case 24:
+                result = 10;
+
+            case 25:
+                result = 11;
+
+            case 26:
+                result = 12;
+
+            case 27:
+                result = 13;
+
+            case 28:
+                result = 14;
+
+            case 29:
+                result = 15;
+
+            case 30:
+                result = 16;
+
+            case 31:
+                result = 17;
+
+            case 32:
+                result = 18;
+
+            default:
+                result = -1;
+
+        }
+
+        if (result < 0){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("{\"message\": \"There is no competition right now.\"}");
+        } else {
+            return ResponseEntity.status(HttpStatus.OK).body(String.valueOf(result));
+        }
     }
 
 }
