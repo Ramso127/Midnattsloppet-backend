@@ -576,13 +576,13 @@ public class MainController {
     }
 
     @PostMapping(value = "/save-bug-report")
-    public ResponseEntity<String> saveBugReport(@RequestParam String report) {
+    public ResponseEntity<String> saveBugReport(@RequestParam String report, @RequestParam String username) {
 
         if (report.length() > 100) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("{\"message\": \"Message is too long!\"}");
         }
 
-        BugReport myReport = new BugReport(report);
+        BugReport myReport = new BugReport(report, username);
 
         bugReportRepository.save(myReport);
 
