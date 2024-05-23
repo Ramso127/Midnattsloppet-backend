@@ -26,11 +26,7 @@ public class ImageController {
         String username = UserImageRequest.getUsername();
         String base64 = UserImageRequest.getBase64();
 
-        int length = 0;
-
-        for (char character : base64.toCharArray()){
-            length++;
-        }
+        int length = base64.length();
         
         if (userImageRepository.findByUserName(username) != null) {
             updateUserImage(username, base64, length);
@@ -47,10 +43,7 @@ public class ImageController {
         String groupName = groupImageRequest.getGroupName();
         String base64 = groupImageRequest.getBase64();
 
-        int length = 0;
-        for (char character : base64.toCharArray()){
-            length++;
-        }
+        int length = base64.length();
 
         if (groupImageRepository.findByGroupName(groupName) != null) {
             updateGroupImage(groupName, base64, length);
