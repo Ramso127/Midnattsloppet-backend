@@ -37,10 +37,10 @@ public class WebRouterController {
     @GetMapping("/resetPassword")
     public String servePasswordReset(@RequestParam("token") String token) {
             String result = tokenService.validatePasswordResetToken(token);
-            if (result.equals("202") && !passwordTokenRepository.findByToken(token).isDepleted()) {
+            if (result.equals("202") && !passwordTokenRepository.getIfDepleted(token)) {
                 return "forward:/resetPassword.html";
             }
-            else if(result.equals("101")){
+            else if(passwordTokenRepository.getIfDepleted(token)){
                 return "forward:/depletedPasswordResetToken.html";
             }
             else if(result.equals("invalid")){
