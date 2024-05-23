@@ -80,6 +80,9 @@ public class MainController {
     @Autowired
     private PasswordEncryption passwordEncryption;
 
+    @Autowired
+    private PasswordTokenRepository passwordTokenRepository;
+
     @GetMapping(value = "/hello")
     public @ResponseBody String testMethod() {
         return "Hello this is Didrik's test";
@@ -685,6 +688,27 @@ public class MainController {
         } else {
             return ResponseEntity.status(HttpStatus.OK).body(String.valueOf(result));
         }
+    }
+
+    @PostMapping(value = "/deplete-reset-token/{token}")
+    public ResponseEntity<String> depleteResetToken(@PathVariable String token) {
+        PasswordResetToken passReset = passwordTokenRepository.findByToken(token);
+        passReset.setDepleted(true);
+        PasswordResetToken passwordResetToken = passwordTokenRepository.save(passReset);
+        return passwordResetToken != null ? ResponseEntity.status(HttpStatus.ACCEPTED).body("202") : ResponseEntity.status(HttpStatus.NOT_FOUND).body("404");
+    }
+
+    @PostMapping(value = "/deplete-recent-reset-token/{username}")
+    public ResponseEntity<String> depleteRecentResetToken(@PathVariable String username) {
+        User user = accountRepository.findByUsername(username);
+        if(user == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("404");
+        }
+        PasswordResetToken passReset = passwordTokenRepository.findFirstByUserOrderByExpiryDateDesc(user);
+        passReset.setDepleted(true);
+        PasswordResetToken passwordResetToken = passwordTokenRepository.save(passReset);
+
+        return passwordResetToken != null ? ResponseEntity.status(HttpStatus.ACCEPTED).body("202") : ResponseEntity.status(HttpStatus.NOT_FOUND).body("404");
     }
 
 }
