@@ -66,6 +66,7 @@ public class WebRouterController {
             } else {
                 user.setPassword(passwordEncryption.passwordEncoder().encode(newPassword));
                 PasswordResetToken passwordResetToken = passwordTokenRepository.findByToken(token);
+                tokenService.depletePasswordResetToken(token);
                 passwordResetToken.setDepleted(true);
                 accountRepository.save(user);
                 return ResponseEntity.ok().build();

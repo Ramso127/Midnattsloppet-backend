@@ -17,13 +17,13 @@ import java.util.UUID;
 public class TokenService {
 
     @Autowired
-    PasswordTokenRepository passwordTokenRepository;
+    private PasswordTokenRepository passwordTokenRepository;
 
     @Autowired
-    VerificationTokenRepository verificationTokenRepository;
+    private VerificationTokenRepository verificationTokenRepository;
 
     @Autowired
-    AccountRepository accountRepository;
+    private AccountRepository accountRepository;
 
     public PasswordResetToken createPasswordResetToken(User user) {
         String token = generateToken();
@@ -63,7 +63,7 @@ public class TokenService {
         if (passReset == null || token.length() != 36) {
             return "invalid";
         }
-        else if (passReset.isDepleted()) {
+        else if (!passwordTokenRepository.getIfDepleted(token)) {
             return "101";
         }
         else if (passReset.getExpiryDate().before(time.getTime())) {
