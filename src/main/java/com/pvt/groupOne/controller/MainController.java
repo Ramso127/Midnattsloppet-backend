@@ -83,11 +83,6 @@ public class MainController {
     @Autowired
     private PasswordTokenRepository passwordTokenRepository;
 
-    @GetMapping(value = "/hello")
-    public @ResponseBody String testMethod() {
-        return "Hello this is Didrik's test";
-    }
-
     @PostMapping(value = "/add-user", produces = "application/json")
     public @ResponseBody ResponseEntity<String> addUser(@RequestBody UserRequest userRequest) {
         try {
@@ -535,7 +530,7 @@ public class MainController {
         return ResponseEntity.ok("{\"message\": \"Strava user is connected\"}");
 
     }
-    
+
     @PostMapping(value = "/re-encrypt-password/{username}/{newPassword}")
     public ResponseEntity<String> reEncryptPassword(@PathVariable String username, @PathVariable String newPassword) {
         User user = accountRepository.findByUsername(username);
