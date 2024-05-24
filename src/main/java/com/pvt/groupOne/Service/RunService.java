@@ -19,15 +19,13 @@ public class RunService {
         runRepository.save(run);
     }
 
-    // Get top 3 runs for a specific user
     public List<Run> getTopThreeRunsByUser(String username) {
         return runRepository.findTop3RunsByDistance(username);
     }
 
-    // Get top 3 users based on total distance run during the current week
     public List<Object[]> getTopThreeUsersByDistanceThisWeek() {
         LocalDate today = LocalDate.now();
-        LocalDate startOfWeek = today.with(DayOfWeek.MONDAY); // Assumes Monday is the start of the week
+        LocalDate startOfWeek = today.with(DayOfWeek.MONDAY);
         LocalDate endOfWeek = today.with(DayOfWeek.SUNDAY);
 
         return runRepository.findTop3UsersByWeeklyDistance(startOfWeek, endOfWeek);

@@ -25,9 +25,9 @@ public class Run {
     private LocalDate date;
 
     @Column(nullable = false)
-    private double totalDistance; 
+    private double totalDistance; //in km
     @Column(nullable = false)
-    private String totalTime; 
+    private String totalTime; // formatted HH:mm:ss
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
