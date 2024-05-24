@@ -43,7 +43,6 @@ public class StravaService {
         HttpClient httpClient = HttpClientBuilder.create().build();
 
         try {
-            // Build the URI with parameters
             URI uri = new URIBuilder(URL)
                     .setParameter("client_id", CLIENT_ID)
                     .setParameter("client_secret", CLIENT_SECRET)
@@ -53,29 +52,23 @@ public class StravaService {
 
             HttpPost httpPost = new HttpPost(uri);
 
-            // Execute the request
             HttpResponse response = httpClient.execute(httpPost);
 
             HttpEntity entity = response.getEntity();
 
-            // Print response status
             System.out.println("Response Status: " + response.getStatusLine());
 
-            // Print response content
             if (entity != null) {
                 String responseContent = EntityUtils.toString(entity);
                 System.out.println("Response Content: " + responseContent);
 
-                // Parse JSON response
                 ObjectMapper objectMapper = new ObjectMapper();
                 JsonNode jsonNode = objectMapper.readTree(responseContent);
 
-                // Extract required fields
                 long expiresAt = jsonNode.get("expires_at").asLong();
                 String refreshToken = jsonNode.get("refresh_token").asText();
                 String accessToken = jsonNode.get("access_token").asText();
 
-                // Print the extracted fields
                 System.out.println("Expires At: " + expiresAt);
                 System.out.println("Refresh Token: " + refreshToken);
                 System.out.println("Access Token: " + accessToken);
@@ -90,7 +83,6 @@ public class StravaService {
 
             }
 
-            // Print response status code
             System.out.println("Response Status Code: " + response.getStatusLine().getStatusCode());
             return null;
 
@@ -107,7 +99,7 @@ public class StravaService {
         HttpClient httpClient = HttpClientBuilder.create().build();
 
         try {
-            // Build the URI with parameters
+
             URI uri = new URIBuilder(URL)
                     .setParameter("client_id", CLIENT_ID)
                     .setParameter("client_secret", CLIENT_SECRET)
@@ -117,24 +109,19 @@ public class StravaService {
 
             HttpPost httpPost = new HttpPost(uri);
 
-            // Execute the request
             HttpResponse response = httpClient.execute(httpPost);
 
             HttpEntity entity = response.getEntity();
 
-            // Print response status
             System.out.println("Response Status: " + response.getStatusLine());
 
-            // Print response content
             if (entity != null) {
                 String responseContent = EntityUtils.toString(entity);
                 System.out.println("Response Content: " + responseContent);
 
-                // Parse JSON response
                 ObjectMapper objectMapper = new ObjectMapper();
                 JsonNode jsonNode = objectMapper.readTree(responseContent);
 
-                // Extract required fields
                 long expiresAt = jsonNode.get("expires_at").asLong();
                 String refreshToken = jsonNode.get("refresh_token").asText();
                 String accessToken = jsonNode.get("access_token").asText();
@@ -149,7 +136,6 @@ public class StravaService {
 
             }
 
-            // Print response status code
             System.out.println("Response Status Code: " + response.getStatusLine().getStatusCode());
             return false;
 
@@ -166,7 +152,6 @@ public class StravaService {
 
         HttpClient httpClient = HttpClients.createDefault();
 
-        // Create HTTP GET request with the "after" parameter
         String urlWithParams = URL + "?after=" + unixTimeStamp;
         HttpUriRequest request = RequestBuilder.get(urlWithParams)
                 .addHeader("Authorization", "Bearer " + accessToken)
@@ -175,15 +160,12 @@ public class StravaService {
         try {
             HttpResponse response = httpClient.execute(request);
 
-            // Check if the response is successful (status code 200)
             if (response.getStatusLine().getStatusCode() == 200) {
                 String jsonResponse = EntityUtils.toString(response.getEntity());
 
-                // Use Jackson library to parse JSON into Java objects
                 ObjectMapper objectMapper = new ObjectMapper();
                 JsonNode activitiesNode = objectMapper.readTree(jsonResponse);
 
-                // Now you can access information about the runs
                 ArrayList<Run> runs = new ArrayList<>();
                 for (JsonNode activityNode : activitiesNode) {
                     if (activityNode.get("type").asText().equals("Run")) {
@@ -214,6 +196,7 @@ public class StravaService {
     }
 
     private String getFormattedTime(int elapsedTimeInSeconds) {
+
         // Calculate hours
         int hours = elapsedTimeInSeconds / 3600;
 

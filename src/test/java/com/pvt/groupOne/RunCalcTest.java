@@ -1,7 +1,6 @@
 package com.pvt.groupOne;
 
 import com.pvt.groupOne.controller.RunDataCalcController;
-import com.pvt.groupOne.model.Run;
 import com.pvt.groupOne.model.RunnerGroup;
 import com.pvt.groupOne.model.User;
 import com.pvt.groupOne.repository.RunRepository;
@@ -17,7 +16,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 

@@ -12,8 +12,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import static org.mockito.Mockito.*;
 import static org.junit.jupiter.api.Assertions.*;
 
-import java.util.Calendar;
-
 @SpringBootTest
 @ExtendWith(MockitoExtension.class)
 public class TokenServiceTest {
@@ -32,7 +30,7 @@ public class TokenServiceTest {
         assertNotNull(token);
         verify(passwordTokenRepository).save(token);
     }
-
+    // TODO Noa ta bort eller fixa klart?
     @Test
     public void testValidatePasswordResetToken() {
 //        String tokenString = java.util.UUID.randomUUID().toString();
