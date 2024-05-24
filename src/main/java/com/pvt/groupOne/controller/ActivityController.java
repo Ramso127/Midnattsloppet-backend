@@ -29,14 +29,14 @@ public class ActivityController {
     @Autowired
     private RunnerGroupService runnerGroupService;
 
-    // Get top 3 runs for a user
+    //top 3 runs for a user
     @GetMapping("/users/{username}/top-runs")
     public ResponseEntity<List<Run>> getTopRunsByUser(@PathVariable String username) {
         List<Run> runs = runService.getTopThreeRunsByUser(username);
         return ResponseEntity.ok(runs);
     }
 
-    // Get top 3 users based on distance run during the current week
+    //top 3 users based on distance run during the current week
     // ----------------
     @GetMapping("/users/top-weekly-runners")
     public ResponseEntity<List<Object[]>> getTopWeeklyRunners(
@@ -46,7 +46,7 @@ public class ActivityController {
         return ResponseEntity.ok(users);
     }
 
-    // Get sorted list of team members by distance
+    //sorted list of team members by distance
     @GetMapping("/runner-groups/{groupId}/members-sorted-by-distance")
     public ResponseEntity<List<Object[]>> getMembersSortedByDistance(@PathVariable Integer groupId) {
         List<Object[]> members = runnerGroupService.getSortedTeamMembersByDistance(groupId);
