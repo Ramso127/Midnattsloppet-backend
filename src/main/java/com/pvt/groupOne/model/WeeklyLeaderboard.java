@@ -19,7 +19,6 @@ public class WeeklyLeaderboard {
     private int challengeID;
     private double measuredStat;
 
-    // Getters and setters
     public Long getId() {
         return id;
     }
