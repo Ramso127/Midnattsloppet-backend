@@ -74,10 +74,10 @@ public class WebRouterController {
             }
         }
         else if(result.equals("101")){
-            return ResponseEntity.status(405).body("Password has already been reset");
+            return ResponseEntity.status(101).body("Password has already been reset");
         }
         else{
-            return ResponseEntity.status(404).body("Invalid Token");
+            return ResponseEntity.status(505).body("Invalid Token");
         }
     }
 
