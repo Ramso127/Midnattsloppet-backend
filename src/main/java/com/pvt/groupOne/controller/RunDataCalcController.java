@@ -4,7 +4,6 @@ import com.pvt.groupOne.model.Run;
 import com.pvt.groupOne.model.RunnerGroup;
 import com.pvt.groupOne.model.TeamRun;
 import com.pvt.groupOne.model.User;
-import com.pvt.groupOne.model.UserImage;
 import com.pvt.groupOne.repository.RunRepository;
 import com.pvt.groupOne.repository.RunnerGroupRepository;
 import com.pvt.groupOne.repository.UserImageRepository;
