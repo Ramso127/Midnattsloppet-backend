@@ -115,7 +115,6 @@ public class MainController {
 
     @GetMapping(value = "/login/{username}/{password}")
     public ResponseEntity<String> login(@PathVariable String username, @PathVariable String password) {
-        // Perform user authentication
 
         try {
             if (userService.authenticateUser(username, password)) {
@@ -308,7 +307,7 @@ public class MainController {
             myDate.setTime(latestFetch * 1000L);
             Instant instant = myDate.toInstant();
 
-            // Change timezone to Sweden
+            // Change time zone to Sweden because server seems to have the time zone of GMT
             ZonedDateTime zonedDateTime = instant.atZone(ZoneId.of("Europe/Stockholm"));
 
             LocalDate date = zonedDateTime.toLocalDate();
@@ -341,25 +340,21 @@ public class MainController {
 
     @PostMapping(value = "/add-run", produces = "application/json")
     public ResponseEntity<?> addRun(@RequestBody RunRequest runRequest) {
-        // Check if the user exists
+
         String username = runRequest.getUsername();
         User user = accountRepository.findByUsername(username);
         if (user == null) {
             return ResponseEntity.badRequest().body("{\"error\":\"User does not exist\"}");
         }
 
-        // Define the desired date format
-        // Parse the formatted date string back into a LocalDate object
         LocalDate formattedLocalDate;
         String formattedTime;
         try {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
-            // Assuming runRequest.getDate() returns a LocalDate object
             String date = runRequest.getDate();
             LocalDate localDate = LocalDate.parse(date, formatter);
 
-            // Format the LocalDate object using the formatter
             String formattedDate = localDate.format(formatter);
 
             formattedLocalDate = LocalDate.parse(formattedDate, formatter);
@@ -374,7 +369,7 @@ public class MainController {
         } catch (DateTimeParseException e) {
             return ResponseEntity.badRequest().body("{\"error\":\"Invalid date format\"}");
         }
-        // Create and save the new run
+
         double totaldistance = runRequest.getTotaldistance();
         Run newRun = new Run(formattedLocalDate, totaldistance, formattedTime, user);
 
@@ -540,8 +535,7 @@ public class MainController {
         return ResponseEntity.ok("{\"message\": \"Strava user is connected\"}");
 
     }
-
-    // TODO NOA Gör om till PUT (uppdatering)
+    
     @PostMapping(value = "/re-encrypt-password/{username}/{newPassword}")
     public ResponseEntity<String> reEncryptPassword(@PathVariable String username, @PathVariable String newPassword) {
         User user = accountRepository.findByUsername(username);
@@ -567,7 +561,6 @@ public class MainController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("{\"message\": \"User not found!\"}");
         }
 
-        // Delete user from group
         if (user.getRunnerGroup() != null) {
             removeUserFromTeam(username);
         }
