@@ -4,7 +4,6 @@ import com.pvt.groupOne.model.Run;
 import com.pvt.groupOne.model.RunnerGroup;
 import com.pvt.groupOne.model.TeamRun;
 import com.pvt.groupOne.model.User;
-import com.pvt.groupOne.model.UserImage;
 import com.pvt.groupOne.repository.RunRepository;
 import com.pvt.groupOne.repository.RunnerGroupRepository;
 import com.pvt.groupOne.repository.UserImageRepository;
@@ -32,27 +31,27 @@ public class RunDataCalcController {
     @Autowired
     UserImageRepository userImageRepository;
 
-    @GetMapping("/getUserRunTime/{id}")
+    @GetMapping("/get-user-run-time/{id}")
     public String getUserRunTime(@PathVariable Long id) {
         return runRepository.findRunTimeById(id);
     }
 
-    @GetMapping("/getUserRunDistance/{id}")
+    @GetMapping("/get-user-run-distance/{id}")
     public double getUserRunDistance(@PathVariable Long id) {
         return runRepository.findRunDistanceById(id);
     }
 
-    @GetMapping("/getUserRunDate/{id}")
+    @GetMapping("/get-user-run-date/{id}")
     public LocalDate getUserRunDate(@PathVariable Long id) {
         return runRepository.findRunDateById(id);
     }
 
-    @GetMapping("/getUserFromRun/{id}")
+    @GetMapping("/get-user-from-run/{id}")
     public User getUserFromRun(@PathVariable Long id) {
         return runRepository.findUserFromRunById(id);
     }
 
-    @GetMapping("/getAllUserRuns")
+    @GetMapping("/get-all-user-runs")
     public Map<String, List<Map<String, Object>>> getAllUserRuns(@RequestParam String username) {
         List<Run> runs = runRepository.getAllRunsByUser(username);
 
@@ -84,27 +83,27 @@ public class RunDataCalcController {
         return responseMap;
     }
 
-    @GetMapping("/getAllRunTimeByUser/{username}")
+    @GetMapping("/get-all-run-time-by-user/{username}")
     public List<String> getAllRunTimeByUser(@PathVariable String username) {
         return runRepository.getAllRunTimeByUser(username);
     }
 
-    @GetMapping("/getAllRunDistanceByUser/{username}")
+    @GetMapping("/get-all-run-distance-by-user/{username}")
     public List<Double> getAllRunDistanceByUser(@PathVariable String username) {
         return runRepository.getAllRunDistanceByUser(username);
     }
 
-    @GetMapping("/getAllRunDates/{username}")
+    @GetMapping("/get-all-run-dates/{username}")
     public List<LocalDate> getAllRunDates(@PathVariable String username) {
         return runRepository.getAllRunDates(username);
     }
 
-    @GetMapping("/getAllRunIdsByUser/{username}")
+    @GetMapping("/get-all-run-ids-by-user/{username}")
     public List<Long> getAllRunIdsByUser(@PathVariable String username) {
         return runRepository.getAllRunIdsByUser(username);
     }
 
-    @GetMapping("/getAverageSpeed/{id}")
+    @GetMapping("/get-average-speed/{id}")
     public Map<String, Double> getAverageSpeed(@PathVariable Long id) {
         String runTime = runRepository.findRunTimeById(id);
         double runDistance = runRepository.findRunDistanceById(id);
@@ -124,7 +123,7 @@ public class RunDataCalcController {
         return roundedSpeedMap;
     }
 
-    @GetMapping("/getAveragePace/{id}")
+    @GetMapping("/get-average-pace/{id}")
     public Map<String, String> getAveragePace(@PathVariable Long id) {
         String runTime = runRepository.findRunTimeById(id);
         double runDistance = runRepository.findRunDistanceById(id);
@@ -149,7 +148,7 @@ public class RunDataCalcController {
         return averagePaceMap;
     }
 
-    @GetMapping("/getTotalDistance/{username}")
+    @GetMapping("/get-total-distance/{username}")
     public @ResponseBody Map<String, Double> getTotalDistance(@PathVariable String username) {
         List<Double> runDistanceList = runRepository.getAllRunDistanceByUser(username);
         double totalDistance = 0;
@@ -162,7 +161,7 @@ public class RunDataCalcController {
         return response;
     }
 
-    @GetMapping("/getTotalRunTime/{username}")
+    @GetMapping("/get-total-run-time/{username}")
     public @ResponseBody Map<String, Double> getTotalRunTime(@PathVariable String username) {
         List<String> runTimeList = runRepository.getAllRunTimeByUser(username);
         List<Integer> totalRunTimeList = new ArrayList<>();

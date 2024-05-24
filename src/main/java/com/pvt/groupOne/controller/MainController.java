@@ -88,7 +88,7 @@ public class MainController {
         return "Hello this is Didrik's test";
     }
 
-    @PostMapping(value = "/adduser", produces = "application/json")
+    @PostMapping(value = "/add-user", produces = "application/json")
     public @ResponseBody ResponseEntity<String> addUser(@RequestBody UserRequest userRequest) {
         try {
             String username = userRequest.getUsername();
@@ -130,7 +130,7 @@ public class MainController {
         }
     }
 
-    @PostMapping(value = "/addgroup", produces = "application/json")
+    @PostMapping(value = "/add-group", produces = "application/json")
     public ResponseEntity<String> addGroup(@RequestBody GroupRequest groupRequest) {
         String teamName = groupRequest.getTeamname();
         String userName = groupRequest.getUsername();
@@ -154,7 +154,7 @@ public class MainController {
         }
     }
 
-    @PostMapping(value = "/addusertogroup")
+    @PostMapping(value = "/add-user-to-group")
     public ResponseEntity<String> addUserToGroup(@RequestBody AddUserToGroupRequest addUserToGroupRequest) {
 
         String inviteCode = addUserToGroupRequest.getInviteCode();
@@ -201,7 +201,7 @@ public class MainController {
         }
     }
 
-    @GetMapping(value = "/checkusername/{username}")
+    @GetMapping(value = "/check-username/{username}")
     public @ResponseBody Boolean checkUsernameExistsAlready(@PathVariable String username) {
         if (accountRepository.existsByUsername(username))
             return true;
@@ -209,7 +209,7 @@ public class MainController {
             return false;
     }
 
-    @GetMapping(value = "/checkemail/{email}")
+    @GetMapping(value = "/check-email/{email}")
     public @ResponseBody Boolean checkEmailExistsAlready(@PathVariable String email) {
         if (accountRepository.existsByUsername(email))
             return true;
@@ -218,7 +218,7 @@ public class MainController {
     }
 
     // This needs to be GET-mapping for Strava's redirect URI
-    @GetMapping("/saveauthenticateduser/{username}")
+    @GetMapping("/save-authenticated-user/{username}")
     public @ResponseBody String saveStravaToken(
             @RequestParam(required = false) String error,
             @RequestParam("code") String authCode,
@@ -271,7 +271,7 @@ public class MainController {
 
     }
 
-    @PutMapping(value = "/fetchruns")
+    @PutMapping(value = "/fetch-runs")
     public ResponseEntity<String> fetchRuns(@RequestParam("username") String username) {
         StravaUser stravaUser = stravaUserRepository.findByUser_Username(username);
 
@@ -339,7 +339,7 @@ public class MainController {
 
     }
 
-    @PostMapping(value = "/addrun", produces = "application/json")
+    @PostMapping(value = "/add-run", produces = "application/json")
     public ResponseEntity<?> addRun(@RequestBody RunRequest runRequest) {
         // Check if the user exists
         String username = runRequest.getUsername();
@@ -383,14 +383,14 @@ public class MainController {
         return ResponseEntity.ok(newRun);
     }
 
-    @GetMapping(value = "/getNumberOfTeams")
+    @GetMapping(value = "/get-number-of-teams")
     public @ResponseBody String getNumberOfTeams() {
         int numberOfTeams = groupRepository.countDistinctTeams();
         String response = "{\"numberOfTeams\": \"" + numberOfTeams + "\"}";
         return response;
     }
 
-    @GetMapping(value = "/getteammembers/{groupname}")
+    @GetMapping(value = "/get-team-members/{groupname}")
     public @ResponseBody Map<String, List<Map<String, Object>>> getTeamMembers(@PathVariable String groupname) {
         RunnerGroup runnerGroup = groupRepository.findGroupByTeamName(groupname);
         Map<String, List<Map<String, Object>>> response = new HashMap<>();
@@ -424,7 +424,7 @@ public class MainController {
         return response;
     }
 
-    @GetMapping(value = "/gettop3")
+    @GetMapping(value = "/get-top-3")
     public @ResponseBody String getTop3() {
         ObjectMapper om = new ObjectMapper();
         try {
@@ -435,7 +435,7 @@ public class MainController {
         }
     }
 
-    @DeleteMapping(value = "/removeuser/{username}")
+    @DeleteMapping(value = "/remove-user/{username}")
     public @ResponseBody String removeUser(@PathVariable String username) {
         User user = accountRepository.findByUsername(username);
         if (user == null) {

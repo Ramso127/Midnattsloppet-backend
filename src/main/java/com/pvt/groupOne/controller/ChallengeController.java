@@ -9,6 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
@@ -27,7 +29,7 @@ public class ChallengeController {
     private final String numberOfRuns = "runs";
     private final String minutesPerKilometer = "min / km";
 
-    @GetMapping(value = "/increment-challenges")
+    @PutMapping(value = "/increment-challenges")
     public @ResponseBody String incrementChallenges() {
 
         int nextID;
@@ -49,7 +51,7 @@ public class ChallengeController {
         return "Current active challenge: #" + nextActiveChallenge.getId();
     }
 
-    @GetMapping(value = "/setfirstchallengeasactive")
+    @PutMapping(value = "/set-first-challenge-as-active")
     public @ResponseBody String setFirstChallengeAsActive() {
 
         Challenge firstChallenge = challengeRepository.findByid(1);
@@ -60,7 +62,7 @@ public class ChallengeController {
 
     }
 
-    @GetMapping(value = "/addchallenges")
+    @PostMapping(value = "/add-challenges")
     public @ResponseBody String addChallenges() {
 
         Challenge firstChallenge = new Challenge("Furthest distance",
@@ -87,7 +89,7 @@ public class ChallengeController {
         return "Challenges successfully added.";
     }
 
-    @GetMapping(value = "/setallasinactive")
+    @PutMapping(value = "/set-all-as-inactive")
     public @ResponseBody String setAllAsInactive() {
 
         for (int i = 1; i <= 6; i++) {
