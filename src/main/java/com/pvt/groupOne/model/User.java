@@ -49,8 +49,8 @@ public class User {
     @JsonIgnoreProperties("user")
     private StravaUser stravaUser;
 
-    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER) // One user can have many runs
-    @JsonIgnoreProperties("user") // Ignore the user field in Run entity during serialization
+    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
+    @JsonIgnoreProperties("user")
     private List<Run> runs = new ArrayList<>();
 
     public User() {
