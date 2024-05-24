@@ -90,6 +90,13 @@ public class MainController {
             String password = userRequest.getPassword();
             String email = userRequest.getEmail();
             String companyName = userRequest.getCompanyname();
+
+            char firstLetter = companyName.charAt(0);
+        if (!Character.isUpperCase(firstLetter)){
+            char capitalizedFirstLetter = Character.toUpperCase(firstLetter);
+            companyName = capitalizedFirstLetter + companyName.substring(1);
+        }
+
             if (accountRepository.existsByUsername(username))
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("{\"message\": \"Username already exists\"}");
 
@@ -548,7 +555,13 @@ public class MainController {
     @PutMapping(value = "/update-company")
     public ResponseEntity<String> updateCompany(@RequestBody CompanyRequest companyRequest) {
         String username = companyRequest.getUsername();
-        String newCompany = companyRequest.getCompanyName();
+        String companyName = companyRequest.getCompanyName();
+
+        char firstLetter = companyName.charAt(0);
+        if (!Character.isUpperCase(firstLetter)){
+            char capitalizedFirstLetter = Character.toUpperCase(firstLetter);
+            companyName = capitalizedFirstLetter + companyName.substring(1);
+        }
 
         User user = accountRepository.findByUsername(username);
 
@@ -560,7 +573,7 @@ public class MainController {
             removeUserFromTeam(username);
         }
 
-        user.setCompanyName(newCompany);
+        user.setCompanyName(companyName);
         accountRepository.save(user);
 
         return ResponseEntity.ok("{\"message\": \"Company has been changed\"}");
@@ -683,20 +696,22 @@ public class MainController {
         PasswordResetToken passReset = passwordTokenRepository.findByToken(token);
         passReset.setDepleted(true);
         PasswordResetToken passwordResetToken = passwordTokenRepository.save(passReset);
-        return passwordResetToken != null ? ResponseEntity.status(HttpStatus.ACCEPTED).body("202") : ResponseEntity.status(HttpStatus.NOT_FOUND).body("404");
+        return passwordResetToken != null ? ResponseEntity.status(HttpStatus.ACCEPTED).body("202")
+                : ResponseEntity.status(HttpStatus.NOT_FOUND).body("404");
     }
 
     @PostMapping(value = "/deplete-recent-reset-token/{username}")
     public ResponseEntity<String> depleteRecentResetToken(@PathVariable String username) {
         User user = accountRepository.findByUsername(username);
-        if(user == null) {
+        if (user == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("404");
         }
         PasswordResetToken passReset = passwordTokenRepository.findFirstByUserOrderByExpiryDateDesc(user);
         passReset.setDepleted(true);
         PasswordResetToken passwordResetToken = passwordTokenRepository.save(passReset);
 
-        return passwordResetToken != null ? ResponseEntity.status(HttpStatus.ACCEPTED).body("202") : ResponseEntity.status(HttpStatus.NOT_FOUND).body("404");
+        return passwordResetToken != null ? ResponseEntity.status(HttpStatus.ACCEPTED).body("202")
+                : ResponseEntity.status(HttpStatus.NOT_FOUND).body("404");
     }
 
 }
