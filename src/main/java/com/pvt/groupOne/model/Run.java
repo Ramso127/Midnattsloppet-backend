@@ -25,16 +25,14 @@ public class Run {
     private LocalDate date;
 
     @Column(nullable = false)
-    private double totalDistance; // Total distance in kilometers
-
+    private double totalDistance; 
     @Column(nullable = false)
-    private String totalTime; // Total time as String, can be in format HH:mm:ss
+    private String totalTime; 
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
-    @JsonIgnoreProperties("user") // Ignore the user field in User entity during serialization
-    private User user; // Link to User entity
-
+    @JsonIgnoreProperties("user") 
+    private User user; 
     public Run(){
         
     }

@@ -41,7 +41,7 @@ public class User {
 
 
     @ManyToOne
-    @JsonIgnoreProperties("users") // Ignore the bidirectional relationship during serialization
+    @JsonIgnoreProperties("users")
     @JoinColumn(name = "runner_group_id")
     private RunnerGroup runnerGroup;
 

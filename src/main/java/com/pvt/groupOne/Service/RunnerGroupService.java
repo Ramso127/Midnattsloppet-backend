@@ -56,14 +56,12 @@ public class RunnerGroupService {
         String inviteCode;
         boolean isUnique = false;
         do {
-            inviteCode = UUID.randomUUID().toString().substring(0, 8); // You can adjust the length as needed
-            // Check if the invite code is unique
+            inviteCode = UUID.randomUUID().toString().substring(0, 8);
             isUnique = !runnerGroupRepository.existsByInviteCode(inviteCode);
         } while (!isUnique);
         return inviteCode;
     }
 
-    // Get a sorted list of team members based on distance for a specific group
     public List<Object[]> getSortedTeamMembersByDistance(Integer groupId) {
         return runnerGroupRepository.findTeamMembersByDistance(groupId);
     }
@@ -198,12 +196,11 @@ public class RunnerGroupService {
         for (int i = 0; i < totalGroups; i++) {
             Object[] group = sortedGroups.get(i);
             String teamName = (String) group[0];
-            double metric = ((Number) group[1]).doubleValue(); // Ensure correct casting
+            double metric = ((Number) group[1]).doubleValue();
 
-            // Round metric to 2 decimal places
             BigDecimal roundedMetric = BigDecimal.valueOf(metric).setScale(2, RoundingMode.HALF_UP);
 
-            int points = Math.max(25 - i, 1); // Calculate points
+            int points = Math.max(25 - i, 1); 
             groupsWithPoints.add(new GroupStatsRequest(teamName, roundedMetric.doubleValue(), points));
         }
 
@@ -213,10 +210,8 @@ public class RunnerGroupService {
     }
 
     public void assignPointsForCurrentChallenge() {
-        // Get sorted groups with points
         Map<String, List<GroupStatsRequest>> sortedGroupsWithPoints = getGroupsSortedByCurrentChallengeWithPoints();
 
-        // Iterate over the groups and assign points to each group
         List<GroupStatsRequest> groupStatsList = sortedGroupsWithPoints.get("data");
         String winnerTeamName = groupStatsList.get(0).getTeamName();
         WinnerLastChallenge winnerLastChallenge = new WinnerLastChallenge(winnerTeamName);
@@ -229,7 +224,6 @@ public class RunnerGroupService {
             String teamName = groupStats.getTeamName();
             int points = groupStats.getPoints();
 
-            // Find the group and assign points
             RunnerGroup group = runnerGroupRepository.findGroupByTeamName(teamName);
             if (group != null) {
                 group.setPoints(group.getPoints() + points);

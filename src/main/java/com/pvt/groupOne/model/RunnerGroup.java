@@ -40,7 +40,7 @@ public class RunnerGroup {
     }
     
     @OneToMany(mappedBy = "runnerGroup")
-    @JsonIgnoreProperties("runnerGroup") // Ignore the bidirectional relationship during serialization
+    @JsonIgnoreProperties("runnerGroup")
     private List<User> users = new ArrayList<>();
     
     public Integer getGroupId() {
