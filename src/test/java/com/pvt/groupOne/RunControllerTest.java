@@ -78,7 +78,7 @@ public class RunControllerTest {
 
         doNothing().when(runService).saveRun(any(Run.class));        // Perform the request
         
-        mockMvc.perform(post("/controller/addrun")
+        mockMvc.perform(post("/controller/add-run")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(asJsonString(runRequest)))
                 .andExpect(status().isOk());
@@ -98,7 +98,7 @@ public class RunControllerTest {
         when(accountRepository.findByUsername(username)).thenReturn(user);
 
         // Perform the POST request with an invalid date format and verify the response
-        mockMvc.perform(post("/controller/addrun")
+        mockMvc.perform(post("/controller/add-run")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(asJsonString(runRequest)))
                 .andExpect(status().isBadRequest());
@@ -123,7 +123,7 @@ public class RunControllerTest {
         list.add(100.25);
         when(runRepository.getAllRunDistanceByUser("john_doe")).thenReturn(list);
         // When
-        ResultActions result = mockMvc.perform(get("/controller/getteammembers/" + validGroupName)
+        ResultActions result = mockMvc.perform(get("/controller/get-team-members/" + validGroupName)
                                     .contentType(MediaType.APPLICATION_JSON));
 
         // Then
@@ -162,7 +162,7 @@ public class RunControllerTest {
         when(runRepository.getAllRunDistanceByUser("sven_doe")).thenReturn(List.of(15.0));
         
         // When
-        ResultActions result = mockMvc.perform(get("/controller/getteammembers/" + validGroupName)
+        ResultActions result = mockMvc.perform(get("/controller/get-team-members/" + validGroupName)
                 .contentType(MediaType.APPLICATION_JSON));
     
         // Then

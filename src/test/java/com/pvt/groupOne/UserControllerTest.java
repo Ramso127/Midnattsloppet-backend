@@ -92,7 +92,7 @@ public class UserControllerTest {
         UserRequest userRequest = new UserRequest("john_doe", "password", "john.doe@example.com", "CompanyName");
         String userRequestJson = objectMapper.writeValueAsString(userRequest);
 
-        mockMvc.perform(post("/controller/adduser")
+        mockMvc.perform(post("/controller/add-user")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(userRequestJson))
                 .andExpect(status().isCreated())
@@ -106,7 +106,7 @@ public class UserControllerTest {
 
         when(accountRepository.existsByUsername("john_doe")).thenReturn(true);
 
-        mockMvc.perform(post("/controller/adduser")
+        mockMvc.perform(post("/controller/add-user")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(userRequestJson))
                 .andExpect(status().isBadRequest())
@@ -120,7 +120,7 @@ public class UserControllerTest {
 
         when(accountRepository.existsByEmail("john.doe@example.com")).thenReturn(true);
 
-        mockMvc.perform(post("/controller/adduser")
+        mockMvc.perform(post("/controller/add-user")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(userRequestJson))
                 .andExpect(status().isBadRequest())
@@ -182,7 +182,7 @@ public class UserControllerTest {
         when(groupRepository.existsByTeamName(teamName)).thenReturn(false);
         when(runnerGroupService.createRunnerGroup(teamName, user, companyName)).thenReturn(runnerGroup);
 
-        mockMvc.perform(post("/controller/addgroup")
+        mockMvc.perform(post("/controller/add-group")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(groupRequestJson))
                 .andExpect(status().isCreated())
@@ -200,7 +200,7 @@ public class UserControllerTest {
         when(accountRepository.findByUsername(username)).thenReturn(user);
         when(groupRepository.existsByTeamName(teamName)).thenReturn(true);
 
-        mockMvc.perform(post("/controller/addgroup")
+        mockMvc.perform(post("/controller/add-group")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(groupRequestJson))
                 .andExpect(status().isBadRequest())
@@ -213,7 +213,7 @@ public class UserControllerTest {
 
         when(stravaUserRepository.findByUser_Username(username)).thenReturn(null);
 
-        mockMvc.perform(put("/controller/fetchruns")
+        mockMvc.perform(put("/controller/fetch-runs")
                 .param("username", username))
                 .andExpect(status().isBadRequest())
                 .andExpect(content().string("ERROR: No Strava account connected to user " + username));
@@ -232,7 +232,7 @@ public class UserControllerTest {
         when(runRepository.getAllRunsByUser(username)).thenReturn(runs);
         when(userImageRepository.findByUserName(username)).thenReturn(null);
 
-        mockMvc.perform(delete("/controller/removeuser/" + username))
+        mockMvc.perform(delete("/controller/remove-user/" + username))
                 .andExpect(status().isOk())
                 .andExpect(content().string("User " + username + " has been removed."));
     }
@@ -248,7 +248,7 @@ public class UserControllerTest {
 
         when(accountRepository.findByUsername(username)).thenReturn(null);
 
-        mockMvc.perform(delete("/controller/removeuser/" + username))
+        mockMvc.perform(delete("/controller/remove-user/" + username))
                 .andExpect(content().string("ERROR: User " + username + " not found."));
     }
     @Test
@@ -270,7 +270,7 @@ public class UserControllerTest {
         when(groupRepository.findGroupByInviteCode(inviteCode)).thenReturn(runnerGroup);
         when(groupRepository.save(any(RunnerGroup.class))).thenReturn(runnerGroup);
 
-        mockMvc.perform(post("/controller/addusertogroup")
+        mockMvc.perform(post("/controller/add-user-to-group")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(addUserToGroupRequestJson))
                 .andExpect(status().isOk())
@@ -287,7 +287,7 @@ public class UserControllerTest {
 
         when(accountRepository.findByUsername(username)).thenReturn(null);
 
-        mockMvc.perform(post("/controller/addusertogroup")
+        mockMvc.perform(post("/controller/add-user-to-group")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(addUserToGroupRequestJson))
                 .andExpect(status().isBadRequest())
@@ -305,7 +305,7 @@ public class UserControllerTest {
         when(accountRepository.findByUsername(username)).thenReturn(user);
         when(groupRepository.findGroupByInviteCode(inviteCode)).thenReturn(null);
 
-        mockMvc.perform(post("/controller/addusertogroup")
+        mockMvc.perform(post("/controller/add-user-to-group")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(addUserToGroupRequestJson))
                 .andExpect(status().isBadRequest())
@@ -334,7 +334,7 @@ public class UserControllerTest {
         when(accountRepository.findByUsername(username)).thenReturn(user);
         when(groupRepository.findGroupByInviteCode(inviteCode)).thenReturn(runnerGroup);
 
-        mockMvc.perform(post("/controller/addusertogroup")
+        mockMvc.perform(post("/controller/add-user-to-group")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(addUserToGroupRequestJson))
                 .andExpect(status().isBadRequest())
@@ -356,7 +356,7 @@ public class UserControllerTest {
         when(accountRepository.findByUsername(username)).thenReturn(user);
         when(groupRepository.findGroupByInviteCode(inviteCode)).thenReturn(runnerGroup);
 
-        mockMvc.perform(post("/controller/addusertogroup")
+        mockMvc.perform(post("/controller/add-user-to-group")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(addUserToGroupRequestJson))
                 .andExpect(status().isBadRequest())
@@ -380,7 +380,7 @@ public class UserControllerTest {
         when(accountRepository.findByUsername(username)).thenReturn(user);
         when(groupRepository.findGroupByInviteCode(inviteCode)).thenReturn(runnerGroup);
 
-        mockMvc.perform(post("/controller/addusertogroup")
+        mockMvc.perform(post("/controller/add-user-to-group")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(addUserToGroupRequestJson))
                 .andExpect(status().isBadRequest())
