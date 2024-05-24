@@ -21,7 +21,7 @@ public class ImageController {
     @Autowired
     private GroupImageRepository groupImageRepository;
 
-    @PostMapping(value = "/addUserImage")
+    @PostMapping(value = "/add-userImage")
     public @ResponseBody String addUserImage(@RequestBody UserImageRequest UserImageRequest) {
         String username = UserImageRequest.getUsername();
         String base64 = UserImageRequest.getBase64();
@@ -38,7 +38,7 @@ public class ImageController {
         return "Image for " + username + " successfully saved.";
     }
 
-    @PostMapping(value = "/addGroupImage")
+    @PostMapping(value = "/add-group-image")
     public @ResponseBody String addGroupImage(@RequestBody GroupImageRequest groupImageRequest) {
         String groupName = groupImageRequest.getGroupName();
         String base64 = groupImageRequest.getBase64();
@@ -54,7 +54,7 @@ public class ImageController {
         return "Image for group " + groupName + " successfully saved.";
     }
 
-    @DeleteMapping(value = "/removeUserImage")
+    @DeleteMapping(value = "/remove-user-image")
     public @ResponseBody String removeUserImage(@RequestParam String userName) {
         UserImage myImage = userImageRepository.findByUserName(userName);
         if (myImage == null) {
@@ -65,7 +65,7 @@ public class ImageController {
         return "Image for " + userName + " successfully removed.";
     }
 
-    @DeleteMapping(value = "/removeGroupImage")
+    @DeleteMapping(value = "/remove-group-image")
     public @ResponseBody String removeGroupImage(@RequestParam String groupName) {
         GroupImage myImage = groupImageRepository.findByGroupName(groupName);
         if (myImage == null) {
@@ -100,7 +100,7 @@ public class ImageController {
         return "Image for " + groupName + " successfully updated.";
     }
 
-    @GetMapping(value = "/getUserImage/{userName}")
+    @GetMapping(value = "/get-user-image/{userName}")
     public @ResponseBody String getUserImage(@PathVariable String userName) {
         UserImage myImage = userImageRepository.findByUserName(userName);
         if (myImage == null) {
@@ -110,7 +110,7 @@ public class ImageController {
         return "{\"image\": \"" + base64 + "\"}";
     }
 
-    @GetMapping(value = "/getGroupImage/{groupname}")
+    @GetMapping(value = "/get-group-image/{groupname}")
     public @ResponseBody String getGroupImage(@PathVariable String groupname) {
         GroupImage myImage = groupImageRepository.findByGroupName(groupname);
         if (myImage == null) {

@@ -34,7 +34,7 @@ public class WebRouterController {
     @Autowired
     PasswordEncryption passwordEncryption;
 
-    @GetMapping("/resetPassword")
+    @GetMapping("/reset-password")
     public String servePasswordReset(@RequestParam("token") String token) {
             String result = tokenService.validatePasswordResetToken(token);
             if (result.equals("202")) {
@@ -81,7 +81,7 @@ public class WebRouterController {
         }
     }
 
-    @GetMapping("/emailVerification")
+    @GetMapping("/email-verification")
     public String serveVerifyEmail(@RequestParam("token") String token) {
         User user = verificationTokenRepository.findUserByToken(token);
         if(user != null) {

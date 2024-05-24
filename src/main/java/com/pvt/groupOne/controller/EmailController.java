@@ -29,14 +29,14 @@ public class EmailController {
     @Autowired
     private TokenService tokenService;
 
-    @PostMapping("/sendEmail/{reciever}")
+    @PostMapping("/send-email/{reciever}")
     public String sendEmail(@PathVariable String reciever,
             @RequestBody EmailRequest emailRequest) {
         emailService.sendSimpleMessage(reciever, emailRequest.getSubject(), emailRequest.getText());
         return "Email Sent!";
     }
 
-    @GetMapping(value = "/resetPassword/{email}")
+    @GetMapping(value = "/reset-password/{email}")
     public @ResponseBody String resetPassword(HttpServletRequest request, @PathVariable String email) {
         if (!accountRepository.existsByEmail(email)) {
             return "No such user exists";
@@ -47,7 +47,7 @@ public class EmailController {
             PasswordResetToken token = tokenService.createPasswordResetToken(user);
 
             String url = "https://" + request.getServerName() + "/" + request.getContextPath()
-                    + "route/resetPassword?token=" + token.getToken();
+                    + "route/reset-password?token=" + token.getToken();
             EmailRequest emailRequest = new EmailRequest();
             emailRequest.setSubject("Reset Password");
             emailRequest.setText("Hello " + user.getUsername() + ", \r\n" +
@@ -59,7 +59,7 @@ public class EmailController {
 
     }
 
-    @GetMapping(value = "/verifyMail/{email}")
+    @GetMapping(value = "/verify-mail/{email}")
     public @ResponseBody String verificationCode(HttpServletRequest request, @PathVariable String email) {
         if (!accountRepository.existsByEmail(email)) {
             return "No such user exists";
@@ -70,7 +70,7 @@ public class EmailController {
             VerificationToken token = tokenService.createVerificationCode(user);
 
             String url = "https://" + request.getServerName() + "/" + request.getContextPath()
-                    + "route/emailVerification?token=" + token.getToken();
+                    + "route/email-verification?token=" + token.getToken();
             EmailRequest emailRequest = new EmailRequest();
             emailRequest.setSubject("Mail Verification");
             emailRequest.setText("Hello " + user.getUsername() + ", \r\n" +
