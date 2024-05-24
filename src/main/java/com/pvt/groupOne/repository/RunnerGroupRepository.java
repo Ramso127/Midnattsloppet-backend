@@ -123,7 +123,7 @@ public interface RunnerGroupRepository extends CrudRepository<RunnerGroup, Integ
        @Query(value = "SELECT SUM(r.total_distance) FROM run r " +
                      "JOIN user u ON r.user_id = u.user_name " +
                      "WHERE u.runner_group_id = :groupId AND r.date BETWEEN :startDate AND :endDate " +
-                     "AND (r.total_time / r.total_distance) <= 8", nativeQuery = true)
+                     "AND (TIME_TO_SEC(r.total_time) / 60 / r.total_distance) <= 8", nativeQuery = true)
        Double findGroupDistanceForChallenge(@Param("groupId") Integer groupId, @Param("startDate") LocalDate startDate,
                      @Param("endDate") LocalDate endDate);
 
@@ -132,20 +132,20 @@ public interface RunnerGroupRepository extends CrudRepository<RunnerGroup, Integ
                      "JOIN user u ON r.user_id = u.user_name " +
                      "WHERE u.runner_group_id = :groupId AND r.date BETWEEN :startDate AND :endDate " +
                      "AND r.total_distance >= 2", nativeQuery = true)
-       Long findGroupRunsForChallenge(@Param("groupId") Integer groupId, @Param("startDate") LocalDate startDate,
+       Double findGroupRunsForChallenge(@Param("groupId") Integer groupId, @Param("startDate") LocalDate startDate,
                      @Param("endDate") LocalDate endDate);
 
        // Challenge 3: Furthest Run Per Member
        @Query(value = "SELECT SUM(max_distance) FROM (SELECT MAX(r.total_distance) as max_distance " +
                      "FROM run r JOIN user u ON r.user_id = u.user_name " +
                      "WHERE u.runner_group_id = :groupId AND r.date BETWEEN :startDate AND :endDate " +
-                     "AND (r.total_time / r.total_distance) <= 8 GROUP BY u.user_name) as max_distances", nativeQuery = true)
+                     "AND (TIME_TO_SEC(r.total_time) / 60 / r.total_distance) <= 8 GROUP BY u.user_name) as max_distances", nativeQuery = true)
        Double findGroupFurthestRunPerMemberForChallenge(@Param("groupId") Integer groupId,
                      @Param("startDate") LocalDate startDate,
                      @Param("endDate") LocalDate endDate);
 
        // Challenge 4: Lowest Average Pace with Minimum Distance
-       @Query(value = "SELECT AVG(r.total_time / r.total_distance) FROM run r " +
+       @Query(value = "SELECT AVG(TIME_TO_SEC(r.total_time) / 60 / r.total_distance) FROM run r " +
                      "JOIN user u ON r.user_id = u.user_name " +
                      "WHERE u.runner_group_id = :groupId AND r.date BETWEEN :startDate AND :endDate " +
                      "AND r.total_distance >= 2", nativeQuery = true)
@@ -158,22 +158,23 @@ public interface RunnerGroupRepository extends CrudRepository<RunnerGroup, Integ
                      "JOIN user u ON r.user_id = u.user_name " +
                      "WHERE u.runner_group_id = :groupId AND r.date BETWEEN :startDate AND :endDate " +
                      "AND r.total_distance >= 5", nativeQuery = true)
-       Long findGroupLongRunsForChallenge(@Param("groupId") Integer groupId, @Param("startDate") LocalDate startDate,
+       Double findGroupLongRunsForChallenge(@Param("groupId") Integer groupId, @Param("startDate") LocalDate startDate,
                      @Param("endDate") LocalDate endDate);
 
        // Challenge 6: Total Number of Faster Runs
        @Query(value = "SELECT COUNT(r.id) FROM run r " +
                      "JOIN user u ON r.user_id = u.user_name " +
                      "WHERE u.runner_group_id = :groupId AND r.date BETWEEN :startDate AND :endDate " +
-                     "AND (r.total_time / r.total_distance) <= 6", nativeQuery = true)
-       Long findGroupFasterRunsForChallenge(@Param("groupId") Integer groupId, @Param("startDate") LocalDate startDate,
+                     "AND (TIME_TO_SEC(r.total_time) / 60 / r.total_distance) <= 6", nativeQuery = true)
+       Double findGroupFasterRunsForChallenge(@Param("groupId") Integer groupId,
+                     @Param("startDate") LocalDate startDate,
                      @Param("endDate") LocalDate endDate);
 
        // User Challenge Contribution
        // Challenge 1: User's Furthest Distance with Minimum Pace
        @Query(value = "SELECT SUM(r.total_distance) FROM run r " +
                      "WHERE r.user_id = :userId AND r.date BETWEEN :startDate AND :endDate " +
-                     "AND (r.total_time / r.total_distance) <= 8", nativeQuery = true)
+                     "AND (TIME_TO_SEC(r.total_time) / 60 / r.total_distance) <= 8", nativeQuery = true)
        Double findUserDistanceForWeek(@Param("userId") String userId, @Param("startDate") LocalDate startDate,
                      @Param("endDate") LocalDate endDate);
 
@@ -181,7 +182,7 @@ public interface RunnerGroupRepository extends CrudRepository<RunnerGroup, Integ
        @Query(value = "SELECT COUNT(r.id) FROM run r " +
                      "WHERE r.user_id = :userId AND r.date BETWEEN :startDate AND :endDate " +
                      "AND r.total_distance >= 2", nativeQuery = true)
-       Long countUserRuns(@Param("userId") String userId, @Param("startDate") LocalDate startDate,
+       Double countUserRuns(@Param("userId") String userId, @Param("startDate") LocalDate startDate,
                      @Param("endDate") LocalDate endDate);
 
        // Challenge 3: User's Longest Run
@@ -191,7 +192,7 @@ public interface RunnerGroupRepository extends CrudRepository<RunnerGroup, Integ
                      @Param("endDate") LocalDate endDate);
 
        // Challenge 4: Lowest Average Pace by User with Minimum Distance
-       @Query(value = "SELECT AVG(r.total_time / r.total_distance) FROM run r " +
+       @Query(value = "SELECT AVG(TIME_TO_SEC(r.total_time) / 60 / r.total_distance) FROM run r " +
                      "WHERE r.user_id = :userId AND r.date BETWEEN :startDate AND :endDate " +
                      "AND r.total_distance >= 2", nativeQuery = true)
        Double calculateUserAveragePace(@Param("userId") String userId, @Param("startDate") LocalDate startDate,
@@ -201,14 +202,14 @@ public interface RunnerGroupRepository extends CrudRepository<RunnerGroup, Integ
        @Query(value = "SELECT COUNT(r.id) FROM run r " +
                      "WHERE r.user_id = :userId AND r.date BETWEEN :startDate AND :endDate " +
                      "AND r.total_distance >= 5", nativeQuery = true)
-       Long countUserLongRuns(@Param("userId") String userId, @Param("startDate") LocalDate startDate,
+       Double countUserLongRuns(@Param("userId") String userId, @Param("startDate") LocalDate startDate,
                      @Param("endDate") LocalDate endDate);
 
        // Challenge 6: Total Number of Faster Runs by User
        @Query(value = "SELECT COUNT(r.id) FROM run r " +
                      "WHERE r.user_id = :userId AND r.date BETWEEN :startDate AND :endDate " +
-                     "AND (r.total_time / r.total_distance) <= 6", nativeQuery = true)
-       Long countUserFasterRuns(@Param("userId") String userId, @Param("startDate") LocalDate startDate,
+                     "AND (TIME_TO_SEC(r.total_time) / 60 / r.total_distance) <= 6", nativeQuery = true)
+       Double countUserFasterRuns(@Param("userId") String userId, @Param("startDate") LocalDate startDate,
                      @Param("endDate") LocalDate endDate);
 
 }

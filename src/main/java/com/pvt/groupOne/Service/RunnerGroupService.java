@@ -102,42 +102,59 @@ public class RunnerGroupService {
     }
 
     private double getUserChallengeContribution(User user, Challenge challenge, LocalDate start, LocalDate end) {
+        Double contribution = 0.0;
+
         switch (challenge.getId()) {
             case 1:
-                return runnerGroupRepository.findUserDistanceForWeek(user.getUsername(), start, end);
+                contribution = runnerGroupRepository.findUserDistanceForWeek(user.getUsername(), start, end);
+                break;
             case 2:
-                return runnerGroupRepository.countUserRuns(user.getUsername(), start, end);
+                contribution = runnerGroupRepository.countUserRuns(user.getUsername(), start, end);
+                break;
             case 3:
-                return runnerGroupRepository.findUserLongestRun(user.getUsername(), start, end);
+                contribution = runnerGroupRepository.findUserLongestRun(user.getUsername(), start, end);
+                break;
             case 4:
-                return runnerGroupRepository.calculateUserAveragePace(user.getUsername(), start, end);
+                contribution = runnerGroupRepository.calculateUserAveragePace(user.getUsername(), start, end);
+                break;
             case 5:
-                return runnerGroupRepository.countUserLongRuns(user.getUsername(), start, end);
+                contribution = runnerGroupRepository.countUserLongRuns(user.getUsername(), start, end);
+                break;
             case 6:
-                return runnerGroupRepository.countUserFasterRuns(user.getUsername(), start, end);
+                contribution = runnerGroupRepository.countUserFasterRuns(user.getUsername(), start, end);
+                break;
             default:
                 throw new IllegalArgumentException("Unknown challenge type");
         }
+        return contribution != null ? contribution : 0.0;
     }
 
     public double getGroupChallengeContribution(Integer groupId, Challenge challenge, LocalDate start,
             LocalDate end) {
+        Double contribution = 0.0;
         switch (challenge.getId()) {
             case 1:
-                return runnerGroupRepository.findGroupDistanceForChallenge(groupId, start, end);
+                contribution = runnerGroupRepository.findGroupDistanceForChallenge(groupId, start, end);
+                break;
             case 2:
-                return runnerGroupRepository.findGroupRunsForChallenge(groupId, start, end);
+                contribution = runnerGroupRepository.findGroupRunsForChallenge(groupId, start, end);
+                break;
             case 3:
-                return runnerGroupRepository.findGroupFurthestRunPerMemberForChallenge(groupId, start, end);
+                contribution = runnerGroupRepository.findGroupFurthestRunPerMemberForChallenge(groupId, start, end);
+                break;
             case 4:
-                return runnerGroupRepository.findGroupAveragePaceForChallenge(groupId, start, end);
+                contribution = runnerGroupRepository.findGroupAveragePaceForChallenge(groupId, start, end);
+                break;
             case 5:
-                return runnerGroupRepository.findGroupLongRunsForChallenge(groupId, start, end);
+                contribution = runnerGroupRepository.findGroupLongRunsForChallenge(groupId, start, end);
+                break;
             case 6:
-                return runnerGroupRepository.findGroupFasterRunsForChallenge(groupId, start, end);
+                contribution = runnerGroupRepository.findGroupFasterRunsForChallenge(groupId, start, end);
+                break;
             default:
                 throw new IllegalArgumentException("Unknown challenge type");
         }
+        return contribution != null ? contribution : 0.0;
     }
 
     public Map<String, Object> getWeeklyChallengeContribution(String username) {
@@ -151,8 +168,11 @@ public class RunnerGroupService {
         Challenge currentChallenge = challengeRepository.findByisActive(true);
 
         double userContribution = getUserChallengeContribution(user, currentChallenge, startDate, endDate);
-        double groupTotal = getGroupChallengeContribution(user.getRunnerGroup().getGroupId(), currentChallenge,
-                startDate, endDate);
+        double groupTotal = 0;
+        RunnerGroup group = user.getRunnerGroup();
+        if (group != null) {
+            groupTotal = getGroupChallengeContribution(group.getGroupId(), currentChallenge, startDate, endDate);
+        }
 
         double roundedUserContribution = BigDecimal.valueOf(userContribution).setScale(2, RoundingMode.HALF_UP)
                 .doubleValue();
