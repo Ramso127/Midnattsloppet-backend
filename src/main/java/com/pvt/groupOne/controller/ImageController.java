@@ -21,7 +21,7 @@ public class ImageController {
     @Autowired
     private GroupImageRepository groupImageRepository;
 
-    @PostMapping(value = "/add-userImage")
+    @PostMapping(value = "/add-user-image")
     public @ResponseBody String addUserImage(@RequestBody UserImageRequest UserImageRequest) {
         String username = UserImageRequest.getUsername();
         String base64 = UserImageRequest.getBase64();

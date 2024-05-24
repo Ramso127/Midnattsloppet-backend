@@ -55,28 +55,21 @@ public class RunDataCalcController {
     public Map<String, List<Map<String, Object>>> getAllUserRuns(@RequestParam String username) {
         List<Run> runs = runRepository.getAllRunsByUser(username);
 
-        // Create a list to store the run data
         List<Map<String, Object>> dataList = new ArrayList<>();
 
         for (Run run : runs) {
-            // Create a map to represent each run
             Map<String, Object> runMap = new HashMap<>();
             runMap.put("RunID", run.getId());
 
-            // Create a map to represent the attributes
             Map<String, Object> attributesMap = new HashMap<>();
-            attributesMap.put("date", run.getDate().toString()); // Assuming Date is converted to String
-            attributesMap.put("distance", run.getTotalDistance());
+            attributesMap.put("date", run.getDate().toString()); 
             attributesMap.put("time", run.getTotalTime());
 
-            // Add the attributes map to the run map
             runMap.putAll(attributesMap);
 
-            // Add the run map to the data list
             dataList.add(runMap);
         }
 
-        // Create the final response map
         Map<String, List<Map<String, Object>>> responseMap = new HashMap<>();
         responseMap.put("data", dataList);
 
