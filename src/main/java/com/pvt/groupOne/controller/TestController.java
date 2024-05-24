@@ -11,8 +11,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
@@ -51,7 +54,7 @@ public class TestController {
     @Autowired
     private ChallengeRepository challengeRepository;
 
-    @GetMapping(value = "/force-verify/{username}")
+    @PostMapping(value = "/force-verify/{username}")
     public ResponseEntity<String> forceVerify(@PathVariable String username) {
         User currentUser = accountRepository.findByUsername(username);
 
@@ -66,7 +69,7 @@ public class TestController {
 
     }
 
-    @GetMapping(value = "/reset-points")
+    @PutMapping(value = "/reset-points")
     public @ResponseBody String resetPoints() {
 
         Iterable<RunnerGroup> groups = runnerGroupRepository.findAll();
@@ -85,14 +88,14 @@ public class TestController {
         return "Number of groups: " + totalCounter + ". Number of groups reset: " + pointCounter;
     }
 
-    @GetMapping(value = "/assign-points")
+    @PutMapping(value = "/assign-points")
     public @ResponseBody String assignPoints() {
 
         runnerGroupService.assignPointsForCurrentChallenge();
         return "Points added.";
     }
 
-    @GetMapping(value = "/create-demo-teams")
+    @PostMapping(value = "/create-demo-teams")
     public @ResponseBody String createDemoTeams() {
 
         // CREATE AND SAVE USERS
@@ -231,7 +234,7 @@ public class TestController {
 
     }
 
-    @GetMapping(value = "/remove-all-demo-users")
+    @DeleteMapping(value = "/remove-all-demo-users")
     public @ResponseBody String removeAllDemoUsers(){
         removeUser("firstUser");
         removeUser("secondUser");
@@ -323,7 +326,7 @@ public class TestController {
         return true;
     }
 
-    @GetMapping(value = "/simulate-new-week")
+    @PutMapping(value = "/simulate-new-week")
     public @ResponseBody String simulateNewWeek(){
         runnerGroupService.assignPointsForCurrentChallenge();
         incrementChallenges();
