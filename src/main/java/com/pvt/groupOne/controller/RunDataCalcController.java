@@ -64,6 +64,7 @@ public class RunDataCalcController {
             Map<String, Object> attributesMap = new HashMap<>();
             attributesMap.put("date", run.getDate().toString()); 
             attributesMap.put("time", run.getTotalTime());
+            attributesMap.put("distance", run.getTotalDistance());
 
             runMap.putAll(attributesMap);
 
