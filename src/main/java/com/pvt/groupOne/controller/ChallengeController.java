@@ -39,7 +39,7 @@ public class ChallengeController {
         challengeRepository.save(currentActiveChallenge);
         int currentID = currentActiveChallenge.getId();
 
-        // If the last challenge was the final one, loop back to the first challenge.
+        //if the last challenge was the final one, loop back to the first challenge.
         if (currentID == 6) {
             nextID = 0;
             currentID = 0;
